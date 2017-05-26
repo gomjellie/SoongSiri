@@ -1,13 +1,13 @@
 from flask import request, jsonify
 from app import app
-from app.models import *
 
 @app.route('/keyboard')
 def keyboard():
     ret = {
 	    "type" : "buttons",
-	    "buttons" : ["선택 1", "선택 2", "선택 3"]
+	    "button" : ["선택 1", "선택 2", "선택 3"]
 	    }
+    test = {"type": "text"}
     return jsonify(ret)
 
 @app.route('/message', methods=['POST'])
