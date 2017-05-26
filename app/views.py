@@ -5,13 +5,14 @@ from app import app
 def keyboard():
     ret = {
 	    "type" : "buttons",
-	    "button" : ["선택 1", "선택 2", "선택 3"]
+	    "buttons" : ["선택 1", "선택 2", "선택 3"]
 	    }
     test = {"type": "text"}
     return jsonify(ret)
 
 @app.route('/message', methods=['POST'])
 def Message():
+    print("aa")
 
     dataReceive = request.get_json()
     content = dataReceive['content']
@@ -41,4 +42,5 @@ def Message():
                     }
                 }
 
-        return jsonify(dataSend)
+    return jsonify(dataSend)
+
