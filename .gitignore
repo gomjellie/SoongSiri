@@ -15,3 +15,4 @@
 # virtual-env #
 ###############
 venv/*
+__pycache__/*
