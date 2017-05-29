@@ -24,7 +24,7 @@ class Message:
 
 class BaseMessage(Message):
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.retMessage = loads(dumps(Message.baseMessage))
 
     def update_message(self, message):
@@ -51,6 +51,6 @@ class HomeMessage(Message):
 
 class FailMessage(BaseMessage):
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.update_message('error occured')
         self.update_keyboard(Keyboard.home_buttons)
