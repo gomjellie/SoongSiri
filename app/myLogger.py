@@ -4,7 +4,7 @@ from app import app
 
 
 handler = RotatingFileHandler(
-    "./app/log/HongikFood.log",
+    "./app/log/SoongsilFood.log",
     maxBytes=10*1024*1024,
     backupCount=10,
     encoding="utf-8"
