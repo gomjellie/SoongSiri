@@ -1,6 +1,7 @@
 from .keyboard import Keyboard
 from json import loads, dumps
 
+
 class Message:
     baseKeyboard = {
         "type": "buttons",
@@ -20,6 +21,7 @@ class Message:
     def get_message(self):
         return self.retMessage
 
+
 class BaseMessage(Message):
     def __init__(self):
         super.__init__()
@@ -29,11 +31,26 @@ class BaseMessage(Message):
         self.retMessage['message']['text'] = message
 
     def update_keyboard(self, keyboard):
-        self.retMessage['']
+        kb = Message.baseKeyboard
+        kb['buttons'] = keyboard
+        self.retMessage['keyboard'] = kb
 
 
 class FoodMessage(BaseMessage):
     def __init__(self):
         self.retMessage = Message.baseKeyboard
-        self.retMessage['buttons'] = Keyboard.food_buttons
+        self.update_keyboard(Keyboard.food_buttons)
 
+
+class HomeMessage(Message):
+    def __init__(self):
+        self.retMessage = Message.baseKeyboard
+        homeKeyboard = Keyboard.home_buttons
+        self.retMessage['buttons'] = homeKeyboard
+
+
+class FailMessage(BaseMessage):
+    def __init__(self):
+        super.__init__()
+        self.update_message('error occured')
+        self.update_keyboard(Keyboard.home_buttons)

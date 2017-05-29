@@ -1,18 +1,25 @@
 from flask import request, jsonify
+from .managers import APIAdmin
 from app import app
+from .myLogger import viewLog
+import traceback
 
 @app.route('/keyboard')
 def keyboard():
-    ret = {
-	    "type" : "buttons",
-	    "buttons" : ["선택 1", "선택 2", "선택 3"]
-	    }
-    test = {"type": "text"}
-    return jsonify(ret)
+    home_message = APIAdmin.process("home").get_message()
+    return jsonify(home_message), 200
+
 
 @app.route('/message', methods=['POST'])
 def Message():
-    print("aa")
+    try:
+        viewLog("message", request.json)
+        message = APIAdmin.process("message", request.json).get_message()
+        return jsonify(message), 200
+    except:
+        traceback.print_exc()
+        return processFail()
+
 
     dataReceive = request.get_json()
     content = dataReceive['content']
@@ -44,3 +51,7 @@ def Message():
 
     return jsonify(dataSend)
 
+def processFail():
+    message = APIAdmin.process("fail").get_message()
+    viewLog("fail")
+    return jsonify(message)
