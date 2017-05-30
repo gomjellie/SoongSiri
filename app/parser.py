@@ -2,7 +2,15 @@ from bs4 import BeautifulSoup
 import requests
 
 
-class FoodParser():
+class Parser:
+    def __init__(self):
+        self.base_url = None
+
+    def refresh(self):
+        pass
+
+
+class FoodParser(Parser):
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
         self.faculty_food = None
@@ -12,7 +20,12 @@ class FoodParser():
         self.food_court = None
 
     def refresh(self):
-        res = requests.get(self.base_url)
+        """
+        서버에 request를 보내서 식당 정보들을 갱신한다.
+        인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
+        :return: None
+        """
+        res = requests.get(self.base_url, {'fkey': '5'})
         jsn = res.json()
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')
@@ -39,7 +52,7 @@ class FoodParser():
     def get_the_kitchen(self):
         """
         TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
-        :return:
+        :return: dict
         """
         ret_dict = {}
         for section in self.the_kitchen:
@@ -50,8 +63,8 @@ class FoodParser():
 
     def get_snack_corner(self):
         """
-            :return:
             TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
+            :return: dict
         """
         ret_dict = {}
         for section in self.snack_corner:
@@ -62,8 +75,8 @@ class FoodParser():
 
     def get_food_court(self):
         """
-            :return:
             TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
+            :return: dict
         """
         ret_dict = {}
         for section in self.food_court:
@@ -71,3 +84,5 @@ class FoodParser():
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             ret_dict[section].append(soup.text)
         return ret_dict
+
+

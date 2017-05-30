@@ -1,4 +1,5 @@
-from .message import HomeMessage, FailMessage
+from .message import HomeMessage, FailMessage, FoodMessage
+
 
 class Singleton(type):
     instance = None
@@ -10,28 +11,32 @@ class Singleton(type):
 
 
 class APIManager(metaclass=Singleton):
-    def process(self, status, message=None):
-        if status is 'home':
+    def process(self, req, message=None):
+        if req is 'home':
             home_message = MessageAdmin.get_home_message()
             return home_message
-        elif status is 'food':
+        elif req is 'food':
+            return MessageAdmin.get_food_message()
+        elif req is 'bus':
             pass
-        elif status is 'bus':
+        elif req is 'library':
             pass
-        elif status is 'library':
+        elif req is 'subway':
             pass
-        elif status is 'subway':
-            pass
-        elif status is 'fail':
+        elif req is 'fail':
             fail_message = MessageAdmin.get_fail_message()
             return fail_message
         else:
             fail_message = MessageAdmin.get_fail_message()
             return fail_message
 
+
 class MessageManager(metaclass=Singleton):
     def get_home_message(self):
         return HomeMessage()
+
+    def get_food_message(self):
+        return FoodMessage()
 
     def get_fail_message(self):
         return FailMessage()
