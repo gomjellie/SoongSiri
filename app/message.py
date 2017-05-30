@@ -1,6 +1,6 @@
 from .keyboard import Keyboard
 from json import loads, dumps
-from .menu import PupilMenu
+from .menu import PupilMenu, FacultyMenu
 
 class Message:
     baseKeyboard = {
@@ -50,6 +50,13 @@ class PupilFoodMessage(BaseMessage):
         p.set_pupil_foods()
         self.update_message(p.get_string())
 
+
+class FacultyFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        f = FacultyMenu()
+        f.set_faculty_foods()
+        self.update_message(f.get_string())
 
 class HomeMessage(Message):
     def __init__(self):
