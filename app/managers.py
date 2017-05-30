@@ -25,13 +25,13 @@ class APIManager(metaclass=Singleton):
                     return PupilFoodMessage()
                 elif content == '교식':
                     return FacultyFoodMessage()
-            elif content is '버스':
+            elif content == '버스':
                 return BusMessage()
-            elif content is '도서관':
+            elif content == '도서관':
                 return LibMessage
-            elif content is '지하철':
+            elif content == '지하철':
                 return SubMessage
-            elif content is 'fail':
+            elif content == 'fail':
                 fail_message = MessageAdmin.get_fail_message()
                 return fail_message
             else:
