@@ -28,9 +28,9 @@ class APIManager(metaclass=Singleton):
             elif content == '버스':
                 return BusMessage()
             elif content == '도서관':
-                return LibMessage
+                return LibMessage()
             elif content == '지하철':
-                return SubMessage
+                return SubMessage()
             elif content == 'fail':
                 fail_message = MessageAdmin.get_fail_message()
                 return fail_message
