@@ -1,4 +1,4 @@
-from .message import HomeMessage, FailMessage, FoodMessage
+from .message import HomeMessage, FailMessage, FoodMessage, PupilFoodMessage
 
 
 class Singleton(type):
@@ -17,9 +17,12 @@ class APIManager(metaclass=Singleton):
             return home_message
         else:
             content = req['content']
-            if content == u'학식':
-                print('hakusiku')
+            if content == u'밥':
+                print('food')
                 return MessageAdmin.get_food_message()
+            elif content in ['학식', '교식']:
+                if content == '학식':
+                    return PupilFoodMessage()
             elif content is 'bus':
                 pass
             elif content is 'library':
