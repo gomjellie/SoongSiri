@@ -37,10 +37,10 @@ class FoodParser():
         return ret_dict
 
     def get_the_kitchen(self):
-        '''
+        """
         TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
         :return:
-        '''
+        """
         ret_dict = {}
         for section in self.the_kitchen:
             ret_dict.update({section: []})
@@ -49,10 +49,10 @@ class FoodParser():
         return ret_dict
 
     def get_snack_corner(self):
-        '''
+        """
             :return:
             TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
-        '''
+        """
         ret_dict = {}
         for section in self.snack_corner:
             ret_dict.update({section: []})
@@ -61,10 +61,10 @@ class FoodParser():
         return ret_dict
 
     def get_food_court(self):
-        '''
+        """
             :return:
             TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
-        '''
+        """
         ret_dict = {}
         for section in self.food_court:
             ret_dict.update({section: []})
