@@ -1,6 +1,8 @@
 from .keyboard import Keyboard
 from json import loads, dumps
 from .menu import PupilMenu, FacultyMenu
+from .parser import subway_api
+
 
 class Message:
     baseKeyboard = {
@@ -85,9 +87,8 @@ class LibMessage(BaseMessage):
 class SubMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('방향을 선택해 주세요')
-        self.update_keyboard(Keyboard.subway_buttons)
-
+        sub_msg = subway_api.get_station_stat('숭실대입구')
+        self.update_message(sub_msg)
 
 
 class FailMessage(BaseMessage):
