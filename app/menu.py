@@ -29,7 +29,7 @@ class PupilMenu(Menu):
         for section in self.foods:
             menu = self.foods[section][0]
             english_removed = hangul.sub('', menu)
-            ret_string += english_removed.rstrip() + '\n'
+            ret_string += section + ':' + english_removed.rstrip() + '\n'
         return ret_string
 
 
@@ -48,6 +48,6 @@ class FacultyMenu(Menu):
         for section in self.foods:
             menu = self.foods[section][0]
             english_removed = hangul.sub('', menu)
-            ret_string += english_removed.rstrip() + '\n'
+            ret_string += section + ':' + english_removed.rstrip() + '\n'
         return ret_string
 

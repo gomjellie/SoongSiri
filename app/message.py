@@ -71,3 +71,8 @@ class FailMessage(BaseMessage):
         self.update_message('error occured')
         self.update_keyboard(Keyboard.home_buttons)
 
+class OnGoingMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('만드는 중입니다.')
+        self.update_keyboard(Keyboard.home_buttons)

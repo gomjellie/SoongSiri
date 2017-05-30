@@ -25,7 +25,7 @@ class FoodParser(Parser):
         인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
         :return: None
         """
-        res = requests.get(self.base_url, {'fkey': '5'})
+        res = requests.get(self.base_url)
         jsn = res.json()
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')

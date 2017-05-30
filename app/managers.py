@@ -35,8 +35,7 @@ class APIManager(metaclass=Singleton):
                 fail_message = MessageAdmin.get_fail_message()
                 return fail_message
             else:
-                fail_message = MessageAdmin.get_fail_message()
-                return fail_message
+                return MessageAdmin.get_on_going_message()
 
 
 class MessageManager(metaclass=Singleton):
@@ -49,6 +48,8 @@ class MessageManager(metaclass=Singleton):
     def get_fail_message(self):
         return FailMessage()
 
+    def get_on_going_message(self):
+        return OnGoingMessage()
 
 class KeyboardManager(metaclass=Singleton):
     pass

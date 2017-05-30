@@ -17,3 +17,7 @@
 venv/*
 __pycache__/*
 app/__pycache__/*
+
+# jupyter notebook #
+# ##################
+# *.ipynb
