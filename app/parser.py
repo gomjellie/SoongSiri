@@ -40,7 +40,7 @@ class FoodParser(Parser):
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             ret_dict[section].append(soup.text)
 
-        ret_dict.pop(key='조식') # 조식은 항상 조식 : 조식 이런 의미없는 데이터만 있음
+        ret_dict.pop('조식') # 조식은 항상 조식 : 조식 이런 의미없는 데이터만 있음
         #교식이 점심부터 시작하는것 같다.
 
         return ret_dict
