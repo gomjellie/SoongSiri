@@ -1,5 +1,6 @@
 from .parser import FoodParser
 import re
+from collections import OrderedDict
 
 
 class Menu:
@@ -21,7 +22,8 @@ class PupilMenu(Menu):
     def set_pupil_foods(self):
         food_parser = FoodParser()
         food_parser.refresh()
-        self.foods = food_parser.get_pupil_food()
+        unordered_food = food_parser.get_pupil_food()
+        self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_string(self):
         ret_string = ''
@@ -40,7 +42,8 @@ class FacultyMenu(Menu):
     def set_faculty_foods(self):
         food_parser = FoodParser()
         food_parser.refresh()
-        self.foods = food_parser.get_faculty_food()
+        unordered_food = food_parser.get_faculty_food()
+        self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_string(self):
         ret_string = ''
