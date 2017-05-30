@@ -38,9 +38,10 @@ class BaseMessage(Message):
 
 class FoodMessage(BaseMessage):
     def __init__(self):
-        self.retMessage = Message.baseKeyboard
-        self.update_message('food message occured')
+        super().__init__()
+        self.update_message('up message')
         self.update_keyboard(Keyboard.food_buttons)
+
 
 
 class HomeMessage(Message):
@@ -55,3 +56,4 @@ class FailMessage(BaseMessage):
         super().__init__()
         self.update_message('error occured')
         self.update_keyboard(Keyboard.home_buttons)
+
