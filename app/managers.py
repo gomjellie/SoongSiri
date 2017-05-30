@@ -11,13 +11,14 @@ class Singleton(type):
 
 
 class APIManager(metaclass=Singleton):
-    def process(self, stat, req, message=None):
+    def process(self, stat, req=None):
         if stat is 'home':
             home_message = MessageAdmin.get_home_message()
             return home_message
         else:
             content = req['content']
-            if content is '학식':
+            if content == u'학식':
+                print('hakusiku')
                 return MessageAdmin.get_food_message()
             elif content is 'bus':
                 pass

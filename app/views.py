@@ -13,8 +13,8 @@ def keyboard():
 @app.route('/message', methods=['POST'])
 def Message():
     try:
-        viewLog("message", request.json)
-        message = APIAdmin.process("message", request.json).get_message()
+        viewLog("message", request.get_json())
+        message = APIAdmin.process("message", request.get_json()).get_message()
         return jsonify(message), 200
     except:
         traceback.print_exc()

@@ -39,6 +39,7 @@ class BaseMessage(Message):
 class FoodMessage(BaseMessage):
     def __init__(self):
         self.retMessage = Message.baseKeyboard
+        self.update_message('food message occured')
         self.update_keyboard(Keyboard.food_buttons)
 
 
