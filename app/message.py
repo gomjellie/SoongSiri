@@ -49,6 +49,7 @@ class PupilFoodMessage(BaseMessage):
         p = PupilMenu()
         p.set_pupil_foods()
         self.update_message(p.get_string())
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class FacultyFoodMessage(BaseMessage):
@@ -57,6 +58,7 @@ class FacultyFoodMessage(BaseMessage):
         f = FacultyMenu()
         f.set_faculty_foods()
         self.update_message(f.get_string())
+        self.update_keyboard(Keyboard.home_buttons)
 
 class HomeMessage(Message):
     def __init__(self):
