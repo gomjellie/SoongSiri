@@ -11,8 +11,8 @@ class Singleton(type):
 
 
 class APIManager(metaclass=Singleton):
-    def process(self, req, message=None):
-        if req is 'home':
+    def process(self, stat, req, message=None):
+        if stat is 'home':
             home_message = MessageAdmin.get_home_message()
             return home_message
         else:
