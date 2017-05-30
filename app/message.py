@@ -60,6 +60,7 @@ class FacultyFoodMessage(BaseMessage):
         self.update_message(f.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
+
 class HomeMessage(Message):
     def __init__(self):
         self.retMessage = Message.baseKeyboard
@@ -67,11 +68,34 @@ class HomeMessage(Message):
         self.retMessage['buttons'] = homeKeyboard
 
 
+class BusMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('버스 정류장을 선택해 주세요')
+        self.update_keyboard(Keyboard.bus_buttons)
+
+
+class LibMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('열람실을 선택해 주세요')
+        self.update_keyboard(Keyboard.lib_buttons)
+
+
+class SubMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('방향을 선택해 주세요')
+        self.update_keyboard(Keyboard.subway_buttons)
+
+
+
 class FailMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         self.update_message('error occured')
         self.update_keyboard(Keyboard.home_buttons)
+
 
 class OnGoingMessage(BaseMessage):
     def __init__(self):
