@@ -15,20 +15,22 @@ class APIManager(metaclass=Singleton):
         if req is 'home':
             home_message = MessageAdmin.get_home_message()
             return home_message
-        elif req is 'food':
-            return MessageAdmin.get_food_message()
-        elif req is 'bus':
-            pass
-        elif req is 'library':
-            pass
-        elif req is 'subway':
-            pass
-        elif req is 'fail':
-            fail_message = MessageAdmin.get_fail_message()
-            return fail_message
         else:
-            fail_message = MessageAdmin.get_fail_message()
-            return fail_message
+            content = req['content']
+            if content is '학식':
+                return MessageAdmin.get_food_message()
+            elif content is 'bus':
+                pass
+            elif content is 'library':
+                pass
+            elif content is 'subway':
+                pass
+            elif content is 'fail':
+                fail_message = MessageAdmin.get_fail_message()
+                return fail_message
+            else:
+                fail_message = MessageAdmin.get_fail_message()
+                return fail_message
 
 
 class MessageManager(metaclass=Singleton):
