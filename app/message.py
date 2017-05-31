@@ -99,6 +99,10 @@ class LibMessage(BaseMessage):
         self.update_message('열람실을 선택해 주세요')
         self.update_keyboard(l.get_buttons())
 
+    def select_room(self, num):
+        self.update_message('http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(num))
+        self.update_keyboard(Keyboard.home_buttons)
+
 
 class SubMessage(BaseMessage):
     def __init__(self):

@@ -34,8 +34,11 @@ class APIManager(metaclass=Singleton):
                 elif content == '중문':
                     bus_message.middle()
                 return bus_message
-            elif content == '도서관':
+            elif content == '도서관' or '열람실' in content:
                 lib_message = LibMessage()
+                if '열람실' in content:
+                    room_no = content[0]
+                    lib_message.select_room(room_no)
                 return lib_message
             elif content == '지하철':
                 return SubMessage()
