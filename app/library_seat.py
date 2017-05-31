@@ -14,6 +14,8 @@ class LibrarySeat():
             button_text = button + '이용률 :' + lib_stats[button]['이용률']
             ret_buttons.append(button_text)
 
+        return ret_buttons
+
     def get_string(self):
         pass
 
