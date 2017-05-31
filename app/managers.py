@@ -33,6 +33,7 @@ class APIManager(metaclass=Singleton):
                     bus_message.bera()
                 elif content == '중문':
                     bus_message.middle()
+                return bus_message
             elif content == '도서관':
                 lib_message = LibMessage()
                 return lib_message
