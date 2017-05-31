@@ -9,6 +9,10 @@ $ pip install -r ./requirements.txt
 
 # to connect to AWS 
 
-$ ssh -i ./SoongSiri.pem ubuntu@13.58.7.239
+$ ssh -i seoul-soongsiri.pem ubuntu@ec2-52-79-131-30.ap-northeast-2.compute.amazonaws.com
+
+# run
+
+$ nohup ./run &
 
 

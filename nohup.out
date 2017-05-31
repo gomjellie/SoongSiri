@@ -1,0 +1,59 @@
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 667-272-376
+Traceback (most recent call last):
+  File "./run.py", line 3, in <module>
+    app.run(host='0.0.0.0', debug=True)
+  File "/home/ubuntu/soongsiri/venv/lib/python3.5/site-packages/flask/app.py", line 841, in run
+    run_simple(host, port, self, **options)
+  File "/home/ubuntu/soongsiri/venv/lib/python3.5/site-packages/werkzeug/serving.py", line 720, in run_simple
+    s.bind((hostname, port))
+OSError: [Errno 98] Address already in use
+110.76.143.234 - - [31/May/2017 03:11:04] "GET /keyboard HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \ubc25
+--------------------------------------------------------------------------------
+110.76.143.234 - - [31/May/2017 03:11:06] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \uad50\uc2dd
+--------------------------------------------------------------------------------
+110.76.143.234 - - [31/May/2017 03:11:08] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \ubc84\uc2a4
+--------------------------------------------------------------------------------
+110.76.143.234 - - [31/May/2017 03:11:10] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \uc815\ubb38 \uac74\ub108\ud3b8(\ubca0\ub77c \uc55e)
+--------------------------------------------------------------------------------
+110.76.143.234 - - [31/May/2017 03:11:14] "POST /message HTTP/1.1" 200 -
+110.76.143.236 - - [31/May/2017 03:12:22] "GET /keyboard HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \ubc84\uc2a4
+--------------------------------------------------------------------------------
+110.76.143.235 - - [31/May/2017 03:12:24] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \uc815\ubb38 \uac74\ub108\ud3b8(\ubca0\ub77c \uc55e)
+--------------------------------------------------------------------------------
+110.76.143.235 - - [31/May/2017 03:12:26] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \ubc25
+--------------------------------------------------------------------------------
+110.76.143.235 - - [31/May/2017 03:12:28] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \ud559\uc2dd
+--------------------------------------------------------------------------------
+110.76.143.236 - - [31/May/2017 03:12:30] "POST /message HTTP/1.1" 200 -
+--------------------------------------------------------------------------------
+INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
+[message] user_key : GeWG33fssU2L, type : text, content : \uc9c0\ud558\ucca0
+--------------------------------------------------------------------------------
+110.76.143.234 - - [31/May/2017 03:12:36] "POST /message HTTP/1.1" 200 -
