@@ -25,10 +25,17 @@ class APIManager(metaclass=Singleton):
                     return PupilFoodMessage()
                 elif content == '교식':
                     return FacultyFoodMessage()
-            elif content == '버스':
-                return BusMessage()
+            elif content in ['버스', '정문', '정문 건너편(베라 앞)', '중문']:
+                bus_message = BusMessage()
+                if content == '정문':
+                    bus_message.front()
+                elif content == '정문 건너편(베라 앞)':
+                    bus_message.bera()
+                elif content == '중문':
+                    bus_message.middle()
             elif content == '도서관':
-                return LibMessage()
+                lib_message = LibMessage()
+                return lib_message
             elif content == '지하철':
                 return SubMessage()
             elif content == 'fail':

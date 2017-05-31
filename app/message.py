@@ -1,8 +1,8 @@
 from .keyboard import Keyboard
 from json import loads, dumps
 from .menu import PupilMenu, FacultyMenu
-from .parser import subway_api
-
+from .parser import subway_api, bus_api
+from .library_seat import LibrarySeat
 
 class Message:
     baseKeyboard = {
@@ -76,12 +76,28 @@ class BusMessage(BaseMessage):
         self.update_message('버스 정류장을 선택해 주세요')
         self.update_keyboard(Keyboard.bus_buttons)
 
+    def bera(self):
+        bera_msg = bus_api.get_station_stat('20165')
+        self.update_message(bera_msg)
+        self.update_keyboard(Keyboard.home_buttons)
+
+    def front(self):
+        front_msg = bus_api.get_station_stat('')
+        self.update_message(front_msg)
+        self.update_keyboard(Keyboard.home_buttons)
+
+    def middle(self):
+        mid_msg = bus_api.get_station_stat('')
+        self.update_message(mid_msg)
+        self.update_keyboard(Keyboard.home_buttons)
+
 
 class LibMessage(BaseMessage):
     def __init__(self):
         super().__init__()
+        l = LibrarySeat()
         self.update_message('열람실을 선택해 주세요')
-        self.update_keyboard(Keyboard.lib_buttons)
+        self.update_keyboard(l.get_buttons())
 
 
 class SubMessage(BaseMessage):

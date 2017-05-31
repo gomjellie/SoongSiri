@@ -10,7 +10,6 @@ class Parser:
         pass
 
 
-
 class Singleton(type):
     instance = None
 
@@ -33,6 +32,7 @@ class FoodParser(Parser):
         """
         서버에 request를 보내서 식당 정보들을 갱신한다.
         인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
+        fkey 인자를 생략하면 자동으로 오늘의 식단 가져옴
         :return: None
         """
         res = requests.get(self.base_url)
@@ -178,4 +178,69 @@ class SubwayParser(metaclass=Singleton):
         return ret + '-----------------------'
 
 
+class BusParser(metaclass=Singleton):
+    """
+    ex: http://bus.go.kr/xmlRequest/getStationByUid.jsp?strBusNumber=13157'
+    """
+
+    url = 'http://bus.go.kr/xmlRequest/getStationByUid.jsp'
+
+    def get_station_stat(self, station_number):
+        res = requests.get(bus_api.url, dict(strBusNumber=station_number))
+        soup = BeautifulSoup(res.text, 'html.parser')
+        ret = ''
+
+        for bus_name, left_time_1, left_time_2 in zip(soup.select('rtnm'),\
+                soup.select('arrmsg1'), soup.select('arrmsg2')):
+            ret += "-------------------\n| Bus:{0:<8}\n|{1:<10}\n|{2:<13}\n".format(\
+                    bus_name.string, left_time_1.string, left_time_2.string)
+        return ret + '-------------------'
+
+
+class LibParser(metaclass=Singleton):
+    url = 'http://203.253.28.47/seat/domian5.asp'
+    seat = {
+        '1 열람실': {
+            '전체 좌석': 428,
+            '잔여 좌석': None,
+            '사용중인 좌석': None,
+            '이용률': None
+        },
+        '2 열람실': {
+            '전체 좌석': 100,
+            '잔여 좌석': None,
+            '사용중인 좌석': None,
+            '이용률': None
+        },
+        '3 열람실': {
+            '전체 좌석': 117,
+            '잔여 좌석': None,
+            '사용중인 좌석': None,
+            '이용률': None
+        },
+        '4 열람실': {
+            '전체 좌석': 172,
+            '잔여 좌석': None,
+            '사용중인 좌석': None,
+            '이용률': None
+        }
+    }
+
+    def get_lib_stat(self):
+        r = requests.get(lib_api.url)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        cnt = 1
+        for i in soup.find_all('tr')[3:]:
+            rest = i.find_all(attrs={'color': 'blue'})[1].getText()
+            usage_percent = i.find_all(attrs={'color': 'blue'})[2].getText()
+            room = lib_api.seat ['{} 열람실'.format(cnt)]
+            room['잔여 좌석'] = int(rest)
+            room['사용중인 좌석'] = int(room['전체 좌석'])-room['잔여 좌석']
+            room['이용률'] = usage_percent
+            cnt += 1
+
+        return lib_api.seat
+
 subway_api = SubwayParser()
+bus_api = BusParser()
+lib_api = LibParser()
