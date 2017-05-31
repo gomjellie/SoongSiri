@@ -124,3 +124,4 @@ class OnGoingMessage(BaseMessage):
         super().__init__()
         self.update_message('만드는 중입니다.')
         self.update_keyboard(Keyboard.home_buttons)
+
