@@ -186,14 +186,14 @@ class SubwayParser(metaclass=Singleton):
         if jsn.get('resultList') is None:
             return '곧 수정하겠습니다 아직 이부분은 왜안되는지 이유를 모르겠네요'
         for j in range(len(jsn.get('resultList'))):
-            ret += '-----------------------\n|'
-            ret += jsn.get('resultList')[j].get('trainLineNm') + '\n| '
-            ret += jsn.get('resultList')[j].get('arvlMsg2') + '\n|'
+            ret += '───────────────────\n|'
+            ret += jsn.get('resultList')[j].get('trainLineNm') + '\n├ '
+            ret += jsn.get('resultList')[j].get('arvlMsg2') + '\n├'
             # for k in jsn.get('resultList')[j].keys():
             #	print(k, jsn.get('resultList')[j].get(k))
             # print('-------------------')
 
-        return ret + '-----------------------'
+        return ret + '───────────────────'
 
 
 class BusParser(metaclass=Singleton):
@@ -210,9 +210,9 @@ class BusParser(metaclass=Singleton):
 
         for bus_name, left_time_1, left_time_2 in zip(soup.select('rtnm'),\
                 soup.select('arrmsg1'), soup.select('arrmsg2')):
-            ret += "-------------------\n| Bus:{0:<8}\n|{1:<10}\n|{2:<13}\n".format(\
+            ret += "───────────────────\n├ Bus:{0:<8}\n|{1:<10}\n|{2:<13}\n".format(\
                     bus_name.string, left_time_1.string, left_time_2.string)
-        return ret + '-------------------'
+        return ret + '───────────────────'
 
 
 class LibParser(metaclass=Singleton):
