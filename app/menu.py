@@ -10,6 +10,9 @@ class Menu:
     def get_foods(self):
         return self.foods
 
+    def get_dict(self):
+        pass
+
     def get_string(self):
         # 메뉴마다 깔끔하게 딕셔너리를 string으로 바꾼다
         pass
@@ -25,13 +28,21 @@ class PupilMenu(Menu):
         unordered_food = food_parser.get_pupil_food()
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
-    def get_string(self):
-        ret_string = ''
+    def get_dict(self):
+        ret_dict = {}
         hangul = re.compile('[^가-힣 ]+')
         for section in self.foods:
             menu = self.foods[section][0]
             english_removed = hangul.sub('', menu)
-            ret_string += section + ':' + english_removed.rstrip() + '\n'
+            ret_dict.update({section: english_removed.split()})
+        return ret_dict
+
+    def get_string(self):
+        ret_string = ''
+        dic = self.get_dict()
+        for section in dic:
+            food_item = dic[section]
+            ret_string += section + ':' + ', '.join(food_item)
         return ret_string
 
 
@@ -45,12 +56,27 @@ class FacultyMenu(Menu):
         unordered_food = food_parser.get_faculty_food()
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
-    def get_string(self):
-        ret_string = ''
+    def get_dict(self):
+        ret_dict = {}
         hangul = re.compile('[^가-힣 ]+')
         for section in self.foods:
             menu = self.foods[section][0]
             english_removed = hangul.sub('', menu)
-            ret_string += section + ':' + english_removed.rstrip() + '\n'
+            ret_dict.update({section: english_removed.split()})
+
+        return ret_dict
+
+    def get_string(self):
+        ret_string = ''
+        dic = self.get_dict()
+        for section in dic:
+            food_item = dic[section]
+            ret_string += section + ':' + ', '.join(food_item)
+        return ret_string
+        # hangul = re.compile('[^가-힣 ]+')
+        # for section in self.foods:
+        #     menu = self.foods[section][0]
+        #     english_removed = hangul.sub('', menu)
+        #     ret_string += section + ':' + english_removed.rstrip() + '\n'
         return ret_string
 

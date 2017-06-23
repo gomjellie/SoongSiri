@@ -4,6 +4,7 @@ from app import app
 from .myLogger import viewLog
 import traceback
 
+
 @app.route('/keyboard')
 def keyboard():
     home_message = APIAdmin.process("home").get_message()

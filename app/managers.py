@@ -17,9 +17,10 @@ class APIManager(metaclass=Singleton):
             return home_message
         else:
             content = req['content']
-            if content == u'밥':
-                print('food')
+            if content == u'식단 보기':
                 return MessageAdmin.get_food_message()
+            elif content == u'식단 평가':
+                return MessageAdmin.get_fail_message()
             elif content in ['학식', '교식']:
                 if content == '학식':
                     return PupilFoodMessage()
