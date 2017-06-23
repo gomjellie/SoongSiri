@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import urllib
+import re
 
 
 class Parser:
@@ -49,11 +50,17 @@ class FoodParser(Parser):
         for section in self.faculty_food:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
-            ret_dict[section].append(soup.text)
+            t = ''
+            for i in soup.find_all({'span'}):
+                t += '\n' + i.text
 
-        # ret_dict.pop('조식') # 조식은 항상 조식 : 조식 이런 의미없는 데이터만 있음
-        #교식이 점심부터 시작하는것 같다.
+            hangul = re.compile('[^가-힣 ]+')
 
+            res = hangul.sub('', ' '.join(t.split()))
+            res = ' '.join(res.split())
+            res = res.split(' ')
+
+            ret_dict.update({section: res})
         return ret_dict
 
     def get_pupil_food(self):
@@ -61,7 +68,17 @@ class FoodParser(Parser):
         for section in self.pupil_food:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
-            ret_dict[section].append(soup.text)
+            t = ''
+            for i in soup.find_all({'div'}):
+                t += '\n' + i.text
+
+            hangul = re.compile('[^가-힣 ]+')
+
+            res = hangul.sub('', ' '.join(t.split()))
+            res = ' '.join(res.split())
+            res = res.split(' ')
+
+            ret_dict.update({section: res})
         return ret_dict
 
     def get_the_kitchen(self):
