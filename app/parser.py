@@ -210,7 +210,7 @@ class BusParser(metaclass=Singleton):
 
         for bus_name, left_time_1, left_time_2 in zip(soup.select('rtnm'),\
                 soup.select('arrmsg1'), soup.select('arrmsg2')):
-            ret += "────────\n├ Bus:{0:<8}\n|{1:<10}\n|{2:<13}\n".format(\
+            ret += "────────\n├Bus:{0:<8}\n├{1:<10}\n├{2:<13}\n".format(\
                     bus_name.string, left_time_1.string, left_time_2.string)
         return ret + '────────'
 
