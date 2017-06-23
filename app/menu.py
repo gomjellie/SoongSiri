@@ -6,6 +6,7 @@ from collections import OrderedDict
 class Menu:
     def __init__(self):
         self.foods = None
+        self.prettified_str = ''
 
     def get_foods(self):
         return self.foods
@@ -18,26 +19,24 @@ class Menu:
         pass
 
     def prettify(self, d, indent=0):
-        ret_str = ''
         if isinstance(d, dict):
             for key, value in d.items():
-                ret_str += '├──' * (indent + 1) + str(key)
+                self.prettified_str += '├──' * (indent + 1) + str(key)
                 if isinstance(value, dict) or isinstance(value, list):
                     self.prettify(value, indent + 1)
                 else:
-                    ret_str += '│  ├' + '─' * (indent + 1) + str(value)
+                    self.prettified_str += '│  ├' + '─' * (indent + 1) + str(value)
         elif isinstance(d, list):
             for item in d:
                 if isinstance(item, dict) or isinstance(item, list):
                     self.prettify(item, indent + 1)
                 else:
                     if item == d[-1]:
-                        ret_str += '│  └' + '─' * (indent) + str(item)
+                        self.prettified_str += '│  └' + '─' * (indent) + str(item)
                     else:
-                        ret_str += '│  ├' + '─' * (indent) + str(item)
+                        self.prettified_str += '│  ├' + '─' * (indent) + str(item)
         else:
             return Exception
-        return ret_str
 
 
 class PupilMenu(Menu):
@@ -61,7 +60,8 @@ class PupilMenu(Menu):
 
     def get_string(self):
         dic = self.get_dict()
-        ret_string = self.prettify(dic)
+        self.prettify(dic)
+        ret_string = self.prettified_str
         # dic = self.get_dict()
         # for section in dic:
         #     food_item = dic[section]
