@@ -90,12 +90,9 @@ class FacultyMenu(Menu):
         return ret_dict
 
     def get_string(self):
-        ret_string = ''
         dic = self.get_dict()
-        for section in dic:
-            food_item = dic[section]
-            ret_string += section + ':' + ', '.join(food_item)
-        return ret_string
+        self.prettify(dic)
+        ret_string = self.prettified_str
         # hangul = re.compile('[^가-힣 ]+')
         # for section in self.foods:
         #     menu = self.foods[section][0]
