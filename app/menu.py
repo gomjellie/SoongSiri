@@ -17,6 +17,28 @@ class Menu:
         # 메뉴마다 깔끔하게 딕셔너리를 string으로 바꾼다
         pass
 
+    def prettify(self, d, indent=0):
+        ret_str = ''
+        if isinstance(d, dict):
+            for key, value in d.items():
+                ret_str += '├──' * (indent + 1) + str(key)
+                if isinstance(value, dict) or isinstance(value, list):
+                    self.prettify(value, indent + 1)
+                else:
+                    ret_str += '│  ├' + '─' * (indent + 1) + str(value)
+        elif isinstance(d, list):
+            for item in d:
+                if isinstance(item, dict) or isinstance(item, list):
+                    self.prettify(item, indent + 1)
+                else:
+                    if item == d[-1]:
+                        ret_str += '│  └' + '─' * (indent) + str(item)
+                    else:
+                        ret_str += '│  ├' + '─' * (indent) + str(item)
+        else:
+            return Exception
+        return ret_str
+
 
 class PupilMenu(Menu):
     def __init__(self):
@@ -38,11 +60,12 @@ class PupilMenu(Menu):
         return ret_dict
 
     def get_string(self):
-        ret_string = ''
         dic = self.get_dict()
-        for section in dic:
-            food_item = dic[section]
-            ret_string += section + ':' + ', '.join(food_item)
+        ret_string = self.prettify(dic)
+        # dic = self.get_dict()
+        # for section in dic:
+        #     food_item = dic[section]
+        #     ret_string += section + ':' + ', '.join(food_item)
         return ret_string
 
 
