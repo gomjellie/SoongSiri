@@ -45,12 +45,13 @@ class PupilMenu(Menu):
 
     def set_pupil_foods(self):
         food_parser = FoodParser()
-        food_parser.refresh()
         try:
+            food_parser.refresh()
             unordered_food = food_parser.get_pupil_food()
         except TypeError:
             unordered_food = {'학생식당': '오늘은 메뉴가 없습니다.'}
-
+        except Exception as inst:
+            unordered_food = {'학생식당': inst}
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_dict(self):
@@ -69,11 +70,13 @@ class FacultyMenu(Menu):
 
     def set_faculty_foods(self):
         food_parser = FoodParser()
-        food_parser.refresh()
         try:
+            food_parser.refresh()
             unordered_food = food_parser.get_faculty_food()
         except TypeError:
             unordered_food = {'교직원식당': '오늘은 쉽니다.'}
+        except Exception as inst:
+            unordered_food = {'교직원식당': inst}
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_dict(self):
