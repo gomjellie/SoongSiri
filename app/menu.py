@@ -51,7 +51,11 @@ class PupilMenu(Menu):
         except TypeError:
             unordered_food = {'학생식당': '오늘은 메뉴가 없습니다.'}
         except Exception as inst:
-            unordered_food = {'학생식당': inst}
+            unordered_food = {'학생식당': [
+                inst,
+                '파싱이 제대로 되지 않았습니다.',
+                '일요일에는 메뉴가 없어서 동작하지 않을 수 있습니다.'
+            ]}
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_dict(self):
@@ -76,7 +80,11 @@ class FacultyMenu(Menu):
         except TypeError:
             unordered_food = {'교직원식당': '오늘은 쉽니다.'}
         except Exception as inst:
-            unordered_food = {'교직원식당': inst}
+            unordered_food = {'교직원식당': [
+                inst,
+                '파싱이 제대로 되지 않았습니다.',
+                '일요일에는 메뉴가 없어서 동작하지 않을 수 있습니다.'
+            ]}
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_dict(self):
