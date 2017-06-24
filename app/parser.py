@@ -37,7 +37,7 @@ class FoodParser(Parser):
         fkey 인자를 생략하면 자동으로 오늘의 식단 가져옴
         :return: None
         """
-        res = requests.get(self.base_url)
+        res = requests.get(self.base_url, params={'fkey': 5})
         jsn = res.json()
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')
@@ -51,7 +51,7 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            for i in soup.find_all({'span'}):
+            for i in soup.find_all(['div', 'span']):
                 t += '\n' + i.text
 
             hangul = re.compile('[^가-힣 ]+')
@@ -69,7 +69,7 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            for i in soup.find_all({'div'}):
+            for i in soup.find_all(['div', 'span']):
                 t += '\n' + i.text
 
             hangul = re.compile('[^가-힣 ]+')
