@@ -37,7 +37,8 @@ class FoodParser(Parser):
         fkey 인자를 생략하면 자동으로 오늘의 식단 가져옴
         :return: None
         """
-        res = requests.get(self.base_url, params={'fkey': 5})
+        # res = requests.get(self.base_url, params={'fkey': 5})
+        res = requests.get(self.base_url)
         jsn = res.json()
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')
@@ -51,9 +52,14 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            for i in soup.find_all(['div', 'span']):
-                t += '\n' + i.text
-
+            if soup.find_all(['span']) == []:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['span']):
+                    t += '\n' + i.text
+            if t == '':
+                raise TypeError
             hangul = re.compile('[^가-힣 ]+')
 
             res = hangul.sub('', ' '.join(t.split()))
@@ -69,8 +75,14 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            for i in soup.find_all(['div', 'span']):
-                t += '\n' + i.text
+            if soup.find_all(['span']) == []:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['span']):
+                    t += '\n' + i.text
+            if t == '':
+                raise TypeError
 
             hangul = re.compile('[^가-힣 ]+')
 
