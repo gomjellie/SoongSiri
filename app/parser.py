@@ -144,9 +144,14 @@ class FoodParser(Parser):
 
             res = digit.sub('\g<0>\n', s).split('\n')
             res_list = []
+            filter_item = ['일식', '퓨전', [], '']
+
             for i in res:
-                if i not in ['', '퓨전', '일식']:
+                if not any(j in i.split() for j in filter_item):
                     res_list.append(' '.join(i.split()))    # remove whitespace
+
+            if res_list.count(''):
+                res_list.remove('')
 
             ret_dict.update({section: list(set(res_list))})
         return ret_dict
