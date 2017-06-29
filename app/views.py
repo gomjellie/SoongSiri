@@ -17,12 +17,13 @@ def Message():
         viewLog("message", request.get_json())
         message = APIAdmin.process("message", request.get_json()).get_message()
         return jsonify(message), 200
-    except:
+    except Exception as inst:
         traceback.print_exc()
-        return processFail()
+        return process_fail(inst)
 
 
-def processFail():
+def process_fail(exception_str):
     message = APIAdmin.process("fail").get_message()
+    message.update_message(exception_str)
     viewLog("fail")
     return jsonify(message)
