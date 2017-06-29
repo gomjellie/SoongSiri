@@ -19,7 +19,7 @@ def Message():
         return jsonify(message), 200
     except Exception as inst:
         traceback.print_exc()
-        return process_fail(inst)
+        return process_fail(inst.__str__())
 
 
 def process_fail(exception_str):
