@@ -43,11 +43,14 @@ class APIManager(metaclass=Singleton):
                 return lib_message
             elif content == '지하철':
                 return SubMessage()
-            elif content == 'fail':
-                fail_message = MessageAdmin.get_fail_message()
-                return fail_message
-            else:
+            elif content == 'on_going':
+                on_going_message = MessageAdmin.get_on_going_message()
+                on_going_message.update_message(req['log'])
                 return MessageAdmin.get_on_going_message()
+            else:
+                fail_message = MessageAdmin.get_fail_message()
+                fail_message.update_message(req['log'])
+                return fail_message
 
 
 class MessageManager(metaclass=Singleton):

@@ -59,7 +59,7 @@ class FoodParser(Parser):
                 for i in soup.find_all(['span']):
                     t += '\n' + i.text
             if t == '':
-                raise TypeError
+                raise TypeError()
             hangul = re.compile('[^가-힣 ]+')
 
             res = hangul.sub('', ' '.join(t.split()))
@@ -82,7 +82,7 @@ class FoodParser(Parser):
                 for i in soup.find_all(['span']):
                     t += '\n' + i.text
             if t == '':
-                raise TypeError
+                raise TypeError()
 
             hangul = re.compile('[^가-힣 ]+')
 
