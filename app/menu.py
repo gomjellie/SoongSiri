@@ -43,8 +43,9 @@ class PupilMenu(Menu):
 
     def get_string(self):
         dic = self.get_dict()
-        self.prettify(dic)
-        ret_string = self.prettified_str
+        t = TreeFormatter()
+        t.prettify(dic)
+        ret_string = t.prettified_str
         return ret_string
 
 

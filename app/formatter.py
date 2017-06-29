@@ -1,7 +1,7 @@
 
 class TreeFormatter:
     def __init__(self):
-        self.prettified_str = None
+        self.prettified_str = ''
 
     def prettify(self, d, indent=0):
         if isinstance(d, dict):
