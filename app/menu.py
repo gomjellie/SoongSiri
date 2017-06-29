@@ -29,7 +29,10 @@ class PupilMenu(Menu):
             food_parser.refresh()
             unordered_food = food_parser.get_pupil_food()
         except TypeError:
-            unordered_food = {'학생식당': '오늘은 메뉴가 없습니다.'}
+            unordered_food = {'학생식당': [
+                '오늘은 메뉴가 없습니다.',
+                TypeError.__str__()
+            ]}
         except Exception as inst:
             unordered_food = {'학생식당': [
                 inst,
@@ -59,7 +62,10 @@ class FacultyMenu(Menu):
             food_parser.refresh()
             unordered_food = food_parser.get_faculty_food()
         except TypeError:
-            unordered_food = {'교직원식당': '오늘은 쉽니다.'}
+            unordered_food = {'교직원식당': [
+                '오늘은 쉽니다.',
+                TypeError.__str__()
+            ]}
         except Exception as inst:
             unordered_food = {'교직원식당': [
                 inst,
@@ -89,7 +95,12 @@ class FoodCourtMenu(Menu):
             food_parser = FoodParser()
             unordered_food = food_parser.get_food_court()
         except TypeError:
-            unordered_food = {'푸드코트': '오늘은 쉽니다.'}
+            unordered_food = {
+                '푸드코트': [
+                    '오늘은 쉽니다.',
+                    TypeError.__str__()
+                ]
+            }
         except Exception as inst:
             unordered_food = {'교직원식당': [
                 inst,
