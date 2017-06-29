@@ -145,7 +145,8 @@ class FoodParser(Parser):
             res = digit.sub('\g<0>\n', s).split('\n')
             res_list = []
             for i in res:
-                res_list.append(' '.join(i.split()))    # remove whitespace
+                if i not in ['', '퓨전', '일식']:
+                    res_list.append(' '.join(i.split()))    # remove whitespace
 
             ret_dict.update({section: list(set(res_list))})
         return ret_dict
