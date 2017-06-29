@@ -1,5 +1,5 @@
 from .parser import FoodParser
-import re
+from .formatter import TreeFormatter
 from collections import OrderedDict
 
 
@@ -17,26 +17,6 @@ class Menu:
     def get_string(self):
         # 메뉴마다 깔끔하게 딕셔너리를 string으로 바꾼다
         pass
-
-    def prettify(self, d, indent=0):
-        if isinstance(d, dict):
-            for key, value in d.items():
-                self.prettified_str += '\n├─' * (indent + 1) + str(key)
-                if isinstance(value, dict) or isinstance(value, list):
-                    self.prettify(value, indent + 1)
-                else:
-                    self.prettified_str += '\n│  ├' + '─' * (indent + 1) + str(value)
-        elif isinstance(d, list):
-            for item in d:
-                if isinstance(item, dict) or isinstance(item, list):
-                    self.prettify(item, indent + 1)
-                else:
-                    if item == d[-1]:
-                        self.prettified_str += '\n│  └' + '─' * (indent) + str(item)
-                    else:
-                        self.prettified_str += '\n│  ├' + '─' * (indent) + str(item)
-        else:
-            return Exception
 
 
 class PupilMenu(Menu):
@@ -83,7 +63,7 @@ class FacultyMenu(Menu):
             unordered_food = {'교직원식당': [
                 inst,
                 '파싱이 제대로 되지 않았습니다.',
-                '일요일에는 메뉴가 없어서 동작하지 않을 수 있습니다.'
+                '주말에는 메뉴가 없을 수 있습니다.'
             ]}
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
@@ -92,8 +72,9 @@ class FacultyMenu(Menu):
 
     def get_string(self):
         dic = self.get_dict()
-        self.prettify(dic)
-        ret_string = self.prettified_str
+        t = TreeFormatter()
+        t.prettify(dic)
+        ret_string = t.prettified_str
 
         return ret_string
 
