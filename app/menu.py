@@ -91,8 +91,9 @@ class FoodCourtMenu(Menu):
         super().__init__()
 
     def set_food_court_food(self):
+        food_parser = FoodParser()
         try:
-            food_parser = FoodParser()
+            food_parser.refresh()
             unordered_food = food_parser.get_food_court()
         except TypeError:
             unordered_food = {
