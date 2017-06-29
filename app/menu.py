@@ -79,3 +79,33 @@ class FacultyMenu(Menu):
 
         return ret_string
 
+
+class FoodCourtMenu(Menu):
+    def __init__(self):
+        super().__init__()
+
+    def set_food_court_food(self):
+        try:
+            food_parser = FoodParser()
+            unordered_food = food_parser.get_food_court()
+        except TypeError:
+            unordered_food = {'푸드코트': '오늘은 쉽니다.'}
+        except Exception as inst:
+            unordered_food = {'교직원식당': [
+                inst,
+                '파싱이 제대로 되지 않았습니다.',
+                '주말에는 메뉴가 없을 수 있습니다.'
+            ]}
+        self.foods = OrderedDict(sorted(unordered_food.items()))
+
+    def get_dict(self):
+
+        return self.foods
+
+    def get_string(self):
+        dic = self.get_dict()
+        t = TreeFormatter()
+        t.prettified_str(dic)
+        ret_string = t.prettified_str
+
+        return ret_string

@@ -1,8 +1,9 @@
 from .keyboard import Keyboard
 from json import loads, dumps
-from .menu import PupilMenu, FacultyMenu
+from .menu import PupilMenu, FacultyMenu, FoodCourtMenu
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
+
 
 class Message:
     baseKeyboard = {
@@ -63,6 +64,15 @@ class FacultyFoodMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
 
+class FoodCourtMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        f = FoodCourtMenu()
+        f.set_food_court_food()
+        self.update_message(f.get_string())
+        self.update_keyboard(Keyboard.home_buttons)
+
+
 class HomeMessage(Message):
     def __init__(self):
         self.retMessage = Message.baseKeyboard
@@ -102,7 +112,6 @@ class LibMessage(BaseMessage):
     def select_room(self, num):
         self.update_message('http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(num))
         self.update_keyboard(Keyboard.home_buttons)
-
 
 
 class SubMessage(BaseMessage):

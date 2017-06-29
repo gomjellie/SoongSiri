@@ -284,7 +284,7 @@ class LibParser(metaclass=Singleton):
         for i in soup.find_all('tr')[3:]:
             rest = i.find_all(attrs={'color': 'blue'})[1].getText()
             usage_percent = i.find_all(attrs={'color': 'blue'})[2].getText()
-            room = lib_api.seat ['{} 열람실'.format(cnt)]
+            room = lib_api.seat['{} 열람실'.format(cnt)]
             room['잔여 좌석'] = int(rest)
             room['사용중인 좌석'] = int(room['전체 좌석'])-room['잔여 좌석']
             room['이용률'] = usage_percent

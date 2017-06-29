@@ -21,11 +21,13 @@ class APIManager(metaclass=Singleton):
                 return MessageAdmin.get_food_message()
             elif content == u'식단 평가':
                 return MessageAdmin.get_fail_message()
-            elif content in ['학식', '교식']:
+            elif content in ['학식', '교식', '푸드코트']:
                 if content == '학식':
                     return PupilFoodMessage()
                 elif content == '교식':
                     return FacultyFoodMessage()
+                elif content == '푸드코트':
+                    return FoodCourtMessage()
             elif content in ['버스', '정문', '정문 건너편(베라 앞)', '중문']:
                 bus_message = BusMessage()
                 if content == '정문':
