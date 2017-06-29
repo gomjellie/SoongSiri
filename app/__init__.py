@@ -3,9 +3,10 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-SECRET_KEY='development key',
-USERNAME='admin',
-PASSWORD='default'
+    SECRET_KEY='development key',
+    USERNAME='admin',
+    PASSWORD='default'
 ))
 
-from app import views
+from app import views, myLogger
+myLogger.setLogger(app, 20)
