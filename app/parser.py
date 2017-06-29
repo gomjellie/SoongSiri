@@ -122,11 +122,32 @@ class FoodParser(Parser):
             TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
             :return: dict
         """
+
         ret_dict = {}
         for section in self.food_court:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
-            ret_dict[section].append(soup.text)
+            t = ''
+            if soup.find_all(['span']) == []:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['span']):
+                    t += '\n' + i.text
+            if t == '':
+                raise TypeError()
+
+            hangul = re.compile('[^가-힣 0-9.]+')
+            digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")
+
+            s = hangul.sub('', ' '.join(t.split()))
+
+            res = digit.sub('\g<0>\n', s).split('\n')
+            res_list = []
+            for i in res:
+                res_list.append(' '.join(i.split()))    # remove whitespace
+
+            ret_dict.update({section: list(set(res_list))})
         return ret_dict
 
 
