@@ -105,7 +105,7 @@ class FoodCourtMenu(Menu):
     def get_string(self):
         dic = self.get_dict()
         t = TreeFormatter()
-        t.prettified_str(dic)
+        t.prettify(dic)
         ret_string = t.prettified_str
 
         return ret_string

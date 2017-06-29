@@ -21,5 +21,5 @@ class TreeFormatter:
                     else:
                         self.prettified_str += '\n│  ├' + '─' * (indent) + str(item)
         else:
-            return Exception
+            raise Exception()
 
