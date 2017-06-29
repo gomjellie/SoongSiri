@@ -52,11 +52,11 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
+            if soup.find_all(['p']) == []:
                 for i in soup.find_all(['div']):
                     t += '\n' + i.text
             else:
-                for i in soup.find_all(['span']):
+                for i in soup.find_all(['p']):
                     t += '\n' + i.text
             if t == '':
                 raise TypeError()
