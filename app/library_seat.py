@@ -2,7 +2,7 @@ from .parser import lib_api
 from collections import OrderedDict
 
 
-class LibrarySeat():
+class LibrarySeat:
     def __init__(self):
         self.seats = None
 

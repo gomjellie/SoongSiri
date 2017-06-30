@@ -1,4 +1,6 @@
 from flask import Flask
+import pymongo
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -7,6 +9,14 @@ app.config.update(dict(
     USERNAME='admin',
     PASSWORD='default'
 ))
+
+conn = pymongo.MongoClient()
+food_db = pymongo.food_db
+
+hakusiku = food_db.hakusiku
+
+from app.scheduler import menu_scheduler
+menu_scheduler.run()
 
 from app import views, myLogger
 myLogger.setLogger(app, 20)

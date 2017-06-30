@@ -151,7 +151,7 @@ class FoodParser(Parser):
 
             res = digit.sub('\g<0>\n', s).split('\n')
             res_list = []
-            filter_item = ['일식', '퓨전', [], '']
+            filter_item = ['일식', '퓨전', [], '', '직화']
 
             for i in res:
                 if not any(j in i.split() for j in filter_item):

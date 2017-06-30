@@ -40,6 +40,13 @@ def viewLog(mode, data=None):
             data["user_key"],
             data["type"],
             data["content"]))
+    elif mode is "scheduler":
+        app.logger.info("[parsing] 학식: {}, 교식: {}, 푸드코트: {}, 날짜: {}".format(
+            data['학식'],
+            data['교식'],
+            data['푸드코트'],
+            data['날짜']
+        ))
     elif mode is "keyboard":
         app.logger.info("[keyboard] call home keyboard")
     elif mode is "add":

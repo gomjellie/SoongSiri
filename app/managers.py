@@ -1,4 +1,5 @@
 from .message import *
+from app import food_collections as fc
 
 
 class Singleton(type):
@@ -17,6 +18,7 @@ class APIManager(metaclass=Singleton):
             return home_message
         else:
             content = req['content']
+            user_key = req['user_key']
             if content == u'식단 보기':
                 return MessageAdmin.get_food_message()
             elif content == u'식단 평가':
@@ -48,7 +50,7 @@ class APIManager(metaclass=Singleton):
             elif content == 'on_going':
                 on_going_message = MessageAdmin.get_on_going_message()
                 on_going_message.update_message(req['log'])
-                return MessageAdmin.get_on_going_message()
+                return on_going_message
             else:
                 fail_message = MessageAdmin.get_fail_message()
                 fail_message.update_message(req['log'])
@@ -67,6 +69,7 @@ class MessageManager(metaclass=Singleton):
 
     def get_on_going_message(self):
         return OnGoingMessage()
+
 
 class KeyboardManager(metaclass=Singleton):
     pass
