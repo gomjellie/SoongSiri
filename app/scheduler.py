@@ -1,5 +1,6 @@
 import schedule
 import datetime
+import time
 import threading
 from .parser import FoodParser
 from app import hakusiku
@@ -7,12 +8,17 @@ from .myLogger import viewLog
 
 
 class MenuFetcher(threading.Thread):
+    """
+    작동확인 못함
+    """
     def __init__(self):
         super().__init__()
         self.scheduled_time = "00:02"
+        schedule.every().day.at(self.scheduled_time).do(self.fetch_save_menu)
 
     def run(self):
-        schedule.every().day.at(self.scheduled_time).do(self.fetch_save_menu)
+        schedule.run_pending()
+        time.sleep(60)
 
     def fetch_save_menu(self):
         f = FoodParser()
@@ -36,6 +42,7 @@ class MenuFetcher(threading.Thread):
         except Exception as inst:
             viewLog("fail", inst.__str__())
             self.scheduled_time = "06:00"
+            schedule.every().day.at(self.scheduled_time).do(self.fetch_save_menu)
 
 
 menu_scheduler = MenuFetcher()
