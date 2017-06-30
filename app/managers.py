@@ -46,14 +46,12 @@ class APIManager(metaclass=Singleton):
                 return lib_message
             elif content == '지하철':
                 return SubMessage()
-            elif content == 'on_going':
+            elif content == 'fail':
                 on_going_message = MessageAdmin.get_on_going_message()
                 on_going_message.update_message(req['log'])
                 return on_going_message
             else:
-                fail_message = MessageAdmin.get_fail_message()
-                fail_message.update_message(req['log'])
-                return fail_message
+                raise Exception("unexpected req['content']")
 
 
 class MessageManager(metaclass=Singleton):

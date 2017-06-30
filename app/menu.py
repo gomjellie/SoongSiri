@@ -83,7 +83,7 @@ class FacultyMenu(Menu):
         self.foods = OrderedDict(sorted(unordered_food.items()))
 
     def get_dict(self):
-        self.foods({
+        self.foods.update({
                 '운영시간': [
                     '평일 :	11:30 ~ 14:00(중식)',
                     '17:00 ~ 18:10(중식)',

@@ -57,3 +57,31 @@ INFO in myLogger [/home/ubuntu/soongsiri/app/myLogger.py:42]:
 [message] user_key : GeWG33fssU2L, type : text, content : \uc9c0\ud558\ucca0
 --------------------------------------------------------------------------------
 110.76.143.234 - - [31/May/2017 03:12:36] "POST /message HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "./run.py", line 2, in <module>
+    from app import app
+  File "/Users/jacky/Documents/github/webProgramming/SoongSiri/app/__init__.py", line 18, in <module>
+    from app.scheduler import menu_scheduler
+  File "/Users/jacky/Documents/github/webProgramming/SoongSiri/app/scheduler.py", line 7, in <module>
+    from .myLogger import viewLog
+  File "/Users/jacky/Documents/github/webProgramming/SoongSiri/app/myLogger.py", line 10, in <module>
+    encoding="utf-8"
+  File "/usr/local/Cellar/python3/3.5.2_3/Frameworks/Python.framework/Versions/3.5/lib/python3.5/logging/handlers.py", line 150, in __init__
+    BaseRotatingHandler.__init__(self, filename, mode, encoding, delay)
+  File "/usr/local/Cellar/python3/3.5.2_3/Frameworks/Python.framework/Versions/3.5/lib/python3.5/logging/handlers.py", line 57, in __init__
+    logging.FileHandler.__init__(self, filename, mode, encoding, delay)
+  File "/usr/local/Cellar/python3/3.5.2_3/Frameworks/Python.framework/Versions/3.5/lib/python3.5/logging/__init__.py", line 1008, in __init__
+    StreamHandler.__init__(self, self._open())
+  File "/usr/local/Cellar/python3/3.5.2_3/Frameworks/Python.framework/Versions/3.5/lib/python3.5/logging/__init__.py", line 1037, in _open
+    return open(self.baseFilename, self.mode, encoding=self.encoding)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/jacky/Documents/github/webProgramming/SoongSiri/app/log/SoongsilFood.log'
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 218-856-895
+ * Detected change in '/Users/jacky/Documents/github/webProgramming/SoongSiri/app/menu.py', reloading
+ * Restarting with stat
+Fatal Python error: Py_Initialize: can't initialize sys standard streams
+OSError: [Errno 9] Bad file descriptor
+
+Current thread 0x00007fff7563d000 (most recent call first):
