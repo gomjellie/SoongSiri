@@ -86,7 +86,7 @@ class FacultyMenu(Menu):
         self.foods.update({
                 '운영시간': [
                     '평일 :	11:30 ~ 14:00(중식)',
-                    '17:00 ~ 18:10(중식)',
+                    '평일 :  17:00 ~ 18:10(중식)',
                     '주말 :	11:30 ~ 14:00(중식)'
                 ]
         })
@@ -129,7 +129,7 @@ class FoodCourtMenu(Menu):
         self.foods.update({
                 '운영시간': [
                     '평일 :	11:00 ~ 15:00(중식)',
-                    '주말 : 운영안함'
+                    '주말 :  운영안함'
                 ]
             })
         return self.foods

@@ -1,6 +1,5 @@
 import schedule
 import datetime
-import time
 import threading
 from .parser import FoodParser
 from app import hakusiku
@@ -17,8 +16,7 @@ class MenuFetcher(threading.Thread):
         schedule.every().day.at(self.scheduled_time).do(self.fetch_save_menu)
 
     def run(self):
-        schedule.run_pending()
-        time.sleep(60)
+        threading.Timer(60, schedule.run_pending()).start()
 
     def fetch_save_menu(self):
         f = FoodParser()
