@@ -28,13 +28,13 @@ def managerLog(mode, user_key):
 
 
 def viewLog(mode, data=None):
-    '''
+    """
     전달된 mode에 따라 로깅 내용이 달라진다.
     message : 유저키, 타입, 내용을 기록한다. json형태의 data
     add : 유저키를 기록한다. json형태의 data
     block, exit : 유저키를 기록한다. string형태의 data
     fail : 기본 request 처리 실패 로그
-    '''
+    """
     if mode is "message":
         app.logger.info("[message] user_key : {}, type : {}, content : {}".format(
             data["user_key"],
