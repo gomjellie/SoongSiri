@@ -20,4 +20,5 @@ app/__pycache__/*
 
 # jupyter notebook #
 # ##################
-# *.ipynb
+
+*.ipynb
