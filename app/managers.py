@@ -1,5 +1,4 @@
 from .message import *
-from app import food_collections as fc
 
 
 class Singleton(type):

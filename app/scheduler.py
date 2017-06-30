@@ -8,6 +8,7 @@ from .myLogger import viewLog
 
 class MenuFetcher(threading.Thread):
     def __init__(self):
+        super().__init__()
         self.scheduled_time = "00:02"
 
     def run(self):
@@ -33,7 +34,8 @@ class MenuFetcher(threading.Thread):
             hakusiku.insert(food_dict)
 
         except Exception as inst:
+            viewLog("fail", inst.__str__())
             self.scheduled_time = "06:00"
 
 
-menu_scheduler = MenuFetcher(name='MenuFetcher')
+menu_scheduler = MenuFetcher()

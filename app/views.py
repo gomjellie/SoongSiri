@@ -24,5 +24,5 @@ def Message():
 
 def process_fail(exception_str):
     message = APIAdmin.process("fail", {'content': 'fail', 'log': exception_str}).get_message()
-    viewLog("fail")
+    viewLog("fail", data=exception_str)
     return jsonify(message)

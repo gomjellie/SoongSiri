@@ -56,4 +56,4 @@ def viewLog(mode, data=None):
     elif mode is "exit":
         app.logger.info("[exit] user_key : {}".format(data))
     elif mode is "fail":
-        app.logger.info("[fail] request process fail")
+        app.logger.info("[fail] request process fail log: {}".format(data))

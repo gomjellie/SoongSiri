@@ -11,7 +11,7 @@ app.config.update(dict(
 ))
 
 conn = pymongo.MongoClient()
-food_db = pymongo.food_db
+food_db = conn.food_db
 
 hakusiku = food_db.hakusiku
 
