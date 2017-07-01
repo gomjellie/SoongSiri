@@ -16,7 +16,7 @@ food_db = conn.food_db
 hakusiku = food_db.hakusiku
 
 from app.scheduler import menu_scheduler
-menu_scheduler.run()
+menu_scheduler.start()
 
 from app import views, myLogger
 myLogger.setLogger(app, 20)
