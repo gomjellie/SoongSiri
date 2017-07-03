@@ -21,12 +21,14 @@ class Menu:
         date = datetime.datetime.now().date().__str__()
         data = hakusiku.find_one({'날짜': date})
         if data:
-            self.foods = data[self.kor_name]
+            unordered_food = data[self.kor_name]
+            self.foods = OrderedDict(sorted(unordered_food.items()))
+            myLogger.viewLog("query", self.foods)
+
         else:
             try:
                 food_api.refresh()
                 unordered_food = food_api.get_food(self.kor_name)
-                myLogger.viewLog("query", unordered_food)
 
             except Exception as inst:
                 unordered_food = {
