@@ -47,6 +47,8 @@ def viewLog(mode, data=None):
             data['푸드코트'],
             data['날짜']
         ))
+    elif mode is "query":
+        app.logger.info("[query] hakusiku {}".format(data))
     elif mode is "keyboard":
         app.logger.info("[keyboard] call home keyboard")
     elif mode is "add":

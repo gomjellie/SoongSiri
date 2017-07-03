@@ -46,8 +46,19 @@ class FoodParser(Parser):
         self.food_court = jsn.get('푸드코트')
         self.faculty_food = jsn.get('교직원식당')
 
+    def get_food(self, place):
+        if place == '학식':
+            return self.get_pupil_food()
+        elif place == '교식':
+            return self.get_faculty_food()
+        elif place == '푸드코트':
+            return self.get_faculty_food()
+        else:
+            raise Exception('unexpected parameter place={}'.format(place))
+
     def get_faculty_food(self):
         """
+        exception 많이남(주말)
         교식 메뉴
         :return: dict
         """
@@ -75,6 +86,7 @@ class FoodParser(Parser):
 
     def get_pupil_food(self):
         """
+        exception 많이남(주말)
         :return: dict
         """
         ret_dict = {}
@@ -126,7 +138,7 @@ class FoodParser(Parser):
 
     def get_food_court(self):
         """
-            TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
+            exception 많이남(주말)
             :return: dict
         """
 
