@@ -61,21 +61,6 @@ class PupilMenu(Menu):
         }
         self.kor_name = '학식'
 
-    def set_food(self):
-        try:
-            food_api.refresh()
-            unordered_food = food_api.get_food('학식')
-
-        except Exception as inst:
-            unordered_food = {
-                '학생식당': [
-                    inst.__str__(),
-                    '파싱이 제대로 되지 않았습니다.',
-                    '주말에는 메뉴가 없을 수 있습니다.'
-                ]
-            }
-        self.foods = OrderedDict(sorted(unordered_food.items()))
-
 
 class FacultyMenu(Menu):
     def __init__(self):
@@ -89,21 +74,6 @@ class FacultyMenu(Menu):
         }
         self.kor_name = '교식'
 
-    def set_food(self):
-        try:
-            food_api.refresh()
-            unordered_food = food_api.get_food('교식')
-
-        except Exception as inst:
-            unordered_food = {
-                '교직원식당': [
-                    inst.__str__(),
-                    '파싱이 제대로 되지 않았습니다.',
-                    '주말에는 메뉴가 없을 수 있습니다.'
-                ]
-            }
-        self.foods = OrderedDict(sorted(unordered_food.items()))
-
 
 class FoodCourtMenu(Menu):
     def __init__(self):
@@ -115,18 +85,3 @@ class FoodCourtMenu(Menu):
             ]
         }
         self.kor_name = '푸드코트'
-
-    def set_food(self):
-        try:
-            food_api.refresh()
-            unordered_food = food_api.get_food('푸드코트')
-
-        except Exception as inst:
-            unordered_food = {
-                '교직원식당': [
-                    inst.__str__(),
-                    '파싱이 제대로 되지 않았습니다.',
-                    '주말에는 메뉴가 없을 수 있습니다.'
-                ]
-            }
-        self.foods = OrderedDict(sorted(unordered_food.items()))
