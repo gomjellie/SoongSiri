@@ -92,12 +92,12 @@ class BusMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
     def front(self):
-        front_msg = bus_api.get_station_stat('')
+        front_msg = bus_api.get_station_stat('20166')
         self.update_message(front_msg)
         self.update_keyboard(Keyboard.home_buttons)
 
     def middle(self):
-        mid_msg = bus_api.get_station_stat('')
+        mid_msg = bus_api.get_station_stat('20169')
         self.update_message(mid_msg)
         self.update_keyboard(Keyboard.home_buttons)
 

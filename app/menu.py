@@ -57,8 +57,8 @@ class PupilMenu(Menu):
         super().__init__()
         self.open_time = {
             '운영시간': [
-                '평일 :	10:30 ~ 14:00(중식)',
-                '주말 :  운영안함'
+                '평일 :   10:30 ~ 14:00(중식)',
+                '주말 :   운영안함'
             ]
         }
         self.kor_name = '학식'

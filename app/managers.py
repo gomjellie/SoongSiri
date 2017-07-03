@@ -1,5 +1,5 @@
 from .message import *
-
+from app.keyboard import Keyboard
 
 class Singleton(type):
     instance = None
@@ -29,13 +29,13 @@ class APIManager(metaclass=Singleton):
                     return FacultyFoodMessage()
                 elif content == '푸드코트':
                     return FoodCourtMessage()
-            elif content in ['버스', '정문', '정문 건너편(베라 앞)', '중문']:
+            elif content in ['정문(20166)', '베라 앞(20165)','중문(20169)', '버스']:
                 bus_message = BusMessage()
-                if content == '정문':
+                if content == '정문(20166)':
                     bus_message.front()
-                elif content == '정문 건너편(베라 앞)':
+                elif content == '베라 앞(20165)':
                     bus_message.bera()
-                elif content == '중문':
+                elif content == '중문(20169)':
                     bus_message.middle()
                 return bus_message
             elif content == '도서관' or '열람실' in content:
