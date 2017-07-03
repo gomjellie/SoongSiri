@@ -7,137 +7,100 @@ class Menu:
     def __init__(self):
         self.foods = None
         self.prettified_str = ''
+        self.open_time = None
 
-    def get_foods(self):
-        return self.foods
+    def set_food(self):
+        pass
 
     def get_dict(self):
-        pass
+        self.foods.update(self.open_time)
+        return self.foods
 
     def get_string(self):
-        # 메뉴마다 깔끔하게 딕셔너리를 string 으로 바꾼다
-        pass
+        dic = self.get_dict()
+        t = TreeFormatter()
+        t.prettify(dic)
+        ret_string = t.prettified_str
+        return ret_string
 
 
 class PupilMenu(Menu):
     def __init__(self):
         super().__init__()
+        self.open_time = {
+            '운영시간': [
+                '평일 :	10:30 ~ 14:00(중식)',
+                '주말 :  운영안함'
+            ]
+        }
 
-    def set_pupil_foods(self):
+    def set_food(self):
         food_parser = FoodParser()
         try:
             food_parser.refresh()
             unordered_food = food_parser.get_pupil_food()
-        except TypeError as inst:
-            unordered_food = {'학생식당': [
-                '오늘은 메뉴가 없습니다.',
-                inst.__str__()
-            ]}
+
         except Exception as inst:
-            unordered_food = {'학생식당': [
-                inst,
-                '파싱이 제대로 되지 않았습니다.',
-                '일요일에는 메뉴가 없어서 동작하지 않을 수 있습니다.'
-            ]}
-        self.foods = OrderedDict(sorted(unordered_food.items()))
-
-    def get_dict(self):
-        self.foods.update({
-                '운영시간': [
-                    '평일 :	10:30 ~ 14:00(중식)',
-                    '주말 : '
+            unordered_food = {
+                '학생식당': [
+                    inst.__str__(),
+                    '파싱이 제대로 되지 않았습니다.',
+                    '주말에는 메뉴가 없을 수 있습니다.'
                 ]
-            })
-        return self.foods
-
-    def get_string(self):
-        dic = self.get_dict()
-        t = TreeFormatter()
-        t.prettify(dic)
-        ret_string = t.prettified_str
-        return ret_string
+            }
+        self.foods = OrderedDict(sorted(unordered_food.items()))
 
 
 class FacultyMenu(Menu):
     def __init__(self):
         super().__init__()
+        self.open_time = {
+            '운영시간': [
+                '평일 :   11:30 ~ 14:00(중식)',
+                '평일 :   17:00 ~ 18:10(중식)',
+                '주말 :   11:30 ~ 14:00(중식)'
+            ]
+        }
 
-    def set_faculty_foods(self):
+    def set_food(self):
         food_parser = FoodParser()
         try:
             food_parser.refresh()
             unordered_food = food_parser.get_faculty_food()
 
-        except TypeError as inst:
-            unordered_food = {'교직원식당': [
-                '오늘은 쉽니다.',
-                inst.__str__()
-            ]}
-
         except Exception as inst:
-            unordered_food = {'교직원식당': [
-                inst,
-                '파싱이 제대로 되지 않았습니다.',
-                '주말에는 메뉴가 없을 수 있습니다.'
-            ]}
-        self.foods = OrderedDict(sorted(unordered_food.items()))
-
-    def get_dict(self):
-        self.foods.update({
-                '운영시간': [
-                    '평일 :	11:30 ~ 14:00(중식)',
-                    '평일 :  17:00 ~ 18:10(중식)',
-                    '주말 :	11:30 ~ 14:00(중식)'
+            unordered_food = {
+                '교직원식당': [
+                    inst.__str__(),
+                    '파싱이 제대로 되지 않았습니다.',
+                    '주말에는 메뉴가 없을 수 있습니다.'
                 ]
-        })
-        return self.foods
-
-    def get_string(self):
-        dic = self.get_dict()
-        t = TreeFormatter()
-        t.prettify(dic)
-        ret_string = t.prettified_str
-
-        return ret_string
+            }
+        self.foods = OrderedDict(sorted(unordered_food.items()))
 
 
 class FoodCourtMenu(Menu):
     def __init__(self):
         super().__init__()
+        self.open_time = {
+            '운영시간': [
+                '평일 :   11:00 ~ 15:00(중식)',
+                '주말 :   운영안함'
+            ]
+        }
 
-    def set_food_court_food(self):
+    def set_food(self):
         food_parser = FoodParser()
         try:
             food_parser.refresh()
             unordered_food = food_parser.get_food_court()
-        except TypeError as inst:
+
+        except Exception as inst:
             unordered_food = {
-                '푸드코트': [
-                    '오늘은 쉽니다.',
-                    inst.__str__()
+                '교직원식당': [
+                    inst.__str__(),
+                    '파싱이 제대로 되지 않았습니다.',
+                    '주말에는 메뉴가 없을 수 있습니다.'
                 ]
             }
-        except Exception as inst:
-            unordered_food = {'교직원식당': [
-                inst,
-                '파싱이 제대로 되지 않았습니다.',
-                '주말에는 메뉴가 없을 수 있습니다.'
-            ]}
         self.foods = OrderedDict(sorted(unordered_food.items()))
-
-    def get_dict(self):
-        self.foods.update({
-                '운영시간': [
-                    '평일 :	11:00 ~ 15:00(중식)',
-                    '주말 :  운영안함'
-                ]
-            })
-        return self.foods
-
-    def get_string(self):
-        dic = self.get_dict()
-        t = TreeFormatter()
-        t.prettify(dic)
-        ret_string = t.prettified_str
-
-        return ret_string

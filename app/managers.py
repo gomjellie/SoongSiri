@@ -21,7 +21,7 @@ class APIManager(metaclass=Singleton):
             if content == u'식단 보기':
                 return MessageAdmin.get_food_message()
             elif content == u'식단 평가':
-                return MessageAdmin.get_fail_message()
+                return MessageAdmin.get_on_going_message()
             elif content in ['학식', '교식', '푸드코트']:
                 if content == '학식':
                     return PupilFoodMessage()
