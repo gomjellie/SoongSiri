@@ -29,6 +29,8 @@ class APIManager(metaclass=Singleton):
                     return FacultyFoodMessage()
                 elif content == '푸드코트':
                     return FoodCourtMessage()
+                else:
+                    raise Exception('unexpected button {}'.format(content))
             elif content in ['정문(20166)', '베라 앞(20165)','중문(20169)', '버스']:
                 bus_message = BusMessage()
                 if content == '정문(20166)':
