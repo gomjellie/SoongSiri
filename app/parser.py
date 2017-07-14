@@ -67,21 +67,21 @@ class FoodParser(Parser):
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['p']) == []:
-                for i in soup.find_all(['div']):
+            if soup.find_all(['p']):
+                for i in soup.find_all(['p']):
                     t += '\n' + i.text
             else:
-                for i in soup.find_all(['p']):
+                for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
                 raise TypeError()
-            hangul = re.compile('[^가-힣 ]+')
+            exclude_english = re.compile('[^가-힣 0-9.]+')
 
-            res = hangul.sub('', ' '.join(t.split()))
+            res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
 
-            ret_dict.update({section: res})
+            ret_dict.update({section: {'메뉴': res}})
         return ret_dict
 
     def get_pupil_food(self):
@@ -91,25 +91,25 @@ class FoodParser(Parser):
         """
         ret_dict = {}
         for section in self.pupil_food:
-            ret_dict.update({section: []})
+            ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
-                for i in soup.find_all(['div']):
+            if soup.find_all(['span']):
+                for i in soup.find_all(['span']):
                     t += '\n' + i.text
             else:
-                for i in soup.find_all(['span']):
+                for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
                 raise TypeError()
 
-            hangul = re.compile('[^가-힣 ]+')
+            exclude_english = re.compile('[^가-힣 0-9.]+')
 
-            res = hangul.sub('', ' '.join(t.split()))
+            res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
 
-            ret_dict.update({section: res})
+            ret_dict.update({section: {'메뉴': res}})
         return ret_dict
 
     def get_the_kitchen(self):
@@ -167,7 +167,7 @@ class FoodParser(Parser):
 
             for i in res:
                 if not any(j in i.split() for j in filter_item):
-                    res_list.append(' '.join(i.split()))    # remove whitespace
+                    res_list.append(' '.join(i.split()))  # remove whitespace
 
             if res_list.count(''):
                 res_list.remove('')

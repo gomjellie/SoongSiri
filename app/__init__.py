@@ -1,5 +1,6 @@
 from flask import Flask
 import pymongo
+from collections import defaultdict
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -14,9 +15,11 @@ conn = pymongo.MongoClient()
 food_db = conn.food_db
 
 hakusiku = food_db.hakusiku
+session = defaultdict()
 
 from app.scheduler import menu_scheduler
 menu_scheduler.start()
+menu_scheduler.fetch_save_menu()    # test 용으로 앱 시작하면 한번 패치함
 
 from app import views, myLogger
 myLogger.setLogger(app, 20)

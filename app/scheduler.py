@@ -2,10 +2,10 @@ import schedule
 import datetime
 import threading
 from time import sleep
-from .parser import FoodParser
+from .parser import food_api
 from app import hakusiku
 from .myLogger import viewLog
-
+import datetime
 
 class MenuFetcher(threading.Thread):
     """
@@ -27,23 +27,35 @@ class MenuFetcher(threading.Thread):
             sleep(60)
 
     def fetch_save_menu(self):
-        f = FoodParser()
+        def set_rate(f_dicts):
+            for f_dict in f_dicts:
+                for sec in f_dict:
+                    f_dict[sec].update({
+                        '평점': 0,
+                        '참여자': [],
+                    })
         try:
-            f.refresh()
-            food_court = f.get_food_court()
-            faculty_food = f.get_faculty_food()
-            pupil_food = f.get_pupil_food()
+            today = datetime.datetime.today().__str__()
+            if hakusiku.find_one({'날짜': today}):
+                viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
+                return
+            food_api.refresh()
+            food_court = food_api.get_food_court()
+            faculty_food = food_api.get_faculty_food()
+            pupil_food = food_api.get_pupil_food()
             date = datetime.datetime.now().date().__str__()
+
+            ratable_list = [faculty_food, pupil_food]
+            set_rate(ratable_list)
             food_dict = {
                 '푸드코트': food_court,
                 '학식': pupil_food,
                 '교식': faculty_food,
                 '날짜': date,
-                '평점': 0,
-                '참여자': []
             }
             viewLog('scheduler', food_dict)
-            hakusiku.insert(food_dict)
+            if not hakusiku.find_one(food_dict):
+                hakusiku.insert_one(food_dict)
 
         except Exception as inst:
             viewLog("fail", inst.__str__())

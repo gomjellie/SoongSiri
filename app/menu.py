@@ -40,12 +40,35 @@ class Menu:
                 }
             self.foods = OrderedDict(sorted(unordered_food.items()))
 
+    def get_clean_dict(self):
+        """
+        remove rating, participant
+        :return: dict
+        """
+        foods = self.foods
+        for time in foods:
+            foods[time].pop('참여자')
+            foods[time].pop('평점')
+        return foods
+
     def get_dict(self):
-        self.foods.update(self.open_time)
         return self.foods
+
+    def get_times(self):
+        """
+        ['조식', '중식', '중식2'] 이런식으로 리턴함
+        :return: list
+        """
+        ret = []
+        for time in self.foods:
+            ret.append(time)
+        return ret
 
     def get_string(self):
         dic = self.get_dict()
+        dic.update(self.open_time)
+        for time in dic:
+            dic[time].pop('참여자')
         t = TreeFormatter()
         t.prettify(dic)
         ret_string = t.prettified_str
