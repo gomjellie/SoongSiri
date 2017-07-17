@@ -119,6 +119,7 @@ class APIManager(metaclass=Singleton):
     def get_msg(self, user_key, content):
         has_session = UserSessionAdmin.check_user_key(user_key)
         process = UserSessionAdmin.get_process(user_key)
+        print(process)
 
         if not has_session:
             UserSessionAdmin.init(user_key, content)
@@ -156,28 +157,19 @@ class SessionManager(metaclass=Singleton):
         else:
             return False
 
-    def check_session(self, func):
-        @wraps
+    def check_session(func):
+        @wraps(func)
         def session_wrapper(user_key, *args, **kwargs):
-            if self.check_user_key(user_key):
-                func()
+            if user_key in session:
+                return func()
             else:
                 return False
         return session_wrapper
 
-    def check_process(self, func):
-        @wraps
-        def process_wrapper(user_key, *args, **kwargs):
-            if 'process' in session[user_key]['process']:
-                func()
-            else:
-                return False
-        return process_wrapper
-
-    def init(self, user_key, content):
+    def init(self, user_key, content=None, process=None):
         session[user_key] = {
             'history': [content],
-            'process': None,
+            'process': process,
             # process[0]: process name, process[1]: process step
         }
 
@@ -206,10 +198,9 @@ class SessionManager(metaclass=Singleton):
     def expire_process(self, user_key):
         session[user_key]['process'] = None
 
-    @check_process
     @check_session
     def get_process(self, user_key):
-        return session[user_key]['process']
+        return session[user_key].get('process')
 
 
 class DBManager:
