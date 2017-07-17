@@ -14,15 +14,17 @@ def keyboard():
 @app.route('/message', methods=['POST'])
 def Message():
     try:
-        viewLog("message", request.get_json())
-        message = APIAdmin.process("message", request.get_json()).get_message()
+        jsn = request.get_json()
+        viewLog("message", jsn)
+        message = APIAdmin.process("message", jsn).get_message()
         return jsonify(message), 200
     except Exception as inst:
         traceback.print_exc()
-        return process_fail(inst.__str__())
+        return process_fail(inst.__str__(), jsn)
 
 
-def process_fail(exception_str):
-    message = APIAdmin.process("fail", {'content': 'fail', 'log': exception_str}).get_message()
+def process_fail(exception_str, jsn):
+    user_key = jsn.get('user_key')
+    message = APIAdmin.process("fail", {'user_key': user_key, 'log': exception_str}).get_message()
     viewLog("fail", data=exception_str)
     return jsonify(message)

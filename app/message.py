@@ -74,11 +74,12 @@ class SelectFoodPlaceMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         self.update_message('평가할 장소를 선택해주세요')
-        self.update_keyboard(Keyboard.food_buttons)
+        self.update_keyboard(Keyboard.ratable_food_buttons)
 
 
 class RatingPupilMessage(BaseMessage):
     def __init__(self):
+        super().__init__()
         pupil_menu.fetch_food()
         time = pupil_menu.get_times()
         self.update_message('평가할 식단을 선택해 주세요\n' + pupil_menu.get_string())
@@ -87,6 +88,7 @@ class RatingPupilMessage(BaseMessage):
 
 class RatingFacultyMessage(BaseMessage):
     def __init__(self):
+        super().__init__()
         faculty_menu.fetch_food()
         time = faculty_menu.get_times()
         self.update_message('평가할 식단을 선택해 주세요\n' + faculty_menu.get_string())
@@ -95,6 +97,7 @@ class RatingFacultyMessage(BaseMessage):
 
 class RatingFoodCourtMessage(BaseMessage):
     def __init__(self):
+        super().__init__()
         food_court_menu.fetch_food()
         time = food_court_menu.get_times()
         self.update_message('평가할 식단을 선택해 주세요\n' + food_court_menu.get_string())
@@ -103,12 +106,14 @@ class RatingFoodCourtMessage(BaseMessage):
 
 class RateFoodMessage(BaseMessage):
     def __init__(self):
+        super().__init__()
         self.update_message('맛을 평가해 주세요')
         self.update_keyboard(Keyboard.rating_buttons)
 
 
 class HomeMessage(Message):
     def __init__(self):
+        super().__init__()
         self.retMessage = Message.baseKeyboard
         homeKeyboard = Keyboard.home_buttons
         self.retMessage['buttons'] = homeKeyboard

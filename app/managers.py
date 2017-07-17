@@ -46,10 +46,13 @@ class APIManager(metaclass=Singleton):
                 '푸드코트': RatingFoodCourtMessage,
             },
             {
+                '조식': RateFoodMessage,
                 '조식1': RateFoodMessage,
                 '조식2': RateFoodMessage,
+                '중식': RateFoodMessage,
                 '중식1': RateFoodMessage,
                 '중식2': RateFoodMessage,
+                '석식': RateFoodMessage,
                 '석식1': RateFoodMessage,
                 '석식2': RateFoodMessage,
             },
@@ -95,16 +98,16 @@ class APIManager(metaclass=Singleton):
                 DatabaseAdmin.update_rate(user_key, place, menu, rate)
 
                 UserSessionAdmin.delete(user_key)
-                new_msg = self.PROCESS[process][2][content]
+                new_msg = self.PROCESS[process][3][content]
 
-                UserSessionAdmin.expire_process(user_key)
+                UserSessionAdmin.delete(user_key)
                 return new_msg()
 
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
                 msg = LibMessage(room=room)
-                UserSessionAdmin.expire_process(user_key)
+                UserSessionAdmin.delete(user_key)
             else:
                 msg = FailMessage()
             return msg
@@ -155,8 +158,10 @@ class APIManager(metaclass=Singleton):
 
         elif stat is 'fail':
             log = req['log']
+            user_key = req['user_key']
             fail_message = FailMessage()
             fail_message.update_message(log)
+            UserSessionAdmin.delete(user_key)
             return fail_message
         else:
             return FailMessage()
@@ -169,7 +174,6 @@ class SessionManager(metaclass=Singleton):
         else:
             return False
 
-    @logger
     def verify_session(func):
         @wraps(func)
         def session_wrapper(*args, **kwargs):
@@ -195,7 +199,7 @@ class SessionManager(metaclass=Singleton):
 
     @verify_session
     def add_history(self, user_key, content):
-        session[user_key].append(content)
+        session[user_key]['history'].append(content)
 
     @verify_session
     def get_history(self, user_key):
@@ -204,11 +208,6 @@ class SessionManager(metaclass=Singleton):
     @verify_session
     def init_process(self, user_key, process):
         session[user_key]['process'] = process
-
-    @verify_session
-    def next_process(self, user_key):
-        process, step = session[user_key]['process']
-        session[user_key]['process'] = (process, step+1)
 
     @verify_session
     def expire_process(self, user_key):
