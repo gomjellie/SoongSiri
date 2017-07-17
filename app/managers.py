@@ -214,8 +214,10 @@ class SessionManager(metaclass=Singleton):
 
 class DBManager:
     def get_data(self, date=None):
-        if not date:
+        if date is None:
             today = datetime.datetime.today().__str__()
+        else:
+            today = date
         data = hakusiku.find_one({'날짜': today})
         return data
 

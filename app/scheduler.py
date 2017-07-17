@@ -7,6 +7,7 @@ from app import hakusiku
 from .myLogger import viewLog
 import datetime
 
+
 class MenuFetcher(threading.Thread):
     """
     SoongsilFood.log 에

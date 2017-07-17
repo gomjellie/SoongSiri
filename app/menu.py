@@ -13,7 +13,6 @@ class Menu:
         :param kor_name: '학식, 교식, 푸드코트 중에 하나이다.'
         """
         self.foods = None
-        self.prettified_str = ''
         self.open_time = open_time
         self.kor_name = kor_name
 
