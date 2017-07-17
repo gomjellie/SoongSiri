@@ -1,6 +1,6 @@
 from .keyboard import Keyboard
 from json import loads, dumps
-from .menu import PupilMenu, FacultyMenu, FoodCourtMenu
+from .menu import pupil_menu, faculty_menu, food_court_menu
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 
@@ -49,31 +49,28 @@ class FoodMessage(BaseMessage):
 class PupilFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        p = PupilMenu()
-        p.set_food()
-        self.update_message(p.get_string())
+        pupil_menu.fetch_food()
+        self.update_message(pupil_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
 
 class FacultyFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        f = FacultyMenu()
-        f.set_food()
-        self.update_message(f.get_string())
+        faculty_menu.fetch_food()
+        self.update_message(faculty_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
 
 class FoodCourtMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        f = FoodCourtMenu()
-        f.set_food()
-        self.update_message(f.get_string())
+        food_court_menu.fetch_food()
+        self.update_message(food_court_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
 
-class RatingFoodMessage(BaseMessage):
+class SelectFoodPlaceMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         self.update_message('평가할 장소를 선택해주세요')
@@ -82,29 +79,32 @@ class RatingFoodMessage(BaseMessage):
 
 class RatingPupilMessage(BaseMessage):
     def __init__(self):
-        p = PupilMenu()
-        p.set_food()
-        time = p.get_times()
-        self.update_message('평가할 식단을 선택해 주세요\n' + p.get_string())
+        pupil_menu.fetch_food()
+        time = pupil_menu.get_times()
+        self.update_message('평가할 식단을 선택해 주세요\n' + pupil_menu.get_string())
         self.update_keyboard(time)
 
 
 class RatingFacultyMessage(BaseMessage):
     def __init__(self):
-        f = FacultyMenu()
-        f.set_food()
-        time = f.get_times()
-        self.update_message('평가할 식단을 선택해 주세요\n' + f.get_string())
+        faculty_menu.fetch_food()
+        time = faculty_menu.get_times()
+        self.update_message('평가할 식단을 선택해 주세요\n' + faculty_menu.get_string())
         self.update_keyboard(time)
 
 
 class RatingFoodCourtMessage(BaseMessage):
     def __init__(self):
-        fc = FoodCourtMenu()
-        fc.set_food()
-        time = fc.get_times()
-        self.update_message('평가할 식단을 선택해 주세요\n' + fc.get_string())
+        food_court_menu.fetch_food()
+        time = food_court_menu.get_times()
+        self.update_message('평가할 식단을 선택해 주세요\n' + food_court_menu.get_string())
         self.update_keyboard(time)
+
+
+class RateFoodMessage(BaseMessage):
+    def __init__(self):
+        self.update_message('맛을 평가해 주세요')
+        self.update_keyboard(Keyboard.rating_buttons)
 
 
 class HomeMessage(Message):

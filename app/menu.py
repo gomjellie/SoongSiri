@@ -7,13 +7,17 @@ from app import myLogger
 
 
 class Menu:
-    def __init__(self):
+    def __init__(self, open_time, kor_name):
+        """
+        :param open_time: '2017-07-03 이런 형태'
+        :param kor_name: '학식, 교식, 푸드코트 중에 하나이다.'
+        """
         self.foods = None
         self.prettified_str = ''
-        self.open_time = '2017-07-03 이런 형태'
-        self.kor_name = '학식, 교식, 푸드코트 중에 하나이다.'
+        self.open_time = open_time
+        self.kor_name = kor_name
 
-    def set_food(self):
+    def fetch_food(self):
         """
         draft of set_food func using hakusiku db
         :return: None
@@ -47,8 +51,10 @@ class Menu:
         """
         foods = self.foods
         for time in foods:
-            foods[time].pop('참여자')
-            foods[time].pop('평점')
+            if '참여자' in foods[time]:
+                foods[time].pop('참여자')
+            if '평점' in foods[time]:
+                foods[time].pop('평점')
         return foods
 
     def get_dict(self):
@@ -68,45 +74,32 @@ class Menu:
         dic = self.get_dict()
         dic.update(self.open_time)
         for time in dic:
-            dic[time].pop('참여자')
+            if '참여자' in dic[time]:
+                dic[time].pop('참여자')
         t = TreeFormatter()
         t.prettify(dic)
         ret_string = t.prettified_str
         return ret_string
 
-
-class PupilMenu(Menu):
-    def __init__(self):
-        super().__init__()
-        self.open_time = {
+pupil_menu = Menu(open_time={
             '운영시간': [
                 '평일 :   10:30 ~ 14:00(중식)',
                 '주말 :   운영안함'
             ]
-        }
-        self.kor_name = '학식'
+        }, kor_name='학식')
 
-
-class FacultyMenu(Menu):
-    def __init__(self):
-        super().__init__()
-        self.open_time = {
+faculty_menu = Menu(open_time={
             '운영시간': [
                 '평일 :   11:30 ~ 14:00(중식)',
                 '평일 :   17:00 ~ 18:10(중식)',
                 '주말 :   11:30 ~ 14:00(중식)'
             ]
-        }
-        self.kor_name = '교식'
+        }, kor_name='교식')
 
-
-class FoodCourtMenu(Menu):
-    def __init__(self):
-        super().__init__()
-        self.open_time = {
+food_court_menu = Menu(open_time={
             '운영시간': [
                 '평일 :   11:00 ~ 15:00(중식)',
                 '주말 :   운영안함'
             ]
-        }
-        self.kor_name = '푸드코트'
+        }, kor_name='푸드코트')
+
