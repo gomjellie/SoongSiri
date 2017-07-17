@@ -14,6 +14,14 @@ class Singleton(type):
         return cls.instance
 
 
+def logger(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print('init func {} with args: {} kwargs: {}'.format(func.__name__, args, kwargs))
+        return func(*args, **kwargs)
+    return wrapper
+
+
 class APIManager(metaclass=Singleton):
     FREE_PROCESS = {
         '식단 보기': FoodMessage,
@@ -63,6 +71,7 @@ class APIManager(metaclass=Singleton):
         ]
     }
 
+    @logger
     def handle_process(self, process, user_key, content):
         """
         self.PROCESS 의 항목들을 처리한다.
@@ -100,6 +109,7 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage()
             return msg
 
+    @logger
     def handle_free_process(self, user_key, content):
         """
         FREE_PROCESS 항목들을 처리한다.
@@ -116,6 +126,7 @@ class APIManager(metaclass=Singleton):
             new_msg = self.FREE_PROCESS[content]
             return new_msg()
 
+    @logger
     def get_msg(self, user_key, content):
         has_session = UserSessionAdmin.check_user_key(user_key)
         process = UserSessionAdmin.get_process(user_key)
@@ -131,6 +142,7 @@ class APIManager(metaclass=Singleton):
         else:
             return self.handle_free_process(user_key, content)
 
+    @logger
     def process(self, stat, req=None):
         if stat is 'home':
             home_message = HomeMessage()
@@ -157,15 +169,19 @@ class SessionManager(metaclass=Singleton):
         else:
             return False
 
-    def check_session(func):
+    @logger
+    def verify_session(func):
         @wraps(func)
-        def session_wrapper(user_key, *args, **kwargs):
+        def session_wrapper(*args, **kwargs):
+            user_key = args[1]
             if user_key in session:
-                return func()
+                return func(*args, **kwargs)
             else:
+                print('user_key: {} is not in session'.format(user_key))
                 return False
         return session_wrapper
 
+    @logger
     def init(self, user_key, content=None, process=None):
         session[user_key] = {
             'history': [content],
@@ -173,32 +189,32 @@ class SessionManager(metaclass=Singleton):
             # process[0]: process name, process[1]: process step
         }
 
-    @check_session
+    @verify_session
     def delete(self, user_key):
         del session[user_key]
 
-    @check_session
+    @verify_session
     def add_history(self, user_key, content):
         session[user_key].append(content)
 
-    @check_session
+    @verify_session
     def get_history(self, user_key):
         return session[user_key]['history'][:]
 
-    @check_session
+    @verify_session
     def init_process(self, user_key, process):
         session[user_key]['process'] = process
 
-    @check_session
+    @verify_session
     def next_process(self, user_key):
         process, step = session[user_key]['process']
         session[user_key]['process'] = (process, step+1)
 
-    @check_session
+    @verify_session
     def expire_process(self, user_key):
         session[user_key]['process'] = None
 
-    @check_session
+    @verify_session
     def get_process(self, user_key):
         return session[user_key].get('process')
 
