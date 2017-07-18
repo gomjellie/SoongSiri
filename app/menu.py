@@ -23,24 +23,23 @@ class Menu:
         date = datetime.date.today().__str__()
         data = hakusiku.find_one({'날짜': date})
         if data:
-            unordered_food = data[self.kor_name]
-            self.foods = OrderedDict(sorted(unordered_food.items()))
+            self.foods = data[self.kor_name]
             myLogger.viewLog("query", self.foods)
 
         else:
             try:
                 food_api.refresh()
-                unordered_food = food_api.get_food(self.kor_name)
+                foods = food_api.get_food(self.kor_name)
 
             except Exception as inst:
-                unordered_food = {
+                foods = {
                     self.kor_name: [
                         inst.__str__(),
                         '파싱이 제대로 되지 않았습니다.',
                         '주말에는 메뉴가 없을 수 있습니다.'
                     ]
                 }
-            self.foods = OrderedDict(sorted(unordered_food.items()))
+            self.foods = foods
 
     def get_times(self):
         """
@@ -55,7 +54,8 @@ class Menu:
     @staticmethod
     @logger_deco
     def format_to_string(menu, place):
-        ret_string = ''
+        today = datetime.date.today().__str__()
+        ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식']:
             for time in menu:
                 ret_string += '\n{} (평점 {}/4.5)\n'.format(time, menu[time]['평점'])
@@ -71,7 +71,6 @@ class Menu:
 
     def get_string(self):
         dic = self.foods
-        dic.update(self.open_time)
         place = self.kor_name
 
         return Menu.format_to_string(dic, place)
