@@ -56,13 +56,13 @@ class Menu:
     def format_to_string(menu, place):
         ret_string = ''
         if place in ['학식', '교식']:
-            for time in menu[place]:
-                ret_string += '\n{} (평점 {}/4.5)\n'.format(time, menu[place][time]['평점'])
-                for dish in menu[place][time]['메뉴']:
+            for time in menu:
+                ret_string += '\n{} (평점 {}/4.5)\n'.format(time, menu[time]['평점'])
+                for dish in menu[time]['메뉴']:
                     ret_string += '*{}\n'.format(dish)
             return ret_string
         elif place == '푸드코트':
-            for dish in menu['푸드코트']['메뉴']:
+            for dish in menu['메뉴']:
                 ret_string += '*{}\n'.format(dish)
             return ret_string
         else:
