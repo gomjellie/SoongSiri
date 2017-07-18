@@ -3,7 +3,7 @@ from collections import OrderedDict
 import datetime
 from app import hakusiku
 from app import myLogger
-
+from .myLogger import logger_deco
 
 class Menu:
     def __init__(self, open_time, kor_name):
@@ -53,6 +53,7 @@ class Menu:
         return ret
 
     @staticmethod
+    @logger_deco
     def format_to_string(menu, place):
         ret_string = ''
         if place in ['학식', '교식']:
