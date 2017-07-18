@@ -1,8 +1,9 @@
 from .message import *
 from app import session
 from app import hakusiku
-import datetime
+from .myLogger import logger_deco
 from functools import wraps
+import datetime
 
 
 class Singleton(type):
@@ -12,14 +13,6 @@ class Singleton(type):
         if not cls.instance:
             cls.instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls.instance
-
-
-def logger(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        print('init func {} with args: {} kwargs: {}'.format(func.__name__, args, kwargs))
-        return func(*args, **kwargs)
-    return wrapper
 
 
 class APIManager(metaclass=Singleton):
@@ -74,7 +67,7 @@ class APIManager(metaclass=Singleton):
         ]
     }
 
-    @logger
+    @logger_deco
     def handle_process(self, process, user_key, content):
         """
         self.PROCESS 의 항목들을 처리한다.
@@ -91,16 +84,13 @@ class APIManager(metaclass=Singleton):
                 return new_msg()
             elif content in self.PROCESS[process][3]:
                 hist = UserSessionAdmin.get_history(user_key)
-                place = hist[-3]
-                menu = hist[-2]
-                rate = hist[-1]
+                place, menu, rate = hist[-3:]
                 # update database HERE
                 DatabaseAdmin.update_rate(user_key, place, menu, rate)
 
                 UserSessionAdmin.delete(user_key)
                 new_msg = self.PROCESS[process][3][content]
 
-                UserSessionAdmin.delete(user_key)
                 return new_msg()
 
         elif process == '도서관':
@@ -112,7 +102,7 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage()
             return msg
 
-    @logger
+    @logger_deco
     def handle_free_process(self, user_key, content):
         """
         FREE_PROCESS 항목들을 처리한다.
@@ -129,7 +119,7 @@ class APIManager(metaclass=Singleton):
             new_msg = self.FREE_PROCESS[content]
             return new_msg()
 
-    @logger
+    @logger_deco
     def get_msg(self, user_key, content):
         has_session = UserSessionAdmin.check_user_key(user_key)
         process = UserSessionAdmin.get_process(user_key)
@@ -145,7 +135,7 @@ class APIManager(metaclass=Singleton):
         else:
             return self.handle_free_process(user_key, content)
 
-    @logger
+    @logger_deco
     def process(self, stat, req=None):
         if stat is 'home':
             home_message = HomeMessage()
@@ -185,7 +175,7 @@ class SessionManager(metaclass=Singleton):
                 return False
         return session_wrapper
 
-    @logger
+    @logger_deco
     def init(self, user_key, content=None, process=None):
         session[user_key] = {
             'history': [content],

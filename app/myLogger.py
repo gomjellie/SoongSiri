@@ -1,5 +1,6 @@
 from logging.handlers import RotatingFileHandler
 from logging import Formatter
+from functools import wraps
 from app import app
 
 
@@ -59,3 +60,11 @@ def viewLog(mode, data=None):
         app.logger.info("[exit] user_key : {}".format(data))
     elif mode is "fail":
         app.logger.info("[fail] request process fail log: {}".format(data))
+
+
+def logger_deco(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        app.logger.info('[logger_deco] init func {}'.format(func.__name__), args, kwargs)
+        return func(*args, **kwargs)
+    return wrapper

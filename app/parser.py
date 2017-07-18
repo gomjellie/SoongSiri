@@ -75,7 +75,7 @@ class FoodParser(Parser):
                     t += '\n' + i.text
             if t == '':
                 raise TypeError()
-            exclude_english = re.compile('[^가-힣 0-9.]+')
+            exclude_english = re.compile('[^가-힣 ]+')
 
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
@@ -103,7 +103,7 @@ class FoodParser(Parser):
             if t == '':
                 raise TypeError()
 
-            exclude_english = re.compile('[^가-힣 0-9.]+')
+            exclude_english = re.compile('[^가-힣 ]+')
 
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
