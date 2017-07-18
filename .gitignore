@@ -1,6 +1,7 @@
 # AWS Ű #
 ##########
 *.pem
+nohup.out
 
 # Logs and databases #
 #####################
