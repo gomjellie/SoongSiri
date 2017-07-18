@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import urllib
 import re
+import collections
 
 
 class Parser:
@@ -62,7 +63,7 @@ class FoodParser(Parser):
         교식 메뉴
         :return: dict
         """
-        ret_dict = {}
+        ret_dict = collections.defaultdict()
         for section in self.faculty_food:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
@@ -89,7 +90,7 @@ class FoodParser(Parser):
         exception 많이남(주말)
         :return: dict
         """
-        ret_dict = {}
+        ret_dict = collections.defaultdict()
         for section in self.pupil_food:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
@@ -142,7 +143,7 @@ class FoodParser(Parser):
             :return: dict
         """
 
-        ret_dict = {}
+        ret_dict = collections.defaultdict()
         for section in self.food_court:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')

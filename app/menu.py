@@ -21,7 +21,7 @@ class Menu:
         draft of set_food func using hakusiku db
         :return: None
         """
-        date = datetime.datetime.now().date().__str__()
+        date = datetime.date.today().__str__()
         data = hakusiku.find_one({'날짜': date})
         if data:
             unordered_food = data[self.kor_name]

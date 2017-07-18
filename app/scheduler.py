@@ -1,5 +1,4 @@
 import schedule
-import datetime
 import threading
 from time import sleep
 from .parser import food_api
@@ -36,7 +35,7 @@ class MenuFetcher(threading.Thread):
                         '참여자': [],
                     })
         try:
-            today = datetime.datetime.today().__str__()
+            today = datetime.date.today().__str__()
             if hakusiku.find_one({'날짜': today}):
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
@@ -44,7 +43,7 @@ class MenuFetcher(threading.Thread):
             food_court = food_api.get_food_court()
             faculty_food = food_api.get_faculty_food()
             pupil_food = food_api.get_pupil_food()
-            date = datetime.datetime.now().date().__str__()
+            date = datetime.date.today().__str__()
 
             ratable_list = [faculty_food, pupil_food]
             set_rate(ratable_list)

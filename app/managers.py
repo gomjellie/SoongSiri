@@ -211,14 +211,14 @@ class SessionManager(metaclass=Singleton):
 class DBManager:
     def get_data(self, date=None):
         if date is None:
-            today = datetime.datetime.today().__str__()
+            today = datetime.date.today().__str__()
         else:
             today = date
         data = hakusiku.find_one({'날짜': today})
         return data
 
     def update_rate(self, user_key, place, menu, rate):
-        today = datetime.datetime.today().__str__()
+        today = datetime.date.today().__str__()
         data = hakusiku.find_one({'날짜': today})
 
 
