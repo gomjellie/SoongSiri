@@ -18,7 +18,7 @@ class MenuFetcher(threading.Thread):
     def __init__(self):
         super().__init__()
         self.daemon = True
-        schedule.clear()    # 혹시 스케쥴러가 여러개 돌고있을지도 모르니까 한번 추가해봄
+        schedule.clear()
         schedule.every().day.at("00:02").do(self.fetch_save_menu).tag('first-attempt')
 
     def run(self):
@@ -54,7 +54,7 @@ class MenuFetcher(threading.Thread):
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
-            if not hakusiku.find_one(food_dict):
+            if not hakusiku.find_one({"날짜": date}):
                 hakusiku.insert_one(food_dict)
 
         except Exception as inst:

@@ -5,14 +5,6 @@ import re
 import collections
 
 
-class Parser:
-    def __init__(self):
-        self.base_url = None
-
-    def refresh(self):
-        pass
-
-
 class Singleton(type):
     instance = None
 
@@ -22,7 +14,7 @@ class Singleton(type):
         return cls.instance
 
 
-class FoodParser(Parser):
+class FoodParser:
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
         self.faculty_food = None
@@ -75,7 +67,7 @@ class FoodParser(Parser):
                 for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
-                raise TypeError()
+                raise Exception("메뉴정보를 가져올수 없습니다.")
             exclude_english = re.compile('[^가-힣 ]+')
 
             res = exclude_english.sub('', ' '.join(t.split()))
@@ -102,7 +94,7 @@ class FoodParser(Parser):
                 for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
-                raise TypeError()
+                raise Exception("메뉴정보를 가져올수 없습니다.")
 
             exclude_english = re.compile('[^가-힣 ]+')
 
@@ -155,7 +147,7 @@ class FoodParser(Parser):
                 for i in soup.find_all(['span']):
                     t += '\n' + i.text
             if t == '':
-                raise TypeError()
+                raise Exception("메뉴정보를 가져올수 없습니다.")
 
             hangul = re.compile('[^가-힣 0-9.]+')
             digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")
@@ -204,15 +196,11 @@ class SubwayParser(metaclass=Singleton):
         ret = jsn.get('resultList2')[0].get('statnNm') + '\n'
 
         if jsn.get('resultList') is None:
-            return '곧 수정하겠습니다 아직 이부분은 왜안되는지 이유를 모르겠네요'
+            return '결과가 없습니다.'
         for j in range(len(jsn.get('resultList'))):
             ret += '────────\n|'
             ret += jsn.get('resultList')[j].get('trainLineNm') + '\n├ '
             ret += jsn.get('resultList')[j].get('arvlMsg2') + '\n├'
-            # for k in jsn.get('resultList')[j].keys():
-            #	print(k, jsn.get('resultList')[j].get(k))
-            # print('-------------------')
-
         return ret + '────────'
 
 
@@ -229,9 +217,9 @@ class BusParser(metaclass=Singleton):
         soup = BeautifulSoup(res.text, 'html.parser')
         ret = ''
 
-        for bus_name, left_time_1, left_time_2 in zip(soup.select('rtnm'),\
-                soup.select('arrmsg1'), soup.select('arrmsg2')):
-            ret += "────────\n├Bus:{0:<8}\n├{1:<10}\n├{2:<13}\n".format(\
+        for bus_name, left_time_1, left_time_2 in zip(soup.select('rtnm'),
+                                                      soup.select('arrmsg1'), soup.select('arrmsg2')):
+            ret += "────────\n├Bus:{0:<8}\n├{1:<10}\n├{2:<13}\n".format(
                     bus_name.string, left_time_1.string, left_time_2.string)
         return ret + '────────'
 

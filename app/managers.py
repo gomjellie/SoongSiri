@@ -86,7 +86,7 @@ class APIManager(metaclass=Singleton):
                 hist = UserSessionAdmin.get_history(user_key)
                 place, menu, rate = hist[-3:]
                 # update database HERE
-                DatabaseAdmin.update_rate(user_key, place, menu, rate)
+                DBManager.update_rate(user_key, place, menu, rate)
 
                 UserSessionAdmin.delete(user_key)
                 new_msg = self.PROCESS[process][3][content]
@@ -209,7 +209,8 @@ class SessionManager(metaclass=Singleton):
 
 
 class DBManager:
-    def get_data(self, date=None):
+    @staticmethod
+    def get_data(date=None):
         if date is None:
             today = datetime.date.today().__str__()
         else:
@@ -217,7 +218,8 @@ class DBManager:
         data = hakusiku.find_one({'날짜': today})
         return data
 
-    def update_rate(self, user_key, place, menu, rate):
+    @staticmethod
+    def update_rate(user_key, place, menu, rate):
         today = datetime.date.today().__str__()
         data = hakusiku.find_one({'날짜': today})
 
@@ -227,5 +229,4 @@ class KeyboardManager(metaclass=Singleton):
 
 APIAdmin = APIManager()
 UserSessionAdmin = SessionManager()
-DatabaseAdmin = DBManager()
 

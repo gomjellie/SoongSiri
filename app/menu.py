@@ -1,5 +1,4 @@
 from .parser import food_api
-from .formatter import TreeFormatter
 from collections import OrderedDict
 import datetime
 from app import hakusiku
@@ -43,22 +42,6 @@ class Menu:
                 }
             self.foods = OrderedDict(sorted(unordered_food.items()))
 
-    def get_clean_dict(self):
-        """
-        remove rating, participant
-        :return: dict
-        """
-        foods = self.foods
-        for time in foods:
-            if '참여자' in foods[time]:
-                foods[time].pop('참여자')
-            if '평점' in foods[time]:
-                foods[time].pop('평점')
-        return foods
-
-    def get_dict(self):
-        return self.foods
-
     def get_times(self):
         """
         ['조식', '중식', '중식2'] 이런식으로 리턴함
@@ -69,16 +52,28 @@ class Menu:
             ret.append(time)
         return ret
 
+    @staticmethod
+    def format_to_string(menu, place):
+        ret_string = ''
+        if place in ['학식', '교식']:
+            for time in menu[place]:
+                ret_string += '\n{} (평점 {}/4.5)\n'.format(time, menu[place][time]['평점'])
+                for dish in menu[place][time]['메뉴']:
+                    ret_string += '*{}\n'.format(dish)
+            return ret_string
+        elif place == '푸드코트':
+            for dish in menu['푸드코트']['메뉴']:
+                ret_string += '*{}\n'.format(dish)
+            return ret_string
+        else:
+            raise Exception('undexpected place: {}'.format(place))
+
     def get_string(self):
-        dic = self.get_dict()
+        dic = self.foods
         dic.update(self.open_time)
-        for time in dic:
-            if '참여자' in dic[time]:
-                dic[time].pop('참여자')
-        t = TreeFormatter()
-        t.prettify(dic)
-        ret_string = t.prettified_str
-        return ret_string
+        place = self.kor_name
+
+        return Menu.format_to_string(dic, place)
 
 pupil_menu = Menu(open_time={
             '운영시간': [
