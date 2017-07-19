@@ -19,7 +19,7 @@ class MenuFetcher(threading.Thread):
         super().__init__()
         self.daemon = True
         schedule.clear()
-        schedule.every().day.at("00:02").do(self.fetch_save_menu).tag('first-attempt')
+        schedule.every().day.at("05:30").do(self.fetch_save_menu).tag('first-attempt')
 
     def run(self):
         while True:
@@ -60,7 +60,7 @@ class MenuFetcher(threading.Thread):
         except Exception as inst:
             viewLog("fail", inst.__str__())
             schedule.clear('second-attempt')
-            schedule.every().day.at("06:00").do(self.fetch_save_menu).tag('second-attempt')
+            schedule.every().day.at("09:00").do(self.fetch_save_menu).tag('second-attempt')
 
 
 menu_scheduler = MenuFetcher()
