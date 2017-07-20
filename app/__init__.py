@@ -1,5 +1,4 @@
 from flask import Flask
-import pymongo
 from collections import defaultdict
 
 app = Flask(__name__)
@@ -11,10 +10,7 @@ app.config.update(dict(
     PASSWORD='default'
 ))
 
-conn = pymongo.MongoClient()
-food_db = conn.food_db
 
-hakusiku = food_db.hakusiku
 session = defaultdict()
 
 from app.scheduler import menu_scheduler

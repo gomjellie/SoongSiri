@@ -1,9 +1,8 @@
 from .parser import food_api
-from collections import OrderedDict
 import datetime
-from app import hakusiku
 from app import myLogger
 from .myLogger import logger_deco
+
 
 class Menu:
     def __init__(self, open_time, kor_name):
@@ -20,8 +19,8 @@ class Menu:
         draft of set_food func using hakusiku db
         :return: None
         """
-        date = datetime.date.today().__str__()
-        data = hakusiku.find_one({'날짜': date})
+        from .managers import DBManager
+        data = DBManager.get_data()
         if data:
             self.foods = data[self.kor_name]
             myLogger.viewLog("query", self.foods)
@@ -67,7 +66,7 @@ class Menu:
                 ret_string += '*{}\n'.format(dish)
             return ret_string
         else:
-            raise Exception('undexpected place: {}'.format(place))
+            raise Exception('unexpected place: {}'.format(place))
 
     def get_string(self):
         dic = self.foods

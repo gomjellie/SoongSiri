@@ -1,10 +1,8 @@
 from .message import *
 from app import session
-from app import hakusiku
 from .myLogger import logger_deco
 from functools import wraps
 import datetime
-
 
 class Singleton(type):
     instance = None
@@ -209,23 +207,86 @@ class SessionManager(metaclass=Singleton):
 
 
 class DBManager:
+    """
+    hakusiku에서 가져온 데이터의 구성
+    {
+        '_id': ObjectId('596f749eea838013c3bf4c81'),
+        '날짜': '2017-07-20',
+        '교식': {
+            '석식1':{
+                '메뉴': ['김치볶음밥계란후라이', '감자양파국'],
+                '참여자': [],
+                '평점': 0
+            },
+            '조식': {
+                '메뉴': ['방중미운영'],
+                '참여자': [],
+                '평점': 0
+            },
+            '중식1': {
+                '메뉴': ['잡곡밥', '소고기뭇국'],
+                '참여자': [],
+                '평점': 0
+            }
+        },
+        '푸드코트': {
+            '메뉴': ['로스까스 6.5', '삼선짬뽕 6.0', '연어회덮밥 7.0', '퓨전소고기마파두부6.0', '소고기마파두부6.0', '삼선짬뽕밥 6.0']
+        },
+        '학식': {
+            '중식1': {
+                '메뉴': ['쌀밥', '들깨미역국', '버섯불고기양배추쌈', '춘권튀김', '갈아만든감자전', '맛김치'],
+                '참여자': [],
+                '평점': 0
+            }
+        }
+    }
+    """
+    import pymongo
+
+    _conn = pymongo.MongoClient()
+    _food_db = _conn.food_db
+
+    hakusiku = _food_db.hakusiku
+
     @staticmethod
     def get_data(date=None):
         if date is None:
-            today = datetime.date.today().__str__()
-        else:
-            today = date
-        data = hakusiku.find_one({'날짜': today})
+            date = datetime.date.today().__str__()
+        data = DBManager.hakusiku.find_one({'날짜': date})
         return data
+
+    @staticmethod
+    def set_data(data, date=None):
+        if date is None:
+            date = datetime.date.today().__str__()
+        if DBManager.get_data(date=date) is None:
+            DBManager.hakusiku.insert_one(data)
 
     @staticmethod
     def update_rate(user_key, place, menu, rate):
         today = datetime.date.today().__str__()
-        data = hakusiku.find_one({'날짜': today})
+        data = DBManager.hakusiku.find_one({'날짜': today})
+        participant = data[place][menu]['참여자']
+        prev_rate = data[place][menu]['평점']
+        score = {
+            "맛있음": 4.5,
+            "보통": 2.5,
+            "맛없음": 0.5
+        }
+        rate = score[rate]
 
+        if user_key in participant:
+            raise Exception("이미 평가한 항목입니다.")
+        else:
+            prev_rate = prev_rate * len(participant)
+            participant.append(user_key)
+            new_rate = (prev_rate + rate) / len(participant)
+            data[place][menu]['평점'] = new_rate
 
-class KeyboardManager(metaclass=Singleton):
-    pass
+            old_data = DBManager.get_data()
+            DBManager.hakusiku.replace_one(old_data, data)
+            return prev_rate, new_rate
+
 
 APIAdmin = APIManager()
 UserSessionAdmin = SessionManager()

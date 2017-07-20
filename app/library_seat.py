@@ -3,10 +3,8 @@ from collections import OrderedDict
 
 
 class LibrarySeat:
-    def __init__(self):
-        self.seats = None
-
-    def get_buttons(self):
+    @staticmethod
+    def get_buttons():
         ret_buttons = []
         unordered_lib_stats = lib_api.get_lib_stat()
         lib_stats = OrderedDict(sorted(unordered_lib_stats.items()))
@@ -15,8 +13,3 @@ class LibrarySeat:
             ret_buttons.append(button_text)
 
         return ret_buttons
-
-    def get_string(self):
-        pass
-
-

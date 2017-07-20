@@ -2,9 +2,9 @@ import schedule
 import threading
 from time import sleep
 from .parser import food_api
-from app import hakusiku
 from .myLogger import viewLog
 import datetime
+from .managers import DBManager
 
 
 class MenuFetcher(threading.Thread):
@@ -35,8 +35,7 @@ class MenuFetcher(threading.Thread):
                         '참여자': [],
                     })
         try:
-            today = datetime.date.today().__str__()
-            if hakusiku.find_one({'날짜': today}):
+            if DBManager.get_data():
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
             food_api.refresh()
@@ -54,8 +53,7 @@ class MenuFetcher(threading.Thread):
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
-            if not hakusiku.find_one({"날짜": date}):
-                hakusiku.insert_one(food_dict)
+            DBManager.set_data(food_dict)
 
         except Exception as inst:
             viewLog("fail", inst.__str__())

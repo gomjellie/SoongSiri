@@ -157,9 +157,8 @@ class LibMessage(BaseMessage):
             self.update_message('http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room))
             self.update_keyboard(Keyboard.home_buttons)
         else:
-            l = LibrarySeat()
             self.update_message('열람실을 선택해 주세요')
-            self.update_keyboard(l.get_buttons())
+            self.update_keyboard(LibrarySeat.get_buttons())
 
 
 class SubMessage(BaseMessage):
