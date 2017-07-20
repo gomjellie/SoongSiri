@@ -284,7 +284,7 @@ class DBManager:
             data[place][menu]['평점'] = new_rate
 
             old_data = DBManager.get_data()
-            DBManager.hakusiku.replace_one(old_data, data)
+            DBManager.hakusiku.find_one_and_replace({"날짜": today}, data)
             return prev_rate, new_rate
 
 
