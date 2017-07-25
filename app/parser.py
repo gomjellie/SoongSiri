@@ -67,7 +67,8 @@ class FoodParser:
                 for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
-                raise Exception("메뉴정보를 가져올수 없습니다.")
+                from .my_exception import FoodNotFound
+                raise FoodNotFound()
             exclude_english = re.compile('[^가-힣 ]+')
 
             res = exclude_english.sub('', ' '.join(t.split()))
@@ -94,7 +95,8 @@ class FoodParser:
                 for i in soup.find_all(['div']):
                     t += '\n' + i.text
             if t == '':
-                raise Exception("메뉴정보를 가져올수 없습니다.")
+                from .my_exception import FoodNotFound
+                raise FoodNotFound()
 
             exclude_english = re.compile('[^가-힣 ]+')
 
@@ -147,7 +149,8 @@ class FoodParser:
                 for i in soup.find_all(['span']):
                     t += '\n' + i.text
             if t == '':
-                raise Exception("메뉴정보를 가져올수 없습니다.")
+                from .my_exception import FoodNotFound
+                raise FoodNotFound()
 
             hangul = re.compile('[^가-힣 0-9.]+')
             digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")

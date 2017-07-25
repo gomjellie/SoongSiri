@@ -4,6 +4,7 @@ from .myLogger import logger_deco
 from functools import wraps
 import datetime
 
+
 class Singleton(type):
     instance = None
 
@@ -48,9 +49,9 @@ class APIManager(metaclass=Singleton):
                 '석식2': RateFoodMessage,
             },
             {
-                '맛있음': OnGoingMessage,
-                '보통': OnGoingMessage,
-                '맛없음': OnGoingMessage,
+                '맛있음': RateFoodEndMessage,
+                '보통': RateFoodEndMessage,
+                '맛없음': RateFoodEndMessage,
             },
         ],
 
@@ -65,7 +66,6 @@ class APIManager(metaclass=Singleton):
         ]
     }
 
-    @logger_deco
     def handle_process(self, process, user_key, content):
         """
         self.PROCESS 의 항목들을 처리한다.
@@ -83,14 +83,10 @@ class APIManager(metaclass=Singleton):
             elif content in self.PROCESS[process][3]:
                 hist = UserSessionAdmin.get_history(user_key)
                 place, menu, rate = hist[-3:]
-                # update database HERE
-                DBManager.update_rate(user_key, place, menu, rate)
-
+                prev_rate, new_rate = DBManager.update_rate(user_key, place, menu, rate)
                 UserSessionAdmin.delete(user_key)
                 new_msg = self.PROCESS[process][3][content]
-
-                return new_msg()
-
+                return new_msg(prev_rate, new_rate)
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
@@ -100,7 +96,6 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage()
             return msg
 
-    @logger_deco
     def handle_free_process(self, user_key, content):
         """
         FREE_PROCESS 항목들을 처리한다.
@@ -117,7 +112,6 @@ class APIManager(metaclass=Singleton):
             new_msg = self.FREE_PROCESS[content]
             return new_msg()
 
-    @logger_deco
     def get_msg(self, user_key, content):
         has_session = UserSessionAdmin.check_user_key(user_key)
         process = UserSessionAdmin.get_process(user_key)
@@ -173,7 +167,6 @@ class SessionManager(metaclass=Singleton):
                 return False
         return session_wrapper
 
-    @logger_deco
     def init(self, user_key, content=None, process=None):
         session[user_key] = {
             'history': [content],
@@ -276,14 +269,14 @@ class DBManager:
         rate = score[rate]
 
         if user_key in participant:
-            raise Exception("이미 평가한 항목입니다.")
+            from .my_exception import FoodRateDuplicate
+            raise FoodRateDuplicate()
         else:
             prev_rate = prev_rate * len(participant)
             participant.append(user_key)
             new_rate = (prev_rate + rate) / len(participant)
             data[place][menu]['평점'] = new_rate
 
-            old_data = DBManager.get_data()
             DBManager.hakusiku.find_one_and_replace({"날짜": today}, data)
             return prev_rate, new_rate
 

@@ -111,6 +111,13 @@ class RateFoodMessage(BaseMessage):
         self.update_keyboard(Keyboard.rating_buttons)
 
 
+class RateFoodEndMessage(BaseMessage):
+    def __init__(self, prev, next):
+        super().__init__()
+        self.update_message("{}에서 {}으로 평점이 변경되었습니다.".format(prev, next))
+        self.update_keyboard(Keyboard.home_buttons)
+
+
 class HomeMessage(Message):
     def __init__(self):
         super().__init__()

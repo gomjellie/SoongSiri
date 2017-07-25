@@ -1,7 +1,5 @@
-from .parser import food_api
 import datetime
 from app import myLogger
-from .myLogger import logger_deco
 
 
 class Menu:
@@ -27,17 +25,14 @@ class Menu:
 
         else:
             try:
-                food_api.refresh()
-                foods = food_api.get_food(self.kor_name)
+                from .scheduler import menu_scheduler
 
-            except Exception as inst:
-                foods = {
-                    self.kor_name: [
-                        inst.__str__(),
-                        '파싱이 제대로 되지 않았습니다.',
-                        '주말에는 메뉴가 없을 수 있습니다.'
-                    ]
-                }
+                menu_scheduler.fetch_save_menu()
+                foods = DBManager.get_data()
+            except Exception as e:
+                from .my_exception import FoodNotFound
+                raise FoodNotFound(e)
+
             self.foods = foods
 
     def get_times(self):
@@ -51,7 +46,6 @@ class Menu:
         return ret
 
     @staticmethod
-    @logger_deco
     def format_to_string(menu, place):
         today = datetime.date.today().__str__()
         ret_string = '{} {}\n'.format(today, place)
