@@ -3,13 +3,12 @@ from app import myLogger
 
 
 class Menu:
-    def __init__(self, open_time, kor_name):
+    def __init__(self, kor_name):
         """
         :param open_time: '2017-07-03 이런 형태'
         :param kor_name: '학식, 교식, 푸드코트 중에 하나이다.'
         """
         self.foods = None
-        self.open_time = open_time
         self.kor_name = kor_name
 
     def fetch_food(self):
@@ -66,27 +65,15 @@ class Menu:
         dic = self.foods
         place = self.kor_name
 
-        return Menu.format_to_string(dic, place)
+        try:
+            return Menu.format_to_string(dic, place)
+        except Exception as e:
+            from .my_exception import FoodNotFound
+            raise FoodNotFound(e.__str__())
 
-pupil_menu = Menu(open_time={
-            '운영시간': [
-                '평일 :   10:30 ~ 14:00(중식)',
-                '주말 :   운영안함'
-            ]
-        }, kor_name='학식')
+pupil_menu = Menu(kor_name='학식')
 
-faculty_menu = Menu(open_time={
-            '운영시간': [
-                '평일 :   11:30 ~ 14:00(중식)',
-                '평일 :   17:00 ~ 18:10(중식)',
-                '주말 :   11:30 ~ 14:00(중식)'
-            ]
-        }, kor_name='교식')
+faculty_menu = Menu(kor_name='교식')
 
-food_court_menu = Menu(open_time={
-            '운영시간': [
-                '평일 :   11:00 ~ 15:00(중식)',
-                '주말 :   운영안함'
-            ]
-        }, kor_name='푸드코트')
+food_court_menu = Menu(kor_name='푸드코트')
 

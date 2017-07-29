@@ -50,7 +50,8 @@ class PupilFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         pupil_menu.fetch_food()
-        self.update_message(pupil_menu.get_string())
+        open_time = '평일 :   10:30 ~ 14:00(중식)\n주말 :   운영안함'
+        self.update_message(pupil_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -58,7 +59,10 @@ class FacultyFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         faculty_menu.fetch_food()
-        self.update_message(faculty_menu.get_string())
+        open_time = '평일 :   11:30 ~ 14:00(중식)' +\
+                    '평일 :   17:00 ~ 18:10(중식)' +\
+                    '주말 :   11:30 ~ 14:00(중식)'
+        self.update_message(faculty_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -66,7 +70,9 @@ class FoodCourtMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         food_court_menu.fetch_food()
-        self.update_message(food_court_menu.get_string())
+        open_time = '평일 :   11:00 ~ 15:00(중식)' +\
+                    '주말 :   운영안함'
+        self.update_message(food_court_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 

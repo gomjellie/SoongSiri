@@ -60,13 +60,14 @@ class FoodParser:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['p']):
-                for i in soup.find_all(['p']):
-                    t += '\n' + i.text
-            else:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
-            if t == '':
+            try:
+                if soup.find_all(['p']):
+                    for i in soup.find_all(['p']):
+                        t += '\n' + i.text
+                else:
+                    for i in soup.find_all(['div']):
+                        t += '\n' + i.text
+            except:
                 from .my_exception import FoodNotFound
                 raise FoodNotFound()
             exclude_english = re.compile('[^가-힣 ]+')
@@ -88,13 +89,14 @@ class FoodParser:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']):
-                for i in soup.find_all(['span']):
-                    t += '\n' + i.text
-            else:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
-            if t == '':
+            try:
+                if soup.find_all(['span']):
+                    for i in soup.find_all(['span']):
+                        t += '\n' + i.text
+                else:
+                    for i in soup.find_all(['div']):
+                        t += '\n' + i.text
+            except:
                 from .my_exception import FoodNotFound
                 raise FoodNotFound()
 
@@ -142,13 +144,14 @@ class FoodParser:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
-            else:
-                for i in soup.find_all(['span']):
-                    t += '\n' + i.text
-            if t == '':
+            try:
+                if soup.find_all(['span']) == []:
+                    for i in soup.find_all(['div']):
+                        t += '\n' + i.text
+                else:
+                    for i in soup.find_all(['span']):
+                        t += '\n' + i.text
+            except:
                 from .my_exception import FoodNotFound
                 raise FoodNotFound()
 
