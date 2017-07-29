@@ -50,7 +50,7 @@ class Menu:
         ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식']:
             for time in menu:
-                ret_string += '\n{} (평점 {}/4.5)\n'.format(time, menu[time]['평점'])
+                ret_string += '\n{} (평점 {}/10.0)\n'.format(time, menu[time]['평점'])
                 for dish in menu[time]['메뉴']:
                     ret_string += '*{}\n'.format(dish)
             return ret_string

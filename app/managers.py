@@ -262,8 +262,8 @@ class DBManager:
         participant = data[place][menu]['참여자']
         prev_rate = data[place][menu]['평점']
         score = {
-            "맛있음": 4.5,
-            "보통": 2.5,
+            "맛있음": 10.0,
+            "보통": 5.0,
             "맛없음": 0.5
         }
         rate = score[rate]
