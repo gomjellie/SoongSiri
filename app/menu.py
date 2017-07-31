@@ -27,12 +27,11 @@ class Menu:
                 from .scheduler import menu_scheduler
 
                 menu_scheduler.fetch_save_menu()
-                foods = DBManager.get_data()
+                data = DBManager.get_data()
+                self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
                 raise FoodNotFound(e)
-
-            self.foods = foods
 
     def get_times(self):
         """
