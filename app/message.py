@@ -60,7 +60,7 @@ class FacultyFoodMessage(BaseMessage):
         super().__init__()
         faculty_menu.fetch_food()
         open_time = '\n평일 :   11:30 ~ 14:00(중식)' +\
-                    '\n평일 :   17:00 ~ 18:10(중식)' +\
+                    '\n평일 :   17:00 ~ 18:10(조식)' +\
                     '\n주말 :   11:30 ~ 14:00(중식)'
         self.update_message(faculty_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
