@@ -19,6 +19,7 @@ class APIManager(metaclass=Singleton):
         '식단 보기': FoodMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
+        '기식': DormFoodMessage,
         '푸드코트': FoodCourtMessage,
         '버스': BusMessage,
         '정문(20166)': BusFrontMessage,
@@ -36,6 +37,7 @@ class APIManager(metaclass=Singleton):
                 '학식': RatingPupilMessage,
                 '교식': RatingFacultyMessage,
                 '푸드코트': RatingFoodCourtMessage,
+                '기식': RatingDormFoodMessage,
             },
             {
                 '조식': RateFoodMessage,
@@ -47,6 +49,7 @@ class APIManager(metaclass=Singleton):
                 '석식': RateFoodMessage,
                 '석식1': RateFoodMessage,
                 '석식2': RateFoodMessage,
+                '중.석식': RateFoodMessage,
             },
             {
                 '맛있음': RateFoodEndMessage,
@@ -115,7 +118,6 @@ class APIManager(metaclass=Singleton):
     def get_msg(self, user_key, content):
         has_session = UserSessionAdmin.check_user_key(user_key)
         process = UserSessionAdmin.get_process(user_key)
-        print(process)
 
         if not has_session:
             UserSessionAdmin.init(user_key, content)
@@ -239,7 +241,7 @@ class DBManager:
     _conn = pymongo.MongoClient()
     _food_db = _conn.food_db
 
-    hakusiku = _food_db.hakusiku
+    hakusiku = _food_db.hakusiku_test
 
     @staticmethod
     def get_data(date=None):
@@ -272,9 +274,9 @@ class DBManager:
             from .my_exception import FoodRateDuplicate
             raise FoodRateDuplicate()
         else:
-            prev_rate = prev_rate * len(participant)
+            _prev_rate = prev_rate * len(participant)
             participant.append(user_key)
-            new_rate = (prev_rate + rate) / len(participant)
+            new_rate = (_prev_rate + rate) / len(participant)
             data[place][menu]['평점'] = new_rate
 
             DBManager.hakusiku.find_one_and_replace({"날짜": today}, data)

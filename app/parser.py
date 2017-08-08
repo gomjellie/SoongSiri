@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import urllib
 import re
-import collections
+from collections import defaultdict
 
 
 class Singleton(type):
@@ -46,6 +46,8 @@ class FoodParser:
             return self.get_faculty_food()
         elif place == '푸드코트':
             return self.get_faculty_food()
+        elif place == '기식':
+            return self.get_dormitory_food()
         else:
             raise Exception('unexpected parameter place={}'.format(place))
 
@@ -55,7 +57,7 @@ class FoodParser:
         교식 메뉴
         :return: dict
         """
-        ret_dict = collections.defaultdict()
+        ret_dict = defaultdict()
         for section in self.faculty_food:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
@@ -84,7 +86,7 @@ class FoodParser:
         exception 많이남(주말)
         :return: dict
         """
-        ret_dict = collections.defaultdict()
+        ret_dict = defaultdict()
         for section in self.pupil_food:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
@@ -108,6 +110,32 @@ class FoodParser:
 
             ret_dict.update({section: {'메뉴': res}})
         return ret_dict
+
+    def get_dormitory_food(self):
+        import datetime
+        dorm_url = 'http://ssudorm.ssu.ac.kr/SShostel/mall_main.php?viewform=B0001_foodboard_list&gyear={}&gmonth={}&gday={}'
+        today = datetime.date.today()
+        year = today.year
+        month = today.month
+        date = today.day
+        res = requests.get(dorm_url.format(year, month, date))
+        res.encoding = 'euc-kr'
+        form = defaultdict()
+        soup = BeautifulSoup(res.text, 'html.parser')
+        table = soup.find_all('table', attrs={'class': 'boxstyle02'})[0]
+        rows = table.findChildren(['tr'])
+        day = 0  # 월화수목금 구분
+        for row in rows[1:]:
+            cells = row.findChildren('td')
+            time = 0  # 조식 중식 석식 구분
+            form.update({'월화수목금토일'[day]: {'조식': defaultdict(), '중식': defaultdict(), '석식': defaultdict()}})
+            for cell in cells[:3]:  # 방학중에는 :3으로 슬라이싱 하고 학기중에는 :4로 슬라이싱 하면됨
+                text = cell.text.strip()
+                menu = text.split('\r\n')
+                form['월화수목금토일'[day]][['조식', '중식', '석식'][time]]['메뉴'] = menu
+                time += 1
+            day += 1
+        return form
 
     def get_the_kitchen(self):
         """
@@ -139,7 +167,7 @@ class FoodParser:
             :return: dict
         """
 
-        ret_dict = collections.defaultdict()
+        ret_dict = defaultdict()
         for section in self.food_court:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
@@ -282,3 +310,4 @@ subway_api = SubwayParser()
 bus_api = BusParser()
 lib_api = LibParser()
 food_api = FoodParser()
+
