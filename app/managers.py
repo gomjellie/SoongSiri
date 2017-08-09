@@ -90,6 +90,8 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
                 new_msg = self.PROCESS[process][3][content]
                 return new_msg(prev_rate, new_rate)
+            else:
+                return FailMessage()
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
@@ -107,6 +109,7 @@ class APIManager(metaclass=Singleton):
         :param content:
         :return: Message Object
         """
+
         if content in self.PROCESS:
             UserSessionAdmin.init_process(user_key, content)
             new_msg = self.PROCESS[content][0][content]
@@ -122,6 +125,10 @@ class APIManager(metaclass=Singleton):
         if not has_session:
             UserSessionAdmin.init(user_key, content)
 
+        if content == '취소':
+            UserSessionAdmin.delete(user_key)
+            return CancelMessage()
+
         UserSessionAdmin.add_history(user_key, content)
         if process:
             return self.handle_process(process, user_key, content)
@@ -129,7 +136,6 @@ class APIManager(metaclass=Singleton):
         else:
             return self.handle_free_process(user_key, content)
 
-    @logger_deco
     def process(self, stat, req=None):
         if stat is 'home':
             home_message = HomeMessage()
@@ -165,7 +171,6 @@ class SessionManager(metaclass=Singleton):
             if user_key in session:
                 return func(*args, **kwargs)
             else:
-                print('user_key: {} is not in session'.format(user_key))
                 return False
         return session_wrapper
 

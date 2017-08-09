@@ -36,7 +36,16 @@ class BaseMessage(Message):
     def update_keyboard(self, keyboard):
         kb = Message.baseKeyboard
         kb['buttons'] = keyboard
+        if '취소' not in kb['buttons']:
+            kb['buttons'].append('취소')
         self.retMessage['keyboard'] = kb
+
+
+class CancelMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('취소되었습니다')
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class FoodMessage(BaseMessage):
@@ -205,7 +214,7 @@ class SubMessage(BaseMessage):
 class FailMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('error occured')
+        self.update_message('에러가 발생했습니다.')
         self.update_keyboard(Keyboard.home_buttons)
 
 

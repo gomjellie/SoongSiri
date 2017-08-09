@@ -28,7 +28,6 @@ class Menu:
 
                 menu_scheduler.fetch_save_menu()
                 data = DBManager.get_data()
-                print(data)
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound

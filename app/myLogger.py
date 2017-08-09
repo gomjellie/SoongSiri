@@ -65,6 +65,5 @@ def viewLog(mode, data=None):
 def logger_deco(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        print('[logger_deco] init {}() args: {} kwargs: {}'.format(func.__name__, args, kwargs))
         return func(*args, **kwargs)
     return wrapper
