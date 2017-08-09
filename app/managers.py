@@ -241,31 +241,27 @@ class DBManager:
         }
     }
     """
-    import pymongo
+    def __init__(self):
+        import pymongo
+        _conn = pymongo.MongoClient()
+        _food_db = _conn.food_db
+        self.hakusiku = _food_db.hakusiku_test
 
-    _conn = pymongo.MongoClient()
-    _food_db = _conn.food_db
-
-    hakusiku = _food_db.hakusiku_test
-
-    @staticmethod
-    def get_data(date=None):
+    def get_data(self, date=None):
         if date is None:
             date = datetime.date.today().__str__()
-        data = DBManager.hakusiku.find_one({'날짜': date})
+        data = self.hakusiku.find_one({'날짜': date})
         return data
 
-    @staticmethod
-    def set_data(data, date=None):
+    def set_data(self, data, date=None):
         if date is None:
             date = datetime.date.today().__str__()
-        if DBManager.get_data(date=date) is None:
-            DBManager.hakusiku.insert_one(data)
+        if self.get_data(date=date) is None:
+            self.hakusiku.insert_one(data)
 
-    @staticmethod
-    def update_rate(user_key, place, menu, rate):
+    def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()
-        data = DBManager.hakusiku.find_one({'날짜': today})
+        data = self.hakusiku.find_one({'날짜': today})
         participant = data[place][menu]['참여자']
         prev_rate = data[place][menu]['평점']
         score = {
@@ -284,10 +280,10 @@ class DBManager:
             new_rate = (_prev_rate + rate) / len(participant)
             data[place][menu]['평점'] = new_rate
 
-            DBManager.hakusiku.find_one_and_replace({"날짜": today}, data)
+            self.hakusiku.find_one_and_replace({"날짜": today}, data)
             return prev_rate, new_rate
 
 
 APIAdmin = APIManager()
 UserSessionAdmin = SessionManager()
-
+DBAdmin = DBManager()

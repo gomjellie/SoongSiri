@@ -1,5 +1,6 @@
 import datetime
-from app import myLogger
+from .myLogger import viewLog
+from .parser import food_api
 
 
 class Menu:
@@ -11,23 +12,59 @@ class Menu:
         self.foods = None
         self.kor_name = kor_name
 
-    def fetch_food(self):
+    @staticmethod
+    def fetch_save_menu():
+        def set_rate(f_dicts):
+            for f_dict in f_dicts:
+                for sec in f_dict:
+                    f_dict[sec].update({
+                        '평점': 0,
+                        '참여자': [],
+                    })
+        try:
+            from .managers import DBAdmin
+            if DBAdmin.get_data():
+                viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
+                return
+            food_api.refresh()
+            food_court = food_api.get_food_court()
+            faculty_food = food_api.get_faculty_food()
+            pupil_food = food_api.get_pupil_food()
+            dorm_foods = food_api.get_dormitory_food()
+            day_of_week = datetime.date.today().weekday()
+            dorm_food = dorm_foods.get(' 월화수목금토일'[day_of_week])
+            date = datetime.date.today().__str__()
+
+            ratable_list = [faculty_food, pupil_food, dorm_food]
+            set_rate(ratable_list)
+            food_dict = {
+                '푸드코트': food_court,
+                '학식': pupil_food,
+                '교식': faculty_food,
+                '기식': dorm_food,
+                '날짜': date,
+            }
+            viewLog('scheduler', food_dict)
+            DBAdmin.set_data(food_dict)
+
+        except Exception as inst:
+            viewLog("fail", inst.__str__())
+
+    def prepare_food(self):
         """
         draft of set_food func using hakusiku db
         :return: None
         """
-        from .managers import DBManager
-        data = DBManager.get_data()
+        from .managers import DBAdmin
+        data = DBAdmin.get_data()
         if data:
             self.foods = data[self.kor_name]
-            myLogger.viewLog("query", self.foods)
+            viewLog("query", self.foods)
 
         else:
             try:
-                from .scheduler import menu_scheduler
-
-                menu_scheduler.fetch_save_menu()
-                data = DBManager.get_data()
+                self.fetch_save_menu()
+                data = DBAdmin.get_data()
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
@@ -71,10 +108,7 @@ class Menu:
             raise FoodNotFound(e.__str__())
 
 pupil_menu = Menu(kor_name='학식')
-
 faculty_menu = Menu(kor_name='교식')
-
 food_court_menu = Menu(kor_name='푸드코트')
-
 dormitory_menu = Menu(kor_name='기식')
 
