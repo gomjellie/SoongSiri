@@ -86,7 +86,7 @@ class APIManager(metaclass=Singleton):
             elif content in self.PROCESS[process][3]:
                 hist = UserSessionAdmin.get_history(user_key)
                 place, menu, rate = hist[-3:]
-                prev_rate, new_rate = DBManager.update_rate(user_key, place, menu, rate)
+                prev_rate, new_rate = DBAdmin.update_rate(user_key, place, menu, rate)
                 UserSessionAdmin.delete(user_key)
                 new_msg = self.PROCESS[process][3][content]
                 return new_msg(prev_rate, new_rate)
