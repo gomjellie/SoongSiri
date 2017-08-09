@@ -32,7 +32,7 @@ class Menu:
             pupil_food = food_api.get_pupil_food()
             dorm_foods = food_api.get_dormitory_food()
             day_of_week = datetime.date.today().weekday()
-            dorm_food = dorm_foods.get(' 월화수목금토일'[day_of_week])
+            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = datetime.date.today().__str__()
 
             ratable_list = [faculty_food, pupil_food, dorm_food]
