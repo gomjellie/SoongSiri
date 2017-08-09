@@ -1,6 +1,6 @@
 from .keyboard import Keyboard
 from json import loads, dumps
-from .menu import pupil_menu, faculty_menu, food_court_menu
+from .menu import pupil_menu, faculty_menu, food_court_menu, dormitory_menu
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 
@@ -60,7 +60,7 @@ class FacultyFoodMessage(BaseMessage):
         super().__init__()
         faculty_menu.fetch_food()
         open_time = '\n평일 :   11:30 ~ 14:00(중식)' +\
-                    '\n평일 :   17:00 ~ 18:10(조식)' +\
+                    '\n평일 :   17:00 ~ 18:10(석식)' +\
                     '\n주말 :   11:30 ~ 14:00(중식)'
         self.update_message(faculty_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
@@ -73,6 +73,18 @@ class FoodCourtMessage(BaseMessage):
         open_time = '\n평일 :   11:00 ~ 15:00(중식)' +\
                     '\n주말 :   운영안함'
         self.update_message(food_court_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class DormFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        dormitory_menu.fetch_food()
+        open_time = '\n조식 : 08:00 ~ 09:30' +\
+                    '\n중식 : 11:00 ~ 14:00' +\
+                    '\n석식 : 17:00 ~ 18:30' +\
+                    '\n쉬는시간 : 14:30~15:00 16:00~17:00'
+        self.update_message(dormitory_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -110,6 +122,15 @@ class RatingFoodCourtMessage(BaseMessage):
         self.update_keyboard(time)
 
 
+class RatingDormFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        dormitory_menu.fetch_food()
+        time = dormitory_menu.get_times()
+        self.update_message('평가할 식단을 선택해 주세요\n' + dormitory_menu.get_string())
+        self.update_keyboard(time)
+
+
 class RateFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
@@ -118,9 +139,9 @@ class RateFoodMessage(BaseMessage):
 
 
 class RateFoodEndMessage(BaseMessage):
-    def __init__(self, prev, next):
+    def __init__(self, prev, post):
         super().__init__()
-        self.update_message("{}에서 {}으로 평점이 변경되었습니다.".format(prev, next))
+        self.update_message("{:0.2f}에서 {:0.2f}으로 평점이 변경되었습니다.".format(prev, post))
         self.update_keyboard(Keyboard.home_buttons)
 
 

@@ -35,14 +35,19 @@ class MenuFetcher(threading.Thread):
             food_court = food_api.get_food_court()
             faculty_food = food_api.get_faculty_food()
             pupil_food = food_api.get_pupil_food()
+            dorm_foods = food_api.get_dormitory_food()
+            day_of_week = datetime.datetime.today().weekday()
+            dorm_food = dorm_foods.get(' 월화수목금토일'[day_of_week])
+            print(dorm_food)
             date = datetime.date.today().__str__()
 
-            ratable_list = [faculty_food, pupil_food]
+            ratable_list = [faculty_food, pupil_food, dorm_food]
             set_rate(ratable_list)
             food_dict = {
                 '푸드코트': food_court,
                 '학식': pupil_food,
                 '교식': faculty_food,
+                '기식': dorm_food,
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)

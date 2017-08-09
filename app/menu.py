@@ -28,6 +28,7 @@ class Menu:
 
                 menu_scheduler.fetch_save_menu()
                 data = DBManager.get_data()
+                print(data)
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
@@ -47,9 +48,9 @@ class Menu:
     def format_to_string(menu, place):
         today = datetime.date.today().__str__()
         ret_string = '{} {}\n'.format(today, place)
-        if place in ['학식', '교식']:
+        if place in ['학식', '교식', '기식']:
             for time in menu:
-                ret_string += '\n{} (평점 {:.2f}/10.0)\n'.format(time, menu[time]['평점'])
+                ret_string += '\n{} (평점 {:0.2f}/10.0)\n'.format(time, menu[time]['평점'])
                 for dish in menu[time]['메뉴']:
                     ret_string += '*{}\n'.format(dish)
             return ret_string
@@ -75,4 +76,6 @@ pupil_menu = Menu(kor_name='학식')
 faculty_menu = Menu(kor_name='교식')
 
 food_court_menu = Menu(kor_name='푸드코트')
+
+dormitory_menu = Menu(kor_name='기식')
 
