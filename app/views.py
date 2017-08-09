@@ -23,6 +23,11 @@ def message():
         return process_fail(inst.__str__())
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return process_fail('page_not_found')
+
+
 def process_fail(exception_str):
     user_key = request.get_json().get('user_key')
     msg = APIAdmin.process("fail", {'user_key': user_key, 'log': exception_str}).get_message()
