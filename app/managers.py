@@ -245,7 +245,7 @@ class DBManager:
         import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
-        self.hakusiku = _food_db.hakusiku_test
+        self.hakusiku = _food_db.hakusiku
 
     def get_data(self, date=None):
         if date is None:
