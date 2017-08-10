@@ -98,7 +98,7 @@ class Menu:
         if place in ['학식', '교식', '기식']:
             for time in menu:
                 star = rate2star(menu[time]['평점'])
-                ret_string += '\n{} ({}\n)'.format(time, star)
+                ret_string += '\n{} {}\n'.format(time, star)
                 for dish in menu[time]['메뉴']:
                     ret_string += '*{}\n'.format(dish)
             return ret_string
