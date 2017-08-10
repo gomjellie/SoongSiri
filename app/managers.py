@@ -91,14 +91,20 @@ class APIManager(metaclass=Singleton):
                 new_msg = self.PROCESS[process][3][content]
                 return new_msg(prev_rate, new_rate)
             else:
-                return FailMessage()
+                UserSessionAdmin.delete(user_key)
+                return FailMessage('식단 평가 process에서 문제가 발생하였습니다 {}님의 세션을 초기화합니다.'.format(
+                    user_key
+                ))
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
                 msg = LibMessage(room=room)
                 UserSessionAdmin.delete(user_key)
             else:
-                msg = FailMessage()
+                UserSessionAdmin.delete(user_key)
+                msg = FailMessage('도서관 process에서 문제가 발생하였습니다 {}님의 세션을 초기화합니다.'.format(
+                    user_key
+                ))
             return msg
 
     def handle_free_process(self, user_key, content):
@@ -149,12 +155,14 @@ class APIManager(metaclass=Singleton):
         elif stat is 'fail':
             log = req['log']
             user_key = req['user_key']
-            fail_message = FailMessage()
+            fail_message = FailMessage('파악할수 없는 에러가 발생하여 {}님의 세션을 초기화 합니다'.format(
+                user_key
+            ))
             fail_message.update_message(log)
             UserSessionAdmin.delete(user_key)
             return fail_message
         else:
-            return FailMessage()
+            return FailMessage("stat not in list('home', 'message', 'fail')")
 
 
 class SessionManager(metaclass=Singleton):
