@@ -212,9 +212,10 @@ class SubMessage(BaseMessage):
 
 
 class FailMessage(BaseMessage):
-    def __init__(self):
+    def __init__(self, msg=None):
         super().__init__()
-        self.update_message('에러가 발생했습니다.')
+        self.update_message('에러가 발생했습니다.' +\
+                            "\nmsg: " + msg)
         self.update_keyboard(Keyboard.home_buttons)
 
 
