@@ -82,11 +82,23 @@ class Menu:
 
     @staticmethod
     def format_to_string(menu, place):
+        def rate2star(rate):
+            stars = [
+                '✩✩✩✩✩',
+                '★✩✩✩✩',
+                '★★✩✩✩',
+                '★★★✩✩',
+                '★★★★✩',
+                '★★★★★'
+            ]
+            return stars[round(rate / 2)]
+
         today = datetime.date.today().__str__()
         ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식', '기식']:
             for time in menu:
-                ret_string += '\n{} (평점 {:0.2f}/10.0)\n'.format(time, menu[time]['평점'])
+                star = rate2star(menu[time]['평점'])
+                ret_string += '\n{} ({}\n)'.format(time, star)
                 for dish in menu[time]['메뉴']:
                     ret_string += '*{}\n'.format(dish)
             return ret_string

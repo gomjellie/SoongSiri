@@ -5,6 +5,12 @@ from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 
 
+class SuccessMessage:
+    @staticmethod
+    def get_message():
+        return {"message": "SUCCESS"}
+
+
 class Message:
     baseKeyboard = {
         "type": "buttons",

@@ -155,6 +155,8 @@ class APIManager(metaclass=Singleton):
             fail_message.update_message(log)
             UserSessionAdmin.delete(user_key)
             return fail_message
+        elif stat is 'etc':
+            return SuccessMessage()
         else:
             return FailMessage("stat not in list('home', 'message', 'fail')")
 
