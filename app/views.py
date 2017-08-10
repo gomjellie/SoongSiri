@@ -23,9 +23,30 @@ def message():
         return process_fail(inst.__str__())
 
 
+@app.route('/friend', methods=['POST'])
+def add_friend():
+    viewLog('add', request.get_json())
+    msg = APIAdmin.process('etc').get_message()
+    return jsonify(msg), 200
+
+
+@app.route("/friend/<user_key>", methods=["DELETE"])
+def block_friend(user_key):
+    viewLog('block', user_key)
+    msg = APIAdmin.process('etc').get_message()
+    return jsonify(msg), 200
+
+
+@app.route("/chat_room/<user_key>", methods=["DELETE"])
+def exit_chat_room(user_key):
+    viewLog('exit', user_key)
+    msg = APIAdmin.process('etc').get_message()
+    return jsonify(msg), 200
+
+
 @app.errorhandler(404)
 def page_not_found(e):
-    return process_fail('page_not_found')
+    return process_fail('page_not_found'), 404
 
 
 def process_fail(exception_str):
@@ -33,3 +54,4 @@ def process_fail(exception_str):
     msg = APIAdmin.process("fail", {'user_key': user_key, 'log': exception_str}).get_message()
     viewLog("fail", data=exception_str)
     return jsonify(msg)
+
