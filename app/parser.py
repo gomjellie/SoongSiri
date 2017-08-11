@@ -22,6 +22,11 @@ class FoodParser:
         self.the_kitchen = None
         self.snack_corner = None
         self.food_court = None
+        self.no_food_today = {
+            '조중석식': {
+                '메뉴': ['식단을 불러오지 못했습니다.']
+            }
+        }
 
     def refresh(self):
         """
@@ -58,20 +63,19 @@ class FoodParser:
         :return: dict
         """
         ret_dict = defaultdict()
+        if not self.faculty_food:
+            return self.no_food_today
+
         for section in self.faculty_food:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.faculty_food[section], 'html.parser')
             t = ''
-            try:
-                if soup.find_all(['p']):
-                    for i in soup.find_all(['p']):
-                        t += '\n' + i.text
-                else:
-                    for i in soup.find_all(['div']):
-                        t += '\n' + i.text
-            except:
-                from .my_exception import FoodNotFound
-                raise FoodNotFound()
+            if soup.find_all(['p']):
+                for i in soup.find_all(['p']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
             exclude_english = re.compile('[^가-힣 ]+')
 
             res = exclude_english.sub('', ' '.join(t.split()))
@@ -87,20 +91,19 @@ class FoodParser:
         :return: dict
         """
         ret_dict = defaultdict()
+        if not self.pupil_food:
+            return self.no_food_today
+
         for section in self.pupil_food:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            try:
-                if soup.find_all(['span']):
-                    for i in soup.find_all(['span']):
-                        t += '\n' + i.text
-                else:
-                    for i in soup.find_all(['div']):
-                        t += '\n' + i.text
-            except:
-                from .my_exception import FoodNotFound
-                raise FoodNotFound()
+            if soup.find_all(['span']):
+                for i in soup.find_all(['span']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
 
             exclude_english = re.compile('[^가-힣 ]+')
 
@@ -168,20 +171,19 @@ class FoodParser:
         """
 
         ret_dict = defaultdict()
+        if not self.food_court:
+            return self.no_food_today
+
         for section in self.food_court:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             t = ''
-            try:
-                if soup.find_all(['span']) == []:
-                    for i in soup.find_all(['div']):
-                        t += '\n' + i.text
-                else:
-                    for i in soup.find_all(['span']):
-                        t += '\n' + i.text
-            except:
-                from .my_exception import FoodNotFound
-                raise FoodNotFound()
+            if soup.find_all(['span']) == []:
+                for i in soup.find_all(['div']):
+                    t += '\n' + i.text
+            else:
+                for i in soup.find_all(['span']):
+                    t += '\n' + i.text
 
             hangul = re.compile('[^가-힣 0-9.]+')
             digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")

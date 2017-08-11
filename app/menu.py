@@ -83,15 +83,23 @@ class Menu:
     @staticmethod
     def format_to_string(menu, place):
         def rate2star(rate):
+            # half = '✮'
+            # full = '★'
+            # empty = '✩'
             stars = [
                 '✩✩✩✩✩',
+                '✮✩✩✩✩',
                 '★✩✩✩✩',
-                '★★✩✩✩',
+                '★✩✩✩✩',
+                '★✮✩✩✩',
+                '★★✮✩✩',
                 '★★★✩✩',
+                '★★★✮✩',
                 '★★★★✩',
-                '★★★★★'
+                '★★★★✮',
+                '★★★★★',
             ]
-            return stars[round(rate / 2)]
+            return stars[round(rate)]
 
         today = datetime.date.today().__str__()
         ret_string = '{} {}\n'.format(today, place)

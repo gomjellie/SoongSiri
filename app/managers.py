@@ -96,7 +96,7 @@ class APIManager(metaclass=Singleton):
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
-                msg = LibMessage(room=room)
+                msg = LibStatMessage(room=room)
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
