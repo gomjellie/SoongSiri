@@ -7,32 +7,43 @@
 
 모바일에서 [http://pf.kakao.com/_EMxkxgd](http://pf.kakao.com/_EMxkxgd) 링크를 통해 친구추가 하거나, 플러스친구 검색에서 `숭실대 학식` 을 검색해서 친구추가 합니다.
 
+# branch 관리
 
-# 서버 설정들(까먹는 나를위해 있음)
+http://nvie.com/posts/a-successful-git-branching-model/
+
+http://ohgyun.com/402
+
+master는 http://pf.kakao.com/_EMxkxgd
+
+develop은 http://pf.kakao.com/_nPclxl 같은 아마존 서버에서 포트만 바꿔서 테스트
+
+테스트 충분히 하고 develop -> master
+
+# 서버 설정들(까먹는 나를위해)
 ## set virtual environment
 
-```sh
-$ virtualenv venv -p python3
+```bash
+virtualenv venv -p python3
 
-$ source ./venv/bin/activate
+source ./venv/bin/activate
 
-$ pip install -r ./requirements.txt
+pip install -r ./requirements.txt
 ```
 ## run
-```sh
-$ nohup ./run &
+```bash
+nohup ./run &
 ```
 ## set mongodb environ
 
 https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04
-```sh
-$ sudo systemctl start mongodb
+```bash
+sudo systemctl start mongodb
 
-$ sudo systemctl stop mongodb
+sudo systemctl stop mongodb
 ```
 
 ## set time-zone
 
-```sh
-$ tzselect
+```bash
+tzselect
 ```
