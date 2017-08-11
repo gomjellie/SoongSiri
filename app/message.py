@@ -47,6 +47,19 @@ class BaseMessage(Message):
         self.retMessage['keyboard'] = kb
 
 
+class UrlMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+
+    def update_message(self, text, label, url):
+        message_button = {
+            'label': label,
+            'url': url,
+        }
+        self.retMessage['message']['text'] = text
+        self.retMessage['message'].update({'message_button': message_button})
+
+
 class CancelMessage(BaseMessage):
     def __init__(self):
         super().__init__()
@@ -200,14 +213,18 @@ class BusMiddleMessage(BaseMessage):
 
 
 class LibMessage(BaseMessage):
-    def __init__(self, room=None):
+    def __init__(self):
         super().__init__()
-        if room:
-            self.update_message('http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room))
-            self.update_keyboard(Keyboard.home_buttons)
-        else:
-            self.update_message('열람실을 선택해 주세요')
-            self.update_keyboard(LibrarySeat.get_buttons())
+        self.update_message('열람실을 선택해 주세요')
+        self.update_keyboard(LibrarySeat.get_buttons())
+
+
+class LibStatMessage(UrlMessage):
+    def __init__(self, room):
+        super().__init__()
+        url = 'http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room)
+        self.update_message('{}열람실 좌석 테이블입니다.'.format(room), '좌석 확인하기', url)
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class SubMessage(BaseMessage):
