@@ -172,7 +172,7 @@ class FoodParser:
 
         ret_dict = defaultdict()
         if not self.food_court:
-            return self.no_food_today
+            return self.no_food_today['조중석식']
 
         for section in self.food_court:
             ret_dict.update({section: []})
