@@ -47,6 +47,8 @@ class FoodParser:
         # res = requests.get(self.base_url, params={'fkey': 5})
         res = requests.get(self.base_url)
         jsn = res.json()
+        if not jsn:
+            return
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')
         self.snack_corner = jsn.get('스넥코너')
