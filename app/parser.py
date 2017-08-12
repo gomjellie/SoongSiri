@@ -23,9 +23,18 @@ class FoodParser:
         self.snack_corner = None
         self.food_court = None
         self.no_food_today = {
-            '조중석식': {
+            '조식': {
                 '메뉴': ['식단을 불러오지 못했습니다.']
-            }
+            },
+            '중식': {
+                '메뉴': ['식단을 불러오지 못했습니다.']
+            },
+            '석식': {
+                '메뉴': ['식단을 불러오지 못했습니다.']
+            },
+        }
+        self.no_food_court_today = {
+            '메뉴': ['식단을 불러오지 못했습니다.']
         }
 
     def refresh(self):
@@ -38,6 +47,8 @@ class FoodParser:
         # res = requests.get(self.base_url, params={'fkey': 5})
         res = requests.get(self.base_url)
         jsn = res.json()
+        if not jsn:
+            return
         self.pupil_food = jsn.get('학생식당')
         self.the_kitchen = jsn.get('THE KITCHEN')
         self.snack_corner = jsn.get('스넥코너')
@@ -172,7 +183,7 @@ class FoodParser:
 
         ret_dict = defaultdict()
         if not self.food_court:
-            return self.no_food_today['조중석식']
+            return self.no_food_court_today
 
         for section in self.food_court:
             ret_dict.update({section: []})
