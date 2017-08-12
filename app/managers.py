@@ -151,8 +151,7 @@ class APIManager(metaclass=Singleton):
         elif stat is 'fail':
             log = req['log']
             user_key = req['user_key']
-            fail_message = FailMessage('파악할수 없는 에러가 발생하여 해당 세션을 초기화 합니다')
-            fail_message.update_message(log)
+            fail_message = FailMessage('파악할수 없는 에러가 발생하여 해당 세션을 초기화 합니다\n{}'.format(log))
             UserSessionAdmin.delete(user_key)
             return fail_message
         elif stat is 'etc':
