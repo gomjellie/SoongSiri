@@ -23,9 +23,18 @@ class FoodParser:
         self.snack_corner = None
         self.food_court = None
         self.no_food_today = {
-            '조중석식': {
+            '조식': {
                 '메뉴': ['식단을 불러오지 못했습니다.']
-            }
+            },
+            '중식': {
+                '메뉴': ['식단을 불러오지 못했습니다.']
+            },
+            '석식': {
+                '메뉴': ['식단을 불러오지 못했습니다.']
+            },
+        }
+        self.no_food_court_today = {
+            '메뉴': ['식단을 불러오지 못했습니다.']
         }
 
     def refresh(self):
@@ -172,7 +181,7 @@ class FoodParser:
 
         ret_dict = defaultdict()
         if not self.food_court:
-            return self.no_food_today['조중석식']
+            return self.no_food_court_today
 
         for section in self.food_court:
             ret_dict.update({section: []})
