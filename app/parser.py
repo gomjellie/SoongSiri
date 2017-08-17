@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import urllib
+from urllib import parse
 import re
 from collections import defaultdict
 
@@ -45,7 +45,7 @@ class FoodParser:
         :return: None
         """
         # res = requests.get(self.base_url, params={'fkey': 5})
-        res = requests.get(self.base_url)
+        res = requests.get(self.base_url, timeout=2)
         jsn = res.json()
         if not jsn:
             return
@@ -132,10 +132,11 @@ class FoodParser:
         year = today.year
         month = today.month
         date = today.day
-        res = requests.get(dorm_url.format(year, month, date))
+        res = requests.get(dorm_url.format(year, month, date), timeout=2)
         res.encoding = 'euc-kr'
         form = defaultdict()
         soup = BeautifulSoup(res.text, 'html.parser')
+        parenthesis = re.compile(r"(\(.+)\)")
         table = soup.find_all('table', attrs={'class': 'boxstyle02'})[0]
         rows = table.findChildren(['tr'])
         day = 0  # 월화수목금 구분
@@ -145,6 +146,7 @@ class FoodParser:
             form.update({'월화수목금토일'[day]: {'조식': defaultdict(), '중식': defaultdict(), '석식': defaultdict()}})
             for cell in cells[:3]:  # 방학중에는 :3으로 슬라이싱 하고 학기중에는 :4로 슬라이싱 하면됨
                 text = cell.text.strip()
+                text = parenthesis.sub('', text)
                 menu = text.split('\r\n')
                 form['월화수목금토일'[day]][['조식', '중식', '석식'][time]]['메뉴'] = menu
                 time += 1
@@ -225,10 +227,11 @@ class SubwayParser(metaclass=Singleton):
         self.arrival_info_url = 'http://m.bus.go.kr/mBus/subway/getArvlByInfo.bms'
 
     def get_station_stat(self, station_name):
-        station_name = urllib.parse.quote(station_name.replace('역', ''))
+        station_name = parse.quote(station_name.replace('역', ''))
         # 숭실대입구역 -> 숭실대입구 로 변환해야 검색됨
         # 문제점 역삼역 같은경우 역삼역 -> 삼 으로 변환됨...!
-        res = requests.get(self.station_name_url + '?' + 'statnNm=' + station_name.replace('%', '%25'))
+        station_url = self.station_name_url + '?' + 'statnNm=' + station_name.replace('%', '%25')
+        res = requests.get(station_url, timeout=1.5)
         jsn = res.json()
 
         if res.json().get('resultList') is None:
@@ -237,7 +240,7 @@ class SubwayParser(metaclass=Singleton):
         statn_id = jsn.get('resultList')[0].get('statnId')
 
         res = requests.get(self.arrival_info_url + '?' +
-                           'subwayId=' + subway_id + '&statnId=' + statn_id)
+                           'subwayId=' + subway_id + '&statnId=' + statn_id, timeout=1.5)
         jsn = res.json()
 
         ret = jsn.get('resultList2')[0].get('statnNm') + '\n'
@@ -260,7 +263,7 @@ class BusParser(metaclass=Singleton):
         self.url = 'http://bus.go.kr/xmlRequest/getStationByUid.jsp'
 
     def get_station_stat(self, station_number):
-        res = requests.get(self.url, dict(strBusNumber=station_number))
+        res = requests.get(self.url, dict(strBusNumber=station_number), timeout=1.5)
         soup = BeautifulSoup(res.text, 'html.parser')
         ret = ''
 
@@ -305,7 +308,7 @@ class LibParser(metaclass=Singleton):
         """
         :return: dict
         """
-        r = requests.get(self.url)
+        r = requests.get(self.url, timeout=1.5)
         soup = BeautifulSoup(r.text, 'html.parser')
         cnt = 1
         for i in soup.find_all('tr')[3:]:
