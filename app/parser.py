@@ -136,6 +136,7 @@ class FoodParser:
         res.encoding = 'euc-kr'
         form = defaultdict()
         soup = BeautifulSoup(res.text, 'html.parser')
+        parenthesis = re.compile(r"(\(.+)\)")
         table = soup.find_all('table', attrs={'class': 'boxstyle02'})[0]
         rows = table.findChildren(['tr'])
         day = 0  # 월화수목금 구분
@@ -145,6 +146,7 @@ class FoodParser:
             form.update({'월화수목금토일'[day]: {'조식': defaultdict(), '중식': defaultdict(), '석식': defaultdict()}})
             for cell in cells[:3]:  # 방학중에는 :3으로 슬라이싱 하고 학기중에는 :4로 슬라이싱 하면됨
                 text = cell.text.strip()
+                text = parenthesis.sub('', text)
                 menu = text.split('\r\n')
                 form['월화수목금토일'[day]][['조식', '중식', '석식'][time]]['메뉴'] = menu
                 time += 1
