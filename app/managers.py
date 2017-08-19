@@ -251,14 +251,12 @@ class DBManager:
         self.hakusiku = _food_db.hakusiku
 
     def get_data(self, date=None):
-        if date is None:
-            date = datetime.date.today().__str__()
+        date = date or datetime.date.today().__str__()
         data = self.hakusiku.find_one({'날짜': date})
         return data
 
     def set_data(self, data, date=None):
-        if date is None:
-            date = datetime.date.today().__str__()
+        date = date or datetime.date.today().__str__()
         if self.get_data(date=date) is None:
             self.hakusiku.insert_one(data)
 

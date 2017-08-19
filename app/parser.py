@@ -24,17 +24,17 @@ class FoodParser:
         self.food_court = None
         self.no_food_today = {
             '조식': {
-                '메뉴': ['식단을 불러오지 못했습니다.']
+                '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
             },
             '중식': {
-                '메뉴': ['식단을 불러오지 못했습니다.']
+                '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
             },
             '석식': {
-                '메뉴': ['식단을 불러오지 못했습니다.']
+                '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
             },
         }
         self.no_food_court_today = {
-            '메뉴': ['식단을 불러오지 못했습니다.']
+            '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
         }
 
     def refresh(self):
@@ -129,10 +129,18 @@ class FoodParser:
         import datetime
         dorm_url = 'http://ssudorm.ssu.ac.kr/SShostel/mall_main.php?viewform=B0001_foodboard_list&gyear={}&gmonth={}&gday={}'
         today = datetime.date.today()
-        year = today.year
-        month = today.month
-        date = today.day
-        res = requests.get(dorm_url.format(year, month, date), timeout=2)
+        day_of_week = today.weekday()
+        if day_of_week == 6:
+            # 일요일에 다음주로 홈페이지가 넘어가버림
+            yester_day = datetime.date.today() - datetime.timedelta(days=1)
+            year = yester_day.year
+            month = yester_day.month
+            day = yester_day.day
+        else:
+            year = today.year
+            month = today.month
+            day = today.day
+        res = requests.get(dorm_url.format(year, month, day), timeout=2)
         res.encoding = 'euc-kr'
         form = defaultdict()
         soup = BeautifulSoup(res.text, 'html.parser')
