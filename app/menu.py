@@ -104,12 +104,15 @@ class Menu:
         today = datetime.date.today().__str__()
         ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식', '기식']:
-            for time in menu:
-                star = rate2star(menu[time]['평점'])
-                ret_string += '\n{} {}\n'.format(time, star)
-                for dish in menu[time]['메뉴']:
-                    ret_string += '*{}\n'.format(dish)
+            look_up_order = '조식 조식1 조식2 중식 중식1 중식2 석식 석식1 석식2'.split()
+            for time in look_up_order:
+                if time in menu:
+                    star = rate2star(menu[time]['평점'])
+                    ret_string += '\n{} {}\n'.format(time, star)
+                    for dish in menu[time]['메뉴']:
+                        ret_string += '*{}\n'.format(dish)
             return ret_string
+
         elif place == '푸드코트':
             for dish in menu['메뉴']:
                 ret_string += '*{}\n'.format(dish)
