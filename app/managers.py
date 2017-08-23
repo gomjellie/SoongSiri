@@ -1,6 +1,5 @@
 from .message import *
 from app import session
-from .myLogger import logger_deco
 from functools import wraps
 import datetime
 
@@ -78,12 +77,19 @@ class APIManager(metaclass=Singleton):
 
         if process == '식단 평가':
             if content in self.PROCESS[process][1]:
+                # 학식, 교식 중식
                 new_msg = self.PROCESS[process][1][content]
                 return new_msg()
             elif content in self.PROCESS[process][2]:
+                # 조식 중식 석식
+                hist = UserSessionAdmin.get_history(user_key)
+                place, menu = hist[-2:]
+                place = place[:2] # 조식2->조식
+
                 new_msg = self.PROCESS[process][2][content]
                 return new_msg()
             elif content in self.PROCESS[process][3]:
+                # 맛있음 보통 맛없음
                 hist = UserSessionAdmin.get_history(user_key)
                 place, menu, rate = hist[-3:]
                 prev_rate, new_rate = DBAdmin.update_rate(user_key, place, menu, rate)

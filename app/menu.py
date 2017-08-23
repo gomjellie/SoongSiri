@@ -11,6 +11,57 @@ class Menu:
         """
         self.foods = None
         self.kor_name = kor_name
+        self.time_table = {
+            '학식': {
+                '평일': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                },
+                '주말': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                }
+            },
+            '교식': {
+                '평일': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                },
+                '주말': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                }
+            },
+            '기식': {
+                '평일': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                },
+                '주말': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                }
+            },
+            '푸드코트': {
+                '평일': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                },
+                '주말': {
+                    '조식': '',
+                    '중식': '',
+                    '석식': '',
+                }
+            },
+        }
+
     look_up_order = '조식 조식1 조식2 중식 중식1 중식2 석식 석식1 석식2'.split()
 
     @staticmethod
@@ -22,6 +73,7 @@ class Menu:
                         '평점': 0,
                         '참여자': [],
                     })
+
         try:
             from .managers import DBAdmin
             if DBAdmin.get_data():
@@ -131,8 +183,8 @@ class Menu:
             from .my_exception import FoodNotFound
             raise FoodNotFound(e)
 
+
 pupil_menu = Menu(kor_name='학식')
 faculty_menu = Menu(kor_name='교식')
 food_court_menu = Menu(kor_name='푸드코트')
 dormitory_menu = Menu(kor_name='기식')
-
