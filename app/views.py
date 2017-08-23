@@ -18,9 +18,9 @@ def message():
         viewLog("message", jsn)
         msg = APIAdmin.process("message", jsn).get_message()
         return jsonify(msg), 200
-    except Exception as inst:
+    except Exception as e:
         traceback.print_exc()
-        return process_fail(inst.__str__())
+        return process_fail(e)
 
 
 @app.route('/friend', methods=['POST'])

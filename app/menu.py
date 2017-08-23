@@ -48,8 +48,8 @@ class Menu:
             viewLog('scheduler', food_dict)
             DBAdmin.set_data(food_dict)
 
-        except Exception as inst:
-            viewLog("fail", inst.__str__())
+        except Exception as e:
+            viewLog("fail", e)
 
     def prepare_food(self):
         """
@@ -103,7 +103,7 @@ class Menu:
             ]
             return stars[round(rate)]
 
-        today = datetime.date.today().__str__()
+        today = datetime.date.today()
         ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
@@ -129,7 +129,7 @@ class Menu:
             return Menu.format_to_string(dic, place)
         except Exception as e:
             from .my_exception import FoodNotFound
-            raise FoodNotFound(e.__str__())
+            raise FoodNotFound(e)
 
 pupil_menu = Menu(kor_name='학식')
 faculty_menu = Menu(kor_name='교식')
