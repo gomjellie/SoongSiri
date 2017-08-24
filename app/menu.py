@@ -4,6 +4,100 @@ from .parser import food_api
 
 
 class Menu:
+    time_table = {
+        # 하드코딩 하는수밖에 없는거같음
+        '학식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(10, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '석식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+            }
+        },
+        '교식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 10),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+            }
+        },
+        '기식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            }
+        },
+    }
+
     def __init__(self, kor_name):
         """
         :param open_time: '2017-07-03 이런 형태'
@@ -11,56 +105,6 @@ class Menu:
         """
         self.foods = None
         self.kor_name = kor_name
-        self.time_table = {
-            '학식': {
-                '평일': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                },
-                '주말': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                }
-            },
-            '교식': {
-                '평일': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                },
-                '주말': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                }
-            },
-            '기식': {
-                '평일': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                },
-                '주말': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                }
-            },
-            '푸드코트': {
-                '평일': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                },
-                '주말': {
-                    '조식': '',
-                    '중식': '',
-                    '석식': '',
-                }
-            },
-        }
 
     look_up_order = '조식 조식1 조식2 중식 중식1 중식2 석식 석식1 석식2'.split()
 
@@ -182,6 +226,21 @@ class Menu:
         except Exception as e:
             from .my_exception import FoodNotFound
             raise FoodNotFound(e)
+
+    @staticmethod
+    def is_available_now(place, menu):
+        time_table = Menu.time_table
+        current_time = datetime.datetime.now().time()
+        today = datetime.date.today()
+        day_of_week = today.weekday()
+        is_weekend = '주말' if day_of_week in [5, 6] else '평일'
+        start_time = time_table[place][is_weekend][menu]['start time']
+        end_time = time_table[place][is_weekend][menu]['end time']
+
+        if start_time < current_time < end_time:
+            return True, start_time, end_time
+        else:
+            return False, start_time, end_time
 
 
 pupil_menu = Menu(kor_name='학식')
