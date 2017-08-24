@@ -1,6 +1,5 @@
 from .message import *
 from app import session
-from .myLogger import logger_deco
 from functools import wraps
 import datetime
 
@@ -15,7 +14,7 @@ class Singleton(type):
 
 
 class APIManager(metaclass=Singleton):
-    FREE_PROCESS = {
+    STATELESS_PROCESS = {
         '식단 보기': FoodMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
@@ -41,15 +40,9 @@ class APIManager(metaclass=Singleton):
             },
             {
                 '조식': RateFoodMessage,
-                '조식1': RateFoodMessage,
-                '조식2': RateFoodMessage,
                 '중식': RateFoodMessage,
-                '중식1': RateFoodMessage,
-                '중식2': RateFoodMessage,
                 '석식': RateFoodMessage,
-                '석식1': RateFoodMessage,
-                '석식2': RateFoodMessage,
-                '중.석식': RateFoodMessage,
+                # '중.석식': RateFoodMessage,
             },
             {
                 '맛있음': RateFoodEndMessage,
@@ -71,19 +64,31 @@ class APIManager(metaclass=Singleton):
 
     def handle_process(self, process, user_key, content):
         """
-        self.PROCESS 의 항목들을 처리한다.
+        연속되는 문답이 필요한 항목들을 처리한다.
 
         :return: Message Object
         """
 
         if process == '식단 평가':
             if content in self.PROCESS[process][1]:
+                # 학식, 교식 중식
                 new_msg = self.PROCESS[process][1][content]
                 return new_msg()
-            elif content in self.PROCESS[process][2]:
-                new_msg = self.PROCESS[process][2][content]
-                return new_msg()
+            elif content[:2] in self.PROCESS[process][2]:
+                # 조식 중식 석식
+                hist = UserSessionAdmin.get_history(user_key)
+                place, menu = hist[-2:]
+                menu = menu[:2]  # 조식2->조식
+                from .menu import Menu
+                is_available, start_time, end_time = Menu.is_available_now(place, menu)
+                if is_available:
+                    new_msg = self.PROCESS[process][2][menu]
+                    return new_msg()
+                else:
+                    UserSessionAdmin.delete(user_key)
+                    return FoodNonVotableMessage(start_time, end_time)
             elif content in self.PROCESS[process][3]:
+                # 맛있음 보통 맛없음
                 hist = UserSessionAdmin.get_history(user_key)
                 place, menu, rate = hist[-3:]
                 prev_rate, new_rate = DBAdmin.update_rate(user_key, place, menu, rate)
@@ -103,9 +108,9 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
 
-    def handle_free_process(self, user_key, content):
+    def handle_stateless_process(self, user_key, content):
         """
-        FREE_PROCESS 항목들을 처리한다.
+        연속적이지 않은 항목들을 처리한다.
 
         :param user_key:
         :param content:
@@ -117,7 +122,7 @@ class APIManager(metaclass=Singleton):
             new_msg = self.PROCESS[content][0][content]
             return new_msg()
         else:
-            new_msg = self.FREE_PROCESS[content]
+            new_msg = self.STATELESS_PROCESS[content]
             return new_msg()
 
     def get_msg(self, user_key, content):
@@ -136,7 +141,7 @@ class APIManager(metaclass=Singleton):
             return self.handle_process(process, user_key, content)
 
         else:
-            return self.handle_free_process(user_key, content)
+            return self.handle_stateless_process(user_key, content)
 
     def process(self, stat, req=None):
         if stat is 'home':
@@ -268,7 +273,7 @@ class DBManager:
         score = {
             "맛있음": 10.0,
             "보통": 5.0,
-            "맛없음": 0.5
+            "맛없음": 1,
         }
         rate = score[rate]
 
