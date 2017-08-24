@@ -83,10 +83,10 @@ class APIManager(metaclass=Singleton):
                 is_available, start_time, end_time = Menu.is_available_now(place, menu)
                 if is_available:
                     new_msg = self.PROCESS[process][2][menu]
+                    return new_msg()
                 else:
                     UserSessionAdmin.delete(user_key)
-                    new_msg = FoodNonVotableMessage(start_time, end_time)
-                return new_msg()
+                    return FoodNonVotableMessage(start_time, end_time)
             elif content in self.PROCESS[process][3]:
                 # 맛있음 보통 맛없음
                 hist = UserSessionAdmin.get_history(user_key)

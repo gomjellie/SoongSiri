@@ -172,7 +172,8 @@ class FoodNonVotableMessage(BaseMessage):
         if start_time == end_time:
             self.update_message("해당음식은 오늘 서비스 되지 않아서 평가 할 수 없습니다.")
         else:
-            self.update_message("해당 음식은 {} ~ {}에만 평가 할 수 있습니다.".format(start_time, end_time))
+            self.update_message("해당 음식은 {} ~ {}에만 평가 할 수 있습니다.".format(
+                start_time.strftime("%H:%M"), end_time.strftime("%H:%M")))
         self.update_keyboard(Keyboard.home_buttons)
 
 
