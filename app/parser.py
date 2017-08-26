@@ -3,6 +3,7 @@ import requests
 from urllib import parse
 import re
 from collections import defaultdict
+import datetime
 
 
 class Singleton(type):
@@ -37,15 +38,27 @@ class FoodParser:
             '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
         }
 
-    def refresh(self):
+    def refresh(self, day_of_week=None):
         """
         서버에 request를 보내서 식당 정보들을 갱신한다.
         인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
         fkey 인자를 생략하면 자동으로 오늘의 식단 가져옴
+        fkey 가 7 이상으로 넘어가면 다음주식단을 가져옴
+        fkey 가 음수로 되면 과거 데이터를 가져옴
+        아쉬운점은 가격을 못가져온다
+        가격은 http://soongguri.com/main.php?mkey=2&w=3&l=3&j=0 여기있음
+        여기서 다 파싱하면 뒤질지도 모름
+        내가 뒤지는게 아니라 프로그램이 뒤질거같음
+        사이트가 규칙이 갑자기 바뀌면 뻗으니까 안전하게 base_url 지금쓰는거 쓰고
+        base_url에서 가져온 메뉴검색 -> 부모의 다음 쌍둥이 -> day_of_week번째 항목에 있는 가격 가져오기 이런식으로 하는게
+        그나마 안전하지 않을까
         :return: None
         """
-        # res = requests.get(self.base_url, params={'fkey': 5})
-        res = requests.get(self.base_url, timeout=2)
+        day_of_week = day_of_week or datetime.date.today().weekday()
+        # date.weekday() 메소드는 월요일 0 일요일7인 반면 fkey는 월요일 1 일요일 0이다
+        day_of_week = (day_of_week + 1) % 8
+        res = requests.get(self.base_url, params={'fkey': day_of_week}, timeout=2)
+        # res = requests.get(self.base_url, timeout=2)
         jsn = res.json()
         if not jsn:
             return
@@ -69,7 +82,6 @@ class FoodParser:
 
     def get_faculty_food(self):
         """
-        exception 많이남(주말)
         교식 메뉴
         :return: dict
         """
@@ -126,7 +138,6 @@ class FoodParser:
         return ret_dict
 
     def get_dormitory_food(self):
-        import datetime
         dorm_url = 'http://ssudorm.ssu.ac.kr/SShostel/mall_main.php?viewform=B0001_foodboard_list&gyear={}&gmonth={}&gday={}'
         today = datetime.date.today()
         day_of_week = today.weekday()
@@ -187,7 +198,6 @@ class FoodParser:
 
     def get_food_court(self):
         """
-            exception 많이남(주말)
             :return: dict
         """
 
@@ -227,9 +237,6 @@ class FoodParser:
 
 
 class SubwayParser(metaclass=Singleton):
-    """
-
-    """
     def __init__(self):
         self.station_name_url = 'http://m.bus.go.kr/mBus/subway/getStatnByNm.bms'
         self.arrival_info_url = 'http://m.bus.go.kr/mBus/subway/getArvlByInfo.bms'
