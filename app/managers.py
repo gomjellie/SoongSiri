@@ -20,6 +20,7 @@ class APIManager(metaclass=Singleton):
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
         '푸드코트': FoodCourtMessage,
+        '더 키친': TheKitchenMessage,
         '버스': BusMessage,
         '정문(20166)': BusFrontMessage,
         '베라 앞(20165)': BusBeraMessage,
@@ -35,7 +36,6 @@ class APIManager(metaclass=Singleton):
             {
                 '학식': RatingPupilMessage,
                 '교식': RatingFacultyMessage,
-                '푸드코트': RatingFoodCourtMessage,
                 '기식': RatingDormFoodMessage,
             },
             {
