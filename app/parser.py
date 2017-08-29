@@ -207,13 +207,50 @@ class FoodParser:
     def get_the_kitchen(self):
         """
         TODO: 정규표현식 이용해서 메뉴 가격 깔끔하게 나누기
-        :return: dict
+        :return: dict{
+            "메뉴": [
+                '#Pasta#',
+                '- cream sauce',
+                '카르보나라파스타 - 6.0',
+                '만조파스타 - 7.0',
+                '크림소시지파스타 - 6.0',
+                '새우크림파스타 - 6.0',
+                '해물크림파스타 - 7.0',
+                '빠네 파스타 - 8.0 (화.목10%할인) 7.2',
+                '- tomato sauce',
+                '포모도로파스타 - 6.0',
+                '아라비아타파스타 - 6.0',
+                '스파이시치킨파스타 - 7.0',
+                '해물토마토파스타 - 7.0',
+                '생모짜렐라페스토 파스타 -7.0',
+                '- rose sauce',
+                '쉬림프로제 파스타 - 7.0',
+                '머쉬룸로제 파스타 - 7.0',
+                '게살로제 파스타 - 7.0',
+                '- olive oil sauce',
+                ...
+            ]
+        }
         """
-        ret_dict = {}
+        ret_dict = defaultdict()
+        discount = re.compile(r'10%할인\)')
+        if not self.the_kitchen:
+            return self.no_food_court_today
         for section in self.the_kitchen:
-            ret_dict.update({section: []})
-            soup = BeautifulSoup(self.the_kitchen[section], 'html.parser')
-            ret_dict[section].append(soup.text)
+            menu = self.the_kitchen[section]
+            soup = BeautifulSoup(menu, 'html.parser')
+
+            t = ''
+            if soup.find_all(['div']):
+                for i in soup.find_all(['div']):
+                    t += '\n' + ' '.join(i.text.split())
+            else:
+                for i in soup.find_all(['span']):
+                    t += '\n' + ' '.join(i.text.split())
+            # food_list = list(filter(None, t.split('\n')))
+            f = [i.replace(' ', '') for i in t.split('\n') if i != '']
+            food_list = [discount.sub('', i) + ')' if discount.findall(i) else discount.sub('', i) for i in f]
+            ret_dict.update({section: food_list})
         return ret_dict
 
     def get_snack_corner(self):
@@ -363,7 +400,7 @@ class LibParser(metaclass=Singleton):
             usage_percent = i.find_all(attrs={'color': 'blue'})[2].getText()
             room = self.seat['{} 열람실'.format(cnt)]
             room['잔여 좌석'] = int(rest)
-            room['사용중인 좌석'] = int(room['전체 좌석'])-room['잔여 좌석']
+            room['사용중인 좌석'] = int(room['전체 좌석']) - int(room['잔여 좌석'])
             room['이용률'] = usage_percent
             cnt += 1
 
@@ -373,4 +410,3 @@ subway_api = SubwayParser()
 bus_api = BusParser()
 lib_api = LibParser()
 food_api = FoodParser()
-
