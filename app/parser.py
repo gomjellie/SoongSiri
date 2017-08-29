@@ -244,12 +244,13 @@ class FoodParser:
             if soup.find_all(['div']):
                 for i in soup.find_all(['div']):
                     t += '\n' + ' '.join(i.text.split())
-            else:
-                for i in soup.find_all(['span']):
-                    t += '\n' + ' '.join(i.text.split())
+            # else:
+            #     for i in soup.find_all(['span']):
+            #         t += '\n' + ' '.join(i.text.split())
             # food_list = list(filter(None, t.split('\n')))
             f = [i.replace(' ', '') for i in t.split('\n') if i != '']
             food_list = [discount.sub('', i) + ')' if discount.findall(i) else discount.sub('', i) for i in f]
+            food_list = [i for i in food_list if len(i) < 25]  # <div><div>content</div></div>로 묶이면 나오는 긴텍스트 제거
             ret_dict.update({section: food_list})
         return ret_dict
 
