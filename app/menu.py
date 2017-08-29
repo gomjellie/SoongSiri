@@ -208,6 +208,8 @@ class Menu:
                     ret_string += '\n{} {}\n'.format(time, star)
                     for dish in menu[time]['메뉴']:
                         ret_string += '*{}\n'.format(dish)
+                    if place in ['학식', '교식']:
+                        ret_string += '*{}\n'.format(menu[time]['가격'])
             return ret_string
 
         elif place == '푸드코트':

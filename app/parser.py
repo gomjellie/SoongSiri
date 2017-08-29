@@ -18,6 +18,8 @@ class Singleton(type):
 class FoodParser:
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
+        self.price_url = 'http://soongguri.com/main.php?mkey=2&w=3&l=3&j=0'
+        self.price_res = None
         self.faculty_food = None
         self.pupil_food = None
         self.the_kitchen = None
@@ -67,6 +69,34 @@ class FoodParser:
         self.snack_corner = jsn.get('스넥코너')
         self.food_court = jsn.get('푸드코트')
         self.faculty_food = jsn.get('교직원식당')
+        self.price_res = requests.get(self.price_url, timeout=2)
+        self.price_res.encoding = 'utf-8'
+
+    def get_price(self, menu_items):
+        prices = []
+        for menu_item in menu_items:
+            res = self.price_res
+            soup = BeautifulSoup(res.text, 'html.parser')
+            div = soup.find_all('div', text=menu_item)
+            price_reg = re.compile('\d,\d{3} 원')
+
+            if len(div) == 0:
+                span = soup.find_all('span', text=menu_item)
+                if len(span) == 0:
+                    continue
+                else:
+                    span = span[0]
+                    price = price_reg.findall(span.parent.parent.parent.text)
+                    if len(price) != 0:
+                        prices.append(price)
+            else:
+                div = div[0]
+                price = price_reg.findall(div.parent.text)
+                if len(price) != 0:
+                    prices.append(price)
+        if len(prices) == 0:
+            return '가격정보가 없습니다.'
+        return max(list(prices), key=prices.count)[0]
 
     def get_food(self, place):
         if place == '학식':
@@ -104,8 +134,9 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
+            price = self.get_price(res)
 
-            ret_dict.update({section: {'메뉴': res}})
+            ret_dict.update({section: {'메뉴': res, '가격': price}})
         return ret_dict
 
     def get_pupil_food(self):
@@ -133,8 +164,9 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
+            price = self.get_price(res)
 
-            ret_dict.update({section: {'메뉴': res}})
+            ret_dict.update({section: {'메뉴': res, '가격': price}})
         return ret_dict
 
     def get_dormitory_food(self):
