@@ -152,11 +152,11 @@ class FoodParser:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']):
-                for i in soup.find_all(['span']):
+            if soup.find_all(['div']):
+                for i in soup.find_all(['div']):
                     t += '\n' + i.text
             else:
-                for i in soup.find_all(['div']):
+                for i in soup.find_all(['span']):
                     t += '\n' + i.text
 
             exclude_english = re.compile('[^가-힣 ]+')
