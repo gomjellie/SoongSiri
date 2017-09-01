@@ -20,6 +20,7 @@ class APIManager(metaclass=Singleton):
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
         '푸드코트': FoodCourtMessage,
+        '스넥코너': SnackCornerMessage,
         '더 키친': TheKitchenMessage,
         '버스': BusMessage,
         '정문(20166)': BusFrontMessage,

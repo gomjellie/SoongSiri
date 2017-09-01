@@ -1,7 +1,7 @@
 from .keyboard import Keyboard
 from json import loads, dumps
 from .menu import pupil_menu, faculty_menu, food_court_menu,\
-    dormitory_menu, the_kitchen_menu
+    dormitory_menu, the_kitchen_menu, snack_corner_menu
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 
@@ -111,6 +111,15 @@ class TheKitchenMessage(BaseMessage):
         the_kitchen_menu.prepare_food()
         open_time = '\n평일 : NAN'
         self.update_message(the_kitchen_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class SnackCornerMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        snack_corner_menu.prepare_food()
+        open_time = '\n평일 : NAN'
+        self.update_message(snack_corner_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
 
