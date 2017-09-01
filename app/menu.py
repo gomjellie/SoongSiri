@@ -129,6 +129,7 @@ class Menu:
             pupil_food = food_api.get_pupil_food()
             dorm_foods = food_api.get_dormitory_food()
             the_kitchen_food = food_api.get_the_kitchen()
+            snack_corner_food = food_api.get_snack_corner()
             day_of_week = datetime.date.today().weekday()
             dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = datetime.date.today().__str__()
@@ -141,6 +142,7 @@ class Menu:
                 '교식': faculty_food,
                 '기식': dorm_food,
                 '더 키친': the_kitchen_food,
+                '스넥코너': snack_corner_food,
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
@@ -224,6 +226,13 @@ class Menu:
                     ret_string += '\n'
                 ret_string += '{}\n'.format(dish)
             return ret_string
+        elif place == '스넥코너':
+            for dish in menu['메뉴']:
+                if dish[-1] in ['류']:
+                    ret_string += '\n{}\n'.format(dish)
+                else:
+                    ret_string += '*{}\n'.format(dish)
+            return ret_string
         else:
             raise Exception('unexpected place: {}'.format(place))
 
@@ -258,3 +267,4 @@ faculty_menu = Menu(kor_name='교식')
 food_court_menu = Menu(kor_name='푸드코트')
 dormitory_menu = Menu(kor_name='기식')
 the_kitchen_menu = Menu(kor_name='더 키친')
+snack_corner_menu = Menu(kor_name='스넥코너')

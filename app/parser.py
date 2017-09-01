@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from urllib import parse
 import re
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import datetime
 
 
@@ -152,11 +152,11 @@ class FoodParser:
             ret_dict.update({section: {'메뉴': []}})
             soup = BeautifulSoup(self.pupil_food[section], 'html.parser')
             t = ''
-            if soup.find_all(['div']):
-                for i in soup.find_all(['div']):
+            if soup.find_all(['span']):
+                for i in soup.find_all(['span']):
                     t += '\n' + i.text
             else:
-                for i in soup.find_all(['span']):
+                for i in soup.find_all(['div']):
                     t += '\n' + i.text
 
             exclude_english = re.compile('[^가-힣 ]+')
@@ -260,10 +260,20 @@ class FoodParser:
             :return: dict
         """
         ret_dict = {}
+        if not self.snack_corner:
+            return self.no_food_court_today
         for section in self.snack_corner:
-            ret_dict.update({section: []})
-            soup = BeautifulSoup(self.snack_corner[section], 'html.parser')
-            ret_dict[section].append(soup.text)
+            menu = self.snack_corner[section]
+            soup = BeautifulSoup(menu, 'html.parser')
+            div = soup.find_all(['div'])
+            t = ''
+            for i in div:
+                t += '\n' + i.text
+            f = [i.replace(' ', '').replace('\xa0', '') for i in t.split('\n') if i != '']
+            f = [i.replace('<new>', '') for i in f if i]
+            f = [i.strip() for i in f if i != '' and len(i) < 20]
+            food_list = list(OrderedDict((x, True) for x in f).keys())
+            ret_dict.update({section: food_list})
         return ret_dict
 
     def get_food_court(self):
@@ -411,3 +421,4 @@ subway_api = SubwayParser()
 bus_api = BusParser()
 lib_api = LibParser()
 food_api = FoodParser()
+
