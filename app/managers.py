@@ -255,16 +255,46 @@ class DBManager:
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
+        self.review = _food_db.review
 
-    def get_data(self, date=None):
+    def get_hakusiku_data(self, date=None):
         date = date or datetime.date.today().__str__()
         data = self.hakusiku.find_one({'날짜': date})
         return data
 
-    def set_data(self, data, date=None):
+    def set_hakusiku_data(self, data, date=None):
         date = date or datetime.date.today().__str__()
-        if self.get_data(date=date) is None:
+        if self.get_hakusiku_data(date=date) is None:
             self.hakusiku.insert_one(data)
+
+    def get_review(self):
+        date = datetime.date.today().__str__()
+        data = self.review.find_one({'날짜': date})
+        return data['리뷰']
+
+    def init_review(self):
+        date = datetime.date.today().__str__()
+        if not self.get_review():
+            self.review.insert_one({
+                '날짜': date,
+                '리뷰': [],
+            })
+
+    def append_review(self, user_key: str, new_review: str):
+        def count_user_key(lst):
+            s = 0
+            for i in lst:
+                if i.get(user_key):
+                    s += 1
+            return s
+        date = datetime.date.today().__str__()
+        data = self.review.find_one({'날짜': date})
+        review = data['리뷰']
+
+        if count_user_key(review) < 3:
+            review.append({user_key: new_review})
+        else:
+            raise Exception('하루동안 3회 이상 작성하셨습니다.')
 
     def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()

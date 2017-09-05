@@ -51,6 +51,11 @@ def viewLog(mode, data=None):
         ))
     elif mode is "query":
         app.logger.info("[query] hakusiku {}".format(data))
+    elif mode is "review":
+        app.logger.info("[review] user_key: {}, review: {}".format(
+            data['user_key'],
+            data['review'],
+        ))
     elif mode is "keyboard":
         app.logger.info("[keyboard] call home keyboard")
     elif mode is "add":
