@@ -71,7 +71,7 @@ class CancelMessage(BaseMessage):
 class FoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('장소를 선택해주세요')
+        self.update_message('장소를 선택해주세요\n\n오른쪽으로 스와이프 하면 버튼 더 있어요.\n오른쪽에 공간있어요')
         self.update_keyboard(Keyboard.food_buttons)
 
 
@@ -199,7 +199,7 @@ class FoodNonVotableMessage(BaseMessage):
 class RateFoodEndMessage(BaseMessage):
     def __init__(self, prev, post):
         super().__init__()
-        self.update_message("{:0.2f}에서 {:0.2f}으로 평점이 변경되었습니다.".format(prev, post))
+        self.update_message("{:0.2f}에서 {:0.2f}으로 별점이 변경되었습니다.".format(prev, post))
         self.update_keyboard(Keyboard.home_buttons)
 
 

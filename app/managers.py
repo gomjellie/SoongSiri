@@ -30,9 +30,9 @@ class APIManager(metaclass=Singleton):
     }
 
     PROCESS = {
-        '식단 평가': [
+        '식단 별점주기': [
             {
-                '식단 평가': SelectFoodPlaceMessage,
+                '식단 별점주기': SelectFoodPlaceMessage,
             },
             {
                 '학식': RatingPupilMessage,
@@ -70,7 +70,7 @@ class APIManager(metaclass=Singleton):
         :return: Message Object
         """
 
-        if process == '식단 평가':
+        if process == '식단 별점주기':
             if content in self.PROCESS[process][1]:
                 # 학식, 교식 중식
                 new_msg = self.PROCESS[process][1][content]
@@ -98,7 +98,7 @@ class APIManager(metaclass=Singleton):
                 return new_msg(prev_rate, new_rate)
             else:
                 UserSessionAdmin.delete(user_key)
-                return FailMessage('식단 평가 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('식단 별점주기 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다

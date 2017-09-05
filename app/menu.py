@@ -208,8 +208,9 @@ class Menu:
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
                 if time in menu:
+                    len_participant = len(menu[time]['참여자'])
                     star = rate2star(menu[time]['평점'])
-                    ret_string += '\n{} {}\n'.format(time, star)
+                    ret_string += '\n{} {}({}명 평가)\n'.format(time, star, len_participant)
                     for dish in menu[time]['메뉴']:
                         ret_string += '*{}\n'.format(dish)
                     if place in ['학식', '교식']:
@@ -217,6 +218,7 @@ class Menu:
             return ret_string
 
         elif place == '푸드코트':
+            ret_string += '\n'
             for dish in menu['메뉴']:
                 ret_string += '*{}\n'.format(dish)
             return ret_string

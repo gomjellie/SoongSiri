@@ -1,6 +1,6 @@
 class Keyboard:
     buttons = []
-    home_buttons = ["식단 보기", "식단 평가", "도서관", "버스", "지하철"]
+    home_buttons = ["식단 보기", "식단 별점주기", "도서관", "버스", "지하철"]
 
     food_buttons = ['학식', '교식', '기식', '푸드코트', '스넥코너', '더 키친']
     ratable_food_buttons = ['학식', '교식', '기식']
