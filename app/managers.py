@@ -51,7 +51,6 @@ class APIManager(metaclass=Singleton):
                 '맛없음': RateFoodEndMessage,
             },
         ],
-
         '도서관': [
             {
                 '도서관': LibMessage,
@@ -60,7 +59,21 @@ class APIManager(metaclass=Singleton):
                 # 일단 예외로 둔다
                 '*': OnGoingMessage,
             }
-        ]
+        ],
+        '식단 리뷰': [
+            {
+                '식단 리뷰': ReviewInitMessage,
+            },
+            {
+                '리뷰 보기': ReviewBrowseMessage,
+                '리뷰 남기기': ReviewPostMessage,
+                '리뷰 삭제하기': OnGoingMessage,
+            },
+            {
+                # 리뷰 남기기 하면 3단계까지 옴 키보드로 입력받은 문자열이 오기때문에 가능성이 다양함
+                '*': OnGoingMessage,
+            }
+        ],
     }
 
     def handle_process(self, process, user_key, content):
@@ -216,46 +229,15 @@ class SessionManager(metaclass=Singleton):
 
 
 class DBManager:
-    """
-    hakusiku에서 가져온 데이터의 구성
-    {
-        '_id': ObjectId('596f749eea838013c3bf4c81'),
-        '날짜': '2017-07-20',
-        '교식': {
-            '석식1':{
-                '메뉴': ['김치볶음밥계란후라이', '감자양파국'],
-                '참여자': [],
-                '평점': 0
-            },
-            '조식': {
-                '메뉴': ['방중미운영'],
-                '참여자': [],
-                '평점': 0
-            },
-            '중식1': {
-                '메뉴': ['잡곡밥', '소고기뭇국'],
-                '참여자': [],
-                '평점': 0
-            }
-        },
-        '푸드코트': {
-            '메뉴': ['로스까스 6.5', '삼선짬뽕 6.0', '연어회덮밥 7.0', '퓨전소고기마파두부6.0', '소고기마파두부6.0', '삼선짬뽕밥 6.0']
-        },
-        '학식': {
-            '중식1': {
-                '메뉴': ['쌀밥', '들깨미역국', '버섯불고기양배추쌈', '춘권튀김', '갈아만든감자전', '맛김치'],
-                '참여자': [],
-                '평점': 0
-            }
-        }
-    }
-    """
     def __init__(self):
         import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
         self.review = _food_db.review
+        self.ban_list = _food_db.ban_list
+        if self._get_black_list() is None:
+            self.ban_list.insert_one({'black_list': []})
 
     def get_hakusiku_data(self, date=None):
         date = date or datetime.date.today().__str__()
@@ -266,6 +248,16 @@ class DBManager:
         date = date or datetime.date.today().__str__()
         if self.get_hakusiku_data(date=date) is None:
             self.hakusiku.insert_one(data)
+
+    def is_banned_user(self, user_key):
+        return True if user_key in self._get_black_list() else False
+
+    def _get_black_list(self):
+        return self.ban_list.find_one({}, {'_id': 0, 'black_list': 1})
+
+    def ban_user(self, user_key):
+        black_list = self._get_black_list()
+        black_list.append(user_key)
 
     def get_review(self):
         date = datetime.date.today().__str__()
@@ -282,17 +274,17 @@ class DBManager:
 
     def append_review(self, user_key: str, new_review: str):
         def count_user_key(lst):
+            # TODO: mongodb 기능에 count 하는게 있을듯 그걸로 대체
             s = 0
             for i in lst:
-                if i.get(user_key):
+                if i.get('user_key') == user_key:
                     s += 1
             return s
-        date = datetime.date.today().__str__()
-        data = self.review.find_one({'날짜': date})
-        review = data['리뷰']
+        review = self.get_review()
 
         if count_user_key(review) < 3:
-            review.append({user_key: new_review})
+            review.append({'user_key': user_key,
+                           'content': new_review})
         else:
             raise Exception('하루동안 3회 이상 작성하셨습니다.')
 

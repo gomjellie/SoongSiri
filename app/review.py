@@ -23,8 +23,8 @@ class Review:
                   '\n리뷰를 처음으로 남겨 보세요'
 
         for review in reviews:
-            user_key = list(review)[0]
-            msg = review[user_key]
+            user_key = review['user_key']
+            msg = review['content']
             shorten_user_key = user_key[:3] + user_key[-3:]
             ret += "\n{}: {}".format(shorten_user_key, msg)
 
@@ -32,6 +32,8 @@ class Review:
 
     @staticmethod
     def new_review(user_key, new_review):
+        if DBAdmin.is_banned_user(user_key):
+            raise Exception('Banned User')
         viewLog("review", {'user_key': user_key, 'review': new_review})
         DBAdmin.append_review(user_key, new_review)
 
