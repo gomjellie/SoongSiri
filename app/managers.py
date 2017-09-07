@@ -121,6 +121,14 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
                 msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
+        elif process == '식단 리뷰':
+            print('식단 리뷰 process')
+            if content in self.PROCESS[process][1]:
+                new_msg = self.PROCESS[process][1][content]
+                return new_msg()
+            else:
+                UserSessionAdmin.delete(user_key)
+                return ReviewEndPointMessage()
 
     def handle_stateless_process(self, user_key, content):
         """

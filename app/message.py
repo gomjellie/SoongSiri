@@ -179,6 +179,13 @@ class ReviewBrowseMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
 
+class ReviewEndPointMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('ReviewEndPointMessage')
+        self.update_keyboard(Keyboard.home_buttons)
+
+
 class RatingPupilMessage(BaseMessage):
     def __init__(self):
         super().__init__()

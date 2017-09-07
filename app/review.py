@@ -1,6 +1,5 @@
 import datetime
 from .myLogger import viewLog
-from .managers import DBAdmin
 
 
 class Review:
@@ -14,6 +13,7 @@ class Review:
         :return: string
         example: "dreNXN: 솰라솰라\nkkp02n: 뭐라뭐라뭐라"
         """
+        from .managers import DBAdmin
         reviews = DBAdmin.get_review()
         ret = '{}\n'.format(datetime.date.today().__str__())
 
@@ -32,6 +32,7 @@ class Review:
 
     @staticmethod
     def new_review(user_key, new_review):
+        from .managers import DBAdmin
         if DBAdmin.is_banned_user(user_key):
             raise Exception('Banned User')
         viewLog("review", {'user_key': user_key, 'review': new_review})
@@ -39,5 +40,6 @@ class Review:
 
     @staticmethod
     def init_today_review():
+        from .managers import DBAdmin
         if not DBAdmin.get_review():
             DBAdmin.init_review()
