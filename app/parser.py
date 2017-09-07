@@ -77,11 +77,11 @@ class FoodParser:
         for menu_item in menu_items:
             res = self.price_res
             soup = BeautifulSoup(res.text, 'html.parser')
-            div = soup.find_all('div', text=menu_item)
+            div = soup.find_all('div', text=re.compile(menu_item))
             price_reg = re.compile('\d,\d{3} 원')
 
             if len(div) == 0:
-                span = soup.find_all('span', text=menu_item)
+                span = soup.find_all('span', text=re.compile(menu_item))
                 if len(span) == 0:
                     continue
                 else:
