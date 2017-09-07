@@ -18,7 +18,6 @@ class Review:
         ret = '{}\n'.format(datetime.date.today().__str__())
 
         if not reviews:
-            Review.init_today_review()
             ret = '오늘은 리뷰가 아직 없습니다.' + \
                   '\n리뷰를 처음으로 남겨 보세요'
 
@@ -37,9 +36,3 @@ class Review:
             raise Exception('Banned User')
         viewLog("review", {'user_key': user_key, 'review': new_review})
         DBAdmin.append_review(user_key, new_review)
-
-    @staticmethod
-    def init_today_review():
-        from .managers import DBAdmin
-        if not DBAdmin.get_review():
-            DBAdmin.init_review()

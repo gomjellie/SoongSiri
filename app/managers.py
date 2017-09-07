@@ -269,7 +269,7 @@ class DBManager:
 
     def get_review(self):
         date = datetime.date.today().__str__()
-        data = self.review.find_one({'날짜': date})
+        data = self.review.find_one({'날짜': date}) or self.init_review()
         return data['리뷰']
 
     def init_review(self):
@@ -279,6 +279,7 @@ class DBManager:
                 '날짜': date,
                 '리뷰': [],
             })
+        return self.get_review()
 
     def append_review(self, user_key: str, new_review: str):
         def count_user_key(lst):
