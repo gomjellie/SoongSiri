@@ -67,7 +67,7 @@ class APIManager(metaclass=Singleton):
             {
                 '리뷰 보기': ReviewBrowseMessage,
                 '리뷰 남기기': ReviewPostMessage,
-                '리뷰 삭제하기': OnGoingMessage,
+                # '리뷰 삭제하기': OnGoingMessage,
             },
             {
                 # 리뷰 남기기 하면 3단계까지 옴 키보드로 입력받은 문자열이 오기때문에 가능성이 다양함
@@ -125,10 +125,12 @@ class APIManager(metaclass=Singleton):
             print('식단 리뷰 process')
             if content in self.PROCESS[process][1]:
                 new_msg = self.PROCESS[process][1][content]
+                if content == '리뷰 보기':
+                    UserSessionAdmin.delete(user_key)
                 return new_msg()
             else:
                 UserSessionAdmin.delete(user_key)
-                return ReviewEndPointMessage()
+                return ReviewPostSuccess(user_key, content)
 
     def handle_stateless_process(self, user_key, content):
         """

@@ -179,10 +179,11 @@ class ReviewBrowseMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
 
-class ReviewEndPointMessage(BaseMessage):
-    def __init__(self):
+class ReviewPostSuccess(BaseMessage):
+    def __init__(self, user_key, content):
         super().__init__()
-        self.update_message('ReviewEndPointMessage')
+        Review.new_review(user_key, content)
+        self.update_message('성공적으로 등록되었습니다.')
         self.update_keyboard(Keyboard.home_buttons)
 
 
