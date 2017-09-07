@@ -67,7 +67,7 @@ class APIManager(metaclass=Singleton):
             {
                 '리뷰 보기': ReviewBrowseMessage,
                 '리뷰 남기기': ReviewPostMessage,
-                # '리뷰 삭제하기': OnGoingMessage,
+                '리뷰 삭제하기': OnGoingMessage,
             },
             {
                 # 리뷰 남기기 하면 3단계까지 옴 키보드로 입력받은 문자열이 오기때문에 가능성이 다양함
@@ -125,7 +125,7 @@ class APIManager(metaclass=Singleton):
             print('식단 리뷰 process')
             if content in self.PROCESS[process][1]:
                 new_msg = self.PROCESS[process][1][content]
-                if content == '리뷰 보기':
+                if content in ['리뷰 보기', '리뷰 삭제']:
                     UserSessionAdmin.delete(user_key)
                 return new_msg()
             else:
@@ -298,7 +298,7 @@ class DBManager:
             review['리뷰'].append({'user_key': user_key, 'content': new_review})
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
-            raise Exception('하루동안 3회 이상 작성하셨습니다.')
+            raise Exception('3회 이상 작성하셨습니다.')
 
     def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()

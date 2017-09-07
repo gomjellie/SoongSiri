@@ -36,3 +36,13 @@ class Review:
             raise Exception('Banned User')
         viewLog("review", {'user_key': user_key, 'content': new_review})
         DBAdmin.append_review(user_key, new_review)
+
+    @staticmethod
+    def remove_current_review(user_key):
+        from .managers import DBAdmin
+        reviews = DBAdmin.get_review()['리뷰']
+        for review in reviews[::-1]:
+            if review['user_key'] == user_key:
+                reviews.pop(review)
+                DBAdmin.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, reviews)
+                return

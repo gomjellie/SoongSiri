@@ -168,8 +168,9 @@ class ReviewInitMessage(BaseMessage):
 class ReviewPostMessage(KeyboardMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('욕설, 남을 비방하는 내용이 포함될 경우 2018년 7월 4일까지 해당기능을 이용하실 수 없습니다.' +
-                            "'취소'를 입력 하시면 취소 할 수 있습니다.")
+        self.update_message('욕설, 타인을 비방하는 내용이 포함될 경우,' +
+                            '\n2018년 7월 4일까지 해당기능을 이용하실 수 없습니다.' +
+                            "\n'취소'를 입력 하시면 취소 할 수 있습니다.")
 
 
 class ReviewBrowseMessage(BaseMessage):
