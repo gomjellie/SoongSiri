@@ -35,4 +35,5 @@ class Review:
         if DBAdmin.is_banned_user(user_key):
             raise Exception('Banned User')
         viewLog("review", {'user_key': user_key, 'review': new_review})
-        DBAdmin.append_review(user_key, new_review)
+        review = DBAdmin.get_review()
+        review.append({'user_key': user_key, 'review': new_review})
