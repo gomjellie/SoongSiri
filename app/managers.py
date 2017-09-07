@@ -273,7 +273,7 @@ class DBManager:
     def get_review(self):
         date = datetime.date.today().__str__()
         data = self.review.find_one({'날짜': date}) or self.init_review()
-        return data['리뷰']
+        return data
 
     def init_review(self):
         date = datetime.date.today().__str__()
@@ -281,7 +281,7 @@ class DBManager:
             '날짜': date,
             '리뷰': [],
         })
-        return self.review.find_one({'날짜': date})
+        return self.get_review()
 
     def append_review(self, user_key: str, new_review: str):
         def count_user_key(lst):
@@ -294,10 +294,9 @@ class DBManager:
 
         review = self.get_review()
 
-        if count_user_key(review) < 3:
-            review.append({'user_key': user_key,
-                           'content': new_review})
-            self.review.find_and_replace({'날짜': datetime.date.today().__str__()}, review)
+        if count_user_key(review['리뷰']) < 3:
+            review['리뷰'].append({'user_key': user_key, 'content': new_review})
+            self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
             raise Exception('하루동안 3회 이상 작성하셨습니다.')
 

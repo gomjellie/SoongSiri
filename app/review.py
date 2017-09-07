@@ -14,7 +14,7 @@ class Review:
         example: "dreNXN: 솰라솰라\nkkp02n: 뭐라뭐라뭐라"
         """
         from .managers import DBAdmin
-        reviews = DBAdmin.get_review()
+        reviews = DBAdmin.get_review()['리뷰']
         ret = '{}\n'.format(datetime.date.today().__str__())
 
         if not reviews:
