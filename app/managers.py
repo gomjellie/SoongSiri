@@ -202,6 +202,7 @@ class SessionManager(metaclass=Singleton):
                 return func(*args, **kwargs)
             else:
                 return False
+
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
@@ -274,52 +275,54 @@ class DBManager:
 
     def init_review(self):
         date = datetime.date.today().__str__()
-        if not self.get_review():
-            self.review.insert_one({
-                '날짜': date,
-                '리뷰': [],
-            })
-        return self.get_review()
+        self.review.insert_one({
+            '날짜': date,
+            '리뷰': [],
+        })
+        return self.review.find_one({'날짜': date})
 
-    def append_review(self, user_key: str, new_review: str):
-        def count_user_key(lst):
-            # TODO: mongodb 기능에 count 하는게 있을듯 그걸로 대체
-            s = 0
-            for i in lst:
-                if i.get('user_key') == user_key:
-                    s += 1
-            return s
-        review = self.get_review()
 
-        if count_user_key(review) < 3:
-            review.append({'user_key': user_key,
-                           'content': new_review})
-        else:
-            raise Exception('하루동안 3회 이상 작성하셨습니다.')
+def append_review(self, user_key: str, new_review: str):
+    def count_user_key(lst):
+        # TODO: mongodb 기능에 count 하는게 있을듯 그걸로 대체
+        s = 0
+        for i in lst:
+            if i.get('user_key') == user_key:
+                s += 1
+        return s
 
-    def update_rate(self, user_key, place, menu, rate):
-        today = datetime.date.today().__str__()
-        data = self.hakusiku.find_one({'날짜': today})
-        participant = data[place][menu]['참여자']
-        prev_rate = data[place][menu]['평점']
-        score = {
-            "맛있음": 10.0,
-            "보통": 5.0,
-            "맛없음": 1,
-        }
-        rate = score[rate]
+    review = self.get_review()
 
-        if user_key in participant:
-            from .my_exception import FoodRateDuplicate
-            raise FoodRateDuplicate()
-        else:
-            _prev_rate = prev_rate * len(participant)
-            participant.append(user_key)
-            new_rate = (_prev_rate + rate) / len(participant)
-            data[place][menu]['평점'] = new_rate
+    if count_user_key(review) < 3:
+        review.append({'user_key': user_key,
+                       'content': new_review})
+    else:
+        raise Exception('하루동안 3회 이상 작성하셨습니다.')
 
-            self.hakusiku.find_one_and_replace({"날짜": today}, data)
-            return prev_rate, new_rate
+
+def update_rate(self, user_key, place, menu, rate):
+    today = datetime.date.today().__str__()
+    data = self.hakusiku.find_one({'날짜': today})
+    participant = data[place][menu]['참여자']
+    prev_rate = data[place][menu]['평점']
+    score = {
+        "맛있음": 10.0,
+        "보통": 5.0,
+        "맛없음": 1,
+    }
+    rate = score[rate]
+
+    if user_key in participant:
+        from .my_exception import FoodRateDuplicate
+        raise FoodRateDuplicate()
+    else:
+        _prev_rate = prev_rate * len(participant)
+        participant.append(user_key)
+        new_rate = (_prev_rate + rate) / len(participant)
+        data[place][menu]['평점'] = new_rate
+
+        self.hakusiku.find_one_and_replace({"날짜": today}, data)
+        return prev_rate, new_rate
 
 
 APIAdmin = APIManager()
