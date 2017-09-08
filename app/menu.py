@@ -4,7 +4,7 @@ from .parser import food_api
 
 
 class Menu:
-    time_table = {
+    vacation_time_table = {
         # 하드코딩 하는수밖에 없는거같음
         '학식': {
             '평일': {
@@ -63,6 +63,99 @@ class Menu:
                 '석식': {
                     'start time': datetime.time(),
                     'end time': datetime.time(),
+                },
+            }
+        },
+        '기식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            }
+        },
+    }
+    time_table = {
+        # 하드코딩 하는수밖에 없는거같음
+        '학식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 00),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(10, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(10, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+            }
+        },
+        '교식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 00),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(8, 30),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
                 },
             }
         },
