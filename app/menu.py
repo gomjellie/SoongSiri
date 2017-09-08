@@ -120,7 +120,7 @@ class Menu:
 
         try:
             from .managers import DBAdmin
-            if DBAdmin.get_data():
+            if DBAdmin.get_hakusiku_data():
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
             food_api.refresh()
@@ -146,7 +146,7 @@ class Menu:
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
-            DBAdmin.set_data(food_dict)
+            DBAdmin.set_hakusiku_data(food_dict)
 
         except Exception as e:
             viewLog("fail", e)
@@ -157,7 +157,7 @@ class Menu:
         :return: None
         """
         from .managers import DBAdmin
-        data = DBAdmin.get_data()
+        data = DBAdmin.get_hakusiku_data()
         if data:
             self.foods = data[self.kor_name]
             viewLog("query", self.foods)
@@ -165,7 +165,7 @@ class Menu:
         else:
             try:
                 self.fetch_save_menu()
-                data = DBAdmin.get_data()
+                data = DBAdmin.get_hakusiku_data()
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
