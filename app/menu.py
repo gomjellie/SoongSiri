@@ -199,7 +199,7 @@ class Menu:
         self.foods = None
         self.kor_name = kor_name
 
-    look_up_order = '조식 조식1 조식2 중식 중식1 중식2 석식 석식1 석식2'.split()
+    look_up_order = '조식 조식1 조식2 중식 중식1 중식2 중식3 석식 석식1 석식2'.split()
 
     @staticmethod
     def fetch_save_menu():
