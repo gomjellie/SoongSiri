@@ -4,7 +4,7 @@ from .parser import food_api
 
 
 class Menu:
-    time_table = {
+    vacation_time_table = {
         # 하드코딩 하는수밖에 없는거같음
         '학식': {
             '평일': {
@@ -97,6 +97,99 @@ class Menu:
             }
         },
     }
+    time_table = {
+        # 하드코딩 하는수밖에 없는거같음
+        '학식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 00),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(10, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+                '중식': {
+                    'start time': datetime.time(10, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
+                },
+            }
+        },
+        '교식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 00),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(8, 30),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 30),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(19, 00),
+                },
+            }
+        },
+        '기식': {
+            '평일': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            },
+            '주말': {
+                '조식': {
+                    'start time': datetime.time(8, 0),
+                    'end time': datetime.time(9, 30),
+                },
+                '중식': {
+                    'start time': datetime.time(11, 00),
+                    'end time': datetime.time(14, 00),
+                },
+                '석식': {
+                    'start time': datetime.time(17, 00),
+                    'end time': datetime.time(18, 30),
+                },
+            }
+        },
+    }
 
     def __init__(self, kor_name):
         """
@@ -106,7 +199,7 @@ class Menu:
         self.foods = None
         self.kor_name = kor_name
 
-    look_up_order = '조식 조식1 조식2 중식 중식1 중식2 석식 석식1 석식2'.split()
+    look_up_order = '조식 조식1 조식2 중식 중식1 중식2 중식3 석식 석식1 석식2'.split()
 
     @staticmethod
     def fetch_save_menu():
@@ -120,7 +213,7 @@ class Menu:
 
         try:
             from .managers import DBAdmin
-            if DBAdmin.get_data():
+            if DBAdmin.get_hakusiku_data():
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
             food_api.refresh()
@@ -146,7 +239,7 @@ class Menu:
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
-            DBAdmin.set_data(food_dict)
+            DBAdmin.set_hakusiku_data(food_dict)
 
         except Exception as e:
             viewLog("fail", e)
@@ -157,7 +250,7 @@ class Menu:
         :return: None
         """
         from .managers import DBAdmin
-        data = DBAdmin.get_data()
+        data = DBAdmin.get_hakusiku_data()
         if data:
             self.foods = data[self.kor_name]
             viewLog("query", self.foods)
@@ -165,7 +258,7 @@ class Menu:
         else:
             try:
                 self.fetch_save_menu()
-                data = DBAdmin.get_data()
+                data = DBAdmin.get_hakusiku_data()
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
@@ -208,8 +301,9 @@ class Menu:
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
                 if time in menu:
+                    len_participant = len(menu[time]['참여자'])
                     star = rate2star(menu[time]['평점'])
-                    ret_string += '\n{} {}\n'.format(time, star)
+                    ret_string += '\n{} {}({}명 평가)\n'.format(time, star, len_participant)
                     for dish in menu[time]['메뉴']:
                         ret_string += '*{}\n'.format(dish)
                     if place in ['학식', '교식']:
@@ -217,6 +311,7 @@ class Menu:
             return ret_string
 
         elif place == '푸드코트':
+            ret_string += '\n'
             for dish in menu['메뉴']:
                 ret_string += '*{}\n'.format(dish)
             return ret_string

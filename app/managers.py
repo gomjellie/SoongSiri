@@ -20,7 +20,7 @@ class APIManager(metaclass=Singleton):
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
         '푸드코트': FoodCourtMessage,
-        '스넥코너': SnackCornerMessage,
+        '스낵코너': SnackCornerMessage,
         '더 키친': TheKitchenMessage,
         '버스': BusMessage,
         '정문(20166)': BusFrontMessage,
@@ -30,9 +30,9 @@ class APIManager(metaclass=Singleton):
     }
 
     PROCESS = {
-        '식단 평가': [
+        '식단 별점주기': [
             {
-                '식단 평가': SelectFoodPlaceMessage,
+                '식단 별점주기': SelectFoodPlaceMessage,
             },
             {
                 '학식': RatingPupilMessage,
@@ -51,7 +51,6 @@ class APIManager(metaclass=Singleton):
                 '맛없음': RateFoodEndMessage,
             },
         ],
-
         '도서관': [
             {
                 '도서관': LibMessage,
@@ -60,7 +59,21 @@ class APIManager(metaclass=Singleton):
                 # 일단 예외로 둔다
                 '*': OnGoingMessage,
             }
-        ]
+        ],
+        '식단 리뷰': [
+            {
+                '식단 리뷰': ReviewInitMessage,
+            },
+            {
+                '리뷰 보기': ReviewBrowseMessage,
+                '리뷰 남기기': ReviewPostMessage,
+                '리뷰 삭제하기': OnGoingMessage,
+            },
+            {
+                # 리뷰 남기기 하면 3단계까지 옴 키보드로 입력받은 문자열이 오기때문에 가능성이 다양함
+                '*': OnGoingMessage,
+            }
+        ],
     }
 
     def handle_process(self, process, user_key, content):
@@ -70,7 +83,7 @@ class APIManager(metaclass=Singleton):
         :return: Message Object
         """
 
-        if process == '식단 평가':
+        if process == '식단 별점주기':
             if content in self.PROCESS[process][1]:
                 # 학식, 교식 중식
                 new_msg = self.PROCESS[process][1][content]
@@ -98,7 +111,7 @@ class APIManager(metaclass=Singleton):
                 return new_msg(prev_rate, new_rate)
             else:
                 UserSessionAdmin.delete(user_key)
-                return FailMessage('식단 평가 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('식단 별점주기 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
         elif process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
@@ -108,6 +121,16 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
                 msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
+        elif process == '식단 리뷰':
+            print('식단 리뷰 process')
+            if content in self.PROCESS[process][1]:
+                new_msg = self.PROCESS[process][1][content]
+                if content in ['리뷰 보기', '리뷰 삭제']:
+                    UserSessionAdmin.delete(user_key)
+                return new_msg()
+            else:
+                UserSessionAdmin.delete(user_key)
+                return ReviewPostSuccess(user_key, content)
 
     def handle_stateless_process(self, user_key, content):
         """
@@ -181,6 +204,7 @@ class SessionManager(metaclass=Singleton):
                 return func(*args, **kwargs)
             else:
                 return False
+
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
@@ -216,59 +240,71 @@ class SessionManager(metaclass=Singleton):
 
 
 class DBManager:
-    """
-    hakusiku에서 가져온 데이터의 구성
-    {
-        '_id': ObjectId('596f749eea838013c3bf4c81'),
-        '날짜': '2017-07-20',
-        '교식': {
-            '석식1':{
-                '메뉴': ['김치볶음밥계란후라이', '감자양파국'],
-                '참여자': [],
-                '평점': 0
-            },
-            '조식': {
-                '메뉴': ['방중미운영'],
-                '참여자': [],
-                '평점': 0
-            },
-            '중식1': {
-                '메뉴': ['잡곡밥', '소고기뭇국'],
-                '참여자': [],
-                '평점': 0
-            }
-        },
-        '푸드코트': {
-            '메뉴': ['로스까스 6.5', '삼선짬뽕 6.0', '연어회덮밥 7.0', '퓨전소고기마파두부6.0', '소고기마파두부6.0', '삼선짬뽕밥 6.0']
-        },
-        '학식': {
-            '중식1': {
-                '메뉴': ['쌀밥', '들깨미역국', '버섯불고기양배추쌈', '춘권튀김', '갈아만든감자전', '맛김치'],
-                '참여자': [],
-                '평점': 0
-            }
-        }
-    }
-    """
     def __init__(self):
         import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
+        self.review = _food_db.review
+        self.ban_list = _food_db.ban_list
+        if self._get_black_list() is None:
+            self.ban_list.insert_one({'black_list': []})
 
-    def get_data(self, date=None):
+    def get_hakusiku_data(self, date=None):
         date = date or datetime.date.today().__str__()
         data = self.hakusiku.find_one({'날짜': date})
         return data
 
-    def set_data(self, data, date=None):
+    def set_hakusiku_data(self, data, date=None):
         date = date or datetime.date.today().__str__()
-        if self.get_data(date=date) is None:
+        if self.get_hakusiku_data(date=date) is None:
             self.hakusiku.insert_one(data)
+
+    def is_banned_user(self, user_key):
+        return True if user_key in self._get_black_list() else False
+
+    def _get_black_list(self):
+        return self.ban_list.find_one({}, {'_id': 0, 'black_list': 1})
+
+    def ban_user(self, user_key):
+        black_list = self._get_black_list()
+        black_list.append(user_key)
+
+    def get_review(self):
+        date = datetime.date.today().__str__()
+        data = self.review.find_one({'날짜': date}) or self.init_review()
+        return data
+
+    def init_review(self):
+        date = datetime.date.today().__str__()
+        self.review.insert_one({
+            '날짜': date,
+            '리뷰': [],
+        })
+        return self.get_review()
+
+    def append_review(self, user_key: str, new_review: str):
+        def count_user_key(lst):
+            # TODO: mongodb 기능에 count 하는게 있을듯 그걸로 대체
+            s = 0
+            for i in lst:
+                if i.get('user_key') == user_key:
+                    s += 1
+            return s
+
+        review = self.get_review()
+
+        if count_user_key(review['리뷰']) < 3:
+            review['리뷰'].append({'user_key': user_key, 'content': new_review})
+            self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
+        else:
+            raise Exception('3회 이상 작성하셨습니다.')
 
     def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()
+
         data = self.hakusiku.find_one({'날짜': today})
+
         participant = data[place][menu]['참여자']
         prev_rate = data[place][menu]['평점']
         score = {
@@ -280,6 +316,7 @@ class DBManager:
 
         if user_key in participant:
             from .my_exception import FoodRateDuplicate
+
             raise FoodRateDuplicate()
         else:
             _prev_rate = prev_rate * len(participant)

@@ -4,6 +4,7 @@ from .menu import pupil_menu, faculty_menu, food_court_menu,\
     dormitory_menu, the_kitchen_menu, snack_corner_menu
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
+from .review import Review
 
 
 class SuccessMessage:
@@ -61,6 +62,21 @@ class UrlMessage(BaseMessage):
         self.retMessage['message'].update({'message_button': message_button})
 
 
+class KeyboardMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        del self.retMessage['keyboard']
+
+    def get_message(self):
+        return self.retMessage
+
+    def update_message(self, message):
+        self.retMessage['message']['text'] = message
+
+    def update_keyboard(self, keyboard):
+        raise Exception("don't use update_keyboard function")
+
+
 class CancelMessage(BaseMessage):
     def __init__(self):
         super().__init__()
@@ -71,7 +87,7 @@ class CancelMessage(BaseMessage):
 class FoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('장소를 선택해주세요')
+        self.update_message('장소를 선택해주세요\n\n오른쪽으로 스와이프 하면 버튼 더 있어요.\n오른쪽에 공간있어요')
         self.update_keyboard(Keyboard.food_buttons)
 
 
@@ -142,6 +158,36 @@ class SelectFoodPlaceMessage(BaseMessage):
         self.update_keyboard(Keyboard.ratable_food_buttons)
 
 
+class ReviewInitMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('리뷰를 참고하거나, 리뷰를 직접 남겨보세요.')
+        self.update_keyboard(Keyboard.review_buttons)
+
+
+class ReviewPostMessage(KeyboardMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message('욕설, 타인을 비방하는 내용이 포함될 경우,' +
+                            '\n2018년 7월 4일까지 해당기능을 이용하실 수 없습니다.' +
+                            "\n'취소'를 입력 하시면 취소 할 수 있습니다.")
+
+
+class ReviewBrowseMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        self.update_message(Review.get_string())
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class ReviewPostSuccess(BaseMessage):
+    def __init__(self, user_key, content):
+        super().__init__()
+        Review.new_review(user_key, content)
+        self.update_message('성공적으로 등록되었습니다.')
+        self.update_keyboard(Keyboard.home_buttons)
+
+
 class RatingPupilMessage(BaseMessage):
     def __init__(self):
         super().__init__()
@@ -199,7 +245,7 @@ class FoodNonVotableMessage(BaseMessage):
 class RateFoodEndMessage(BaseMessage):
     def __init__(self, prev, post):
         super().__init__()
-        self.update_message("{:0.2f}에서 {:0.2f}으로 평점이 변경되었습니다.".format(prev, post))
+        self.update_message("{:0.2f}에서 {:0.2f}으로 별점이 변경되었습니다.".format(prev, post))
         self.update_keyboard(Keyboard.home_buttons)
 
 
