@@ -198,12 +198,12 @@ class FoodParser:
         for row in rows[1:]:
             cells = row.findChildren('td')
             time = 0  # 조식 중식 석식 구분
-            form.update({'월화수목금토일'[day]: {'조식': defaultdict(), '중식': defaultdict(), '석식': defaultdict()}})
-            for cell in cells[:3]:  # 방학중에는 :3으로 슬라이싱 하고 학기중에는 :4로 슬라이싱 하면됨
+            form.update({'월화수목금토일'[day]: {'조식': defaultdict(), '중식': defaultdict(), '석식': defaultdict(), '특식': defaultdict()}})
+            for cell in cells[:4]:  # 방학중에는 :3으로 슬라이싱 하고 학기중에는 :4로 슬라이싱 하면됨
                 text = cell.text.strip()
                 text = parenthesis.sub('', text)
                 menu = text.split('\r\n')
-                form['월화수목금토일'[day]][['조식', '중식', '석식'][time]]['메뉴'] = menu
+                form['월화수목금토일'[day]][['조식', '중식', '석식', '특식'][time]]['메뉴'] = menu
                 time += 1
             day += 1
         return form
