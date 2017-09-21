@@ -102,15 +102,15 @@ class Menu:
         '학식': {
             '평일': {
                 '조식': {
-                    'start time': datetime.time(8, 00),
-                    'end time': datetime.time(9, 30),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
                 '중식': {
-                    'start time': datetime.time(10, 30),
+                    'start time': datetime.time(10, 20),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
-                    'start time': datetime.time(17, 00),
+                    'start time': datetime.time(16, 30),
                     'end time': datetime.time(19, 00),
                 },
             },
@@ -133,29 +133,29 @@ class Menu:
             '평일': {
                 '조식': {
                     'start time': datetime.time(8, 00),
-                    'end time': datetime.time(9, 30),
+                    'end time': datetime.time(9, 00),
                 },
                 '중식': {
-                    'start time': datetime.time(11, 30),
+                    'start time': datetime.time(11, 20),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
                     'start time': datetime.time(17, 00),
-                    'end time': datetime.time(19, 00),
+                    'end time': datetime.time(18, 30),
                 },
             },
             '주말': {
                 '조식': {
-                    'start time': datetime.time(8, 30),
-                    'end time': datetime.time(9, 30),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
                 '중식': {
                     'start time': datetime.time(11, 30),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
-                    'start time': datetime.time(17, 00),
-                    'end time': datetime.time(19, 00),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
             }
         },
