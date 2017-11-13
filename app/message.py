@@ -95,7 +95,9 @@ class PupilFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         pupil_menu.prepare_food()
-        open_time = '\n평일 :   10:30 ~ 14:00(중식)\n주말 :   운영안함'
+        open_time = '\n평일 :   10:20 ~ 14:30(중식)' +\
+                    '\n평일 :   16:30 ~ 19:00(석식)' +\
+                    '\n주말 :   10:30 ~ 14:00(중식)'
         self.update_message(pupil_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -104,8 +106,9 @@ class FacultyFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         faculty_menu.prepare_food()
-        open_time = '\n평일 :   11:30 ~ 14:00(중식)' +\
-                    '\n평일 :   17:00 ~ 18:10(석식)' +\
+        open_time = '\n평일 :   08:00 ~ 09:00(조식)' + \
+                    '\n평일 :   11:20 ~ 14:00(중식)' + \
+                    '\n평일 :   17:00 ~ 18:30(석식)' +\
                     '\n주말 :   11:30 ~ 14:00(중식)'
         self.update_message(faculty_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
@@ -115,7 +118,7 @@ class FoodCourtMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         food_court_menu.prepare_food()
-        open_time = '\n평일 :   11:00 ~ 15:00(중식)' +\
+        open_time = '\n평일 :   10:30 ~ 19:00' +\
                     '\n주말 :   운영안함'
         self.update_message(food_court_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
@@ -125,7 +128,7 @@ class TheKitchenMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         the_kitchen_menu.prepare_food()
-        open_time = '\n평일 : NAN'
+        open_time = '\n평일 : 08:30 ~ 19:00'
         self.update_message(the_kitchen_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -134,7 +137,7 @@ class SnackCornerMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         snack_corner_menu.prepare_food()
-        open_time = '\n평일 : NAN'
+        open_time = '\n평일 : 11:00 ~ 18:00'
         self.update_message(snack_corner_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 

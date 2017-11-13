@@ -79,6 +79,8 @@ class FoodParser:
     def get_price(self, menu_items):
         prices = []
         for menu_item in menu_items:
+            if menu_item == '*':
+                continue
             res = self.price_res
             soup = BeautifulSoup(res.text, 'html.parser')
             div = soup.find_all('div', text=re.compile(menu_item))
@@ -168,6 +170,7 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
+            res = [each for each in res if each != '*']
             price = self.get_price(res)
 
             ret_dict.update({section: {'메뉴': res, '가격': price}})

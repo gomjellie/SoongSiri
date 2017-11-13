@@ -102,15 +102,15 @@ class Menu:
         '학식': {
             '평일': {
                 '조식': {
-                    'start time': datetime.time(8, 00),
-                    'end time': datetime.time(9, 30),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
                 '중식': {
-                    'start time': datetime.time(10, 30),
+                    'start time': datetime.time(10, 20),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
-                    'start time': datetime.time(17, 00),
+                    'start time': datetime.time(16, 30),
                     'end time': datetime.time(19, 00),
                 },
             },
@@ -133,29 +133,29 @@ class Menu:
             '평일': {
                 '조식': {
                     'start time': datetime.time(8, 00),
-                    'end time': datetime.time(9, 30),
+                    'end time': datetime.time(9, 00),
                 },
                 '중식': {
-                    'start time': datetime.time(11, 30),
+                    'start time': datetime.time(11, 20),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
                     'start time': datetime.time(17, 00),
-                    'end time': datetime.time(19, 00),
+                    'end time': datetime.time(18, 30),
                 },
             },
             '주말': {
                 '조식': {
-                    'start time': datetime.time(8, 30),
-                    'end time': datetime.time(9, 30),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
                 '중식': {
                     'start time': datetime.time(11, 30),
                     'end time': datetime.time(14, 00),
                 },
                 '석식': {
-                    'start time': datetime.time(17, 00),
-                    'end time': datetime.time(19, 00),
+                    'start time': datetime.time(),
+                    'end time': datetime.time(),
                 },
             }
         },
@@ -323,7 +323,7 @@ class Menu:
             return ret_string
         elif place == '스넥코너':
             for dish in menu['메뉴']:
-                if dish[-1] in ['류']:
+                if dish[-1] in ['류'] or dish == '샌드위치':
                     ret_string += '\n{}\n'.format(dish)
                 else:
                     ret_string += '*{}\n'.format(dish)
