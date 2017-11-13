@@ -319,6 +319,8 @@ class Menu:
             for dish in menu['메뉴']:
                 if dish[-2:] in ['할인']:
                     ret_string += '\n{}\n'.format(dish)
+                elif dish[0] in ['-', '*'] or dish == '카르보나라파스타 - 6.0':
+                    ret_string += '\n{}\n'.format(dish)
                 else:
                     ret_string += '*{}\n'.format(dish)
             return ret_string
