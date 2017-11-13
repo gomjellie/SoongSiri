@@ -240,25 +240,18 @@ class FoodParser:
         }
         """
         ret_dict = defaultdict()
-        discount = re.compile(r'10%할인\)')
+
         if not self.the_kitchen:
             return self.no_food_court_today
         for section in self.the_kitchen:
             menu = self.the_kitchen[section]
-            soup = BeautifulSoup(menu, 'html.parser')
 
-            t = ''
-            if soup.find_all(['div']):
-                for i in soup.find_all(['div']):
-                    t += '\n' + ' '.join(i.text.split())
-            # else:
-            #     for i in soup.find_all(['span']):
-            #         t += '\n' + ' '.join(i.text.split())
-            # food_list = list(filter(None, t.split('\n')))
-            f = [i.replace(' ', '') for i in t.split('\n') if i != '']
-            food_list = [discount.sub('', i) + ')' if discount.findall(i) else discount.sub('', i) for i in f]
-            food_list = [i for i in food_list if len(i) < 25]  # <div><div>content</div></div>로 묶이면 나오는 긴텍스트 제거
-            ret_dict.update({section: food_list})
+            menus = menu.split('<br>')
+            kitchen_regex = re.compile('[^가-힣 \d\-\.\+]+')
+            menus = [kitchen_regex.sub('', menu) for menu in menus]
+            menus = [menu.strip() for menu in menus if menu.strip() != '']
+
+            ret_dict.update({section: menus})
         return ret_dict
 
     def get_snack_corner(self):
