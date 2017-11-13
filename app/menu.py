@@ -323,7 +323,7 @@ class Menu:
             return ret_string
         elif place == '스넥코너':
             for dish in menu['메뉴']:
-                if dish[-1] in ['류']:
+                if dish[-1] in ['류'] or dish == '샌드위치':
                     ret_string += '\n{}\n'.format(dish)
                 else:
                     ret_string += '*{}\n'.format(dish)
