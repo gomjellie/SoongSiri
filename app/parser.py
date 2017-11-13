@@ -240,20 +240,18 @@ class FoodParser:
         }
         """
         ret_dict = defaultdict()
-        discount = re.compile(r'10%할인\)')
+
         if not self.the_kitchen:
             return self.no_food_court_today
         for section in self.the_kitchen:
             menu = self.the_kitchen[section]
 
-            t = ''
             menus = menu.split('<br>')
             kitchen_regex = re.compile('[^가-힣 \d\-\.\+]+')
             menus = [kitchen_regex.sub('', menu) for menu in menus]
-            menus = [menu.strip() for menu in menus if menu != '']
+            menus = [menu.strip() for menu in menus if menu.strip() != '']
 
-            f = [i.replace(' ', '') for i in t.split('\n') if i != '']
-            ret_dict.update({section: f})
+            ret_dict.update({section: menus})
         return ret_dict
 
     def get_snack_corner(self):
