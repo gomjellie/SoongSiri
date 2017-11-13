@@ -289,30 +289,24 @@ class FoodParser:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
+            if soup.find_all(['div']):
+                for i in soup.find_all('div')[1:]:
+                    if len(i.text) < 35:
+                        t += '{}\n'.format(i.text.strip())
+
+                t = re.sub(r"\n+", '\n', t.strip())
             else:
-                for i in soup.find_all(['span']):
-                    t += '\n' + i.text
+                # TODO: span parsing
+                t = ''
+
+            menus = t.split('\n')
+            menus = [menu for menu in menus if menu[0] not in ['#', '<', '(']]
 
             hangul = re.compile('[^가-힣 0-9.]+')
-            digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")
+            menus = [hangul.sub('', menu) for menu in menus]
+            menus = [' '.join(menu.strip().split()) for menu in menus]
 
-            s = hangul.sub('', ' '.join(t.split()))
-
-            res = digit.sub('\g<0>\n', s).split('\n')
-            res_list = []
-            filter_item = ['일식', '퓨전', [], '', '직화']
-
-            for i in res:
-                if not any(j in i.split() for j in filter_item):
-                    res_list.append(' '.join(i.split()))  # remove whitespace
-
-            if res_list.count(''):
-                res_list.remove('')
-
-            ret_dict.update({section: list(set(res_list))})
+            ret_dict.update({section: menus})
         return ret_dict
 
 
