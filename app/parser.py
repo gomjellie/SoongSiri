@@ -18,7 +18,7 @@ class Singleton(type):
 class FoodParser:
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
-        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=1"
+        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=3"
         # 'http://soongguri.com/main.php?mkey=2&w=3&l=3&j=0'
         self.price_res = None
         self.faculty_food = None
