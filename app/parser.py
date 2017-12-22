@@ -170,6 +170,7 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
+            res = [each for each in res if each != '']
             res = [each for each in res if each[0] != '*']
             price = self.get_price(res)
 
