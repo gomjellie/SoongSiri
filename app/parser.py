@@ -300,6 +300,7 @@ class FoodParser:
                 t = ''
 
             menus = t.split('\n')
+            menus = [menu for menu in menus if not menu == '']
             menus = [menu for menu in menus if menu[0] not in ['#', '<', '(']]
 
             hangul = re.compile('[^가-힣 0-9.]+')
