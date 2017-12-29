@@ -317,12 +317,9 @@ class Menu:
             return ret_string
         elif place == '더 키친':
             for dish in menu['메뉴']:
-                if dish[-2:] in ['할인']:
-                    ret_string += '\n{}\n'.format(dish)
-                elif dish[0] in ['-', '*'] or dish == '카르보나라파스타 - 6.0':
-                    ret_string += '\n{}\n'.format(dish)
-                else:
-                    ret_string += '*{}\n'.format(dish)
+                if dish[0] in ['-', '#']:
+                    ret_string += '\n'
+                ret_string += '{}\n'.format(dish)
             return ret_string
         elif place == '스넥코너':
             for dish in menu['메뉴']:

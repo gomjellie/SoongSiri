@@ -128,8 +128,7 @@ class TheKitchenMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         the_kitchen_menu.prepare_food()
-        open_time = '\n평일  :   08:30 ~ 19:00' +\
-            '\n주말 :    10:00 ~ 17:00'
+        open_time = '\n평일 : 08:30 ~ 19:00'
         self.update_message(the_kitchen_menu.get_string() + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -139,7 +138,7 @@ class SnackCornerMessage(BaseMessage):
         super().__init__()
         snack_corner_menu.prepare_food()
         open_time = '\n평일 : 11:00 ~ 18:00'
-        self.update_message(snack_corner_menu.get_string() + open_time)
+        self.update_message(snack_corner_menu.get_string())
         self.update_keyboard(Keyboard.home_buttons)
 
 

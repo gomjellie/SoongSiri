@@ -20,7 +20,7 @@ def message():
         return jsonify(msg), 200
     except Exception as e:
         traceback.print_exc()
-        return process_fail(traceback.format_exc())
+        return process_fail(e)
 
 
 @app.route('/friend', methods=['POST'])
