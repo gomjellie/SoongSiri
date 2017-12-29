@@ -1,0 +1,18 @@
+# place this at /etc/systemd/system/soongsiri.service
+
+[Unit]
+Description=gunicorn instance to serve soongsiri
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/soongsiri
+Environment="PATH=/home/ubuntu/soongsiri/venv/bin"
+# ExecStart=/home/ubuntu/soongsiri/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:9092 -m 007 wsgi:app 
+ExecStart=/home/ubuntu/soongsiri/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/soongsiri/soongsiri.sock -m 777 wsgi:app 
+# ExecStart=/home/ubuntu/soongsiri/bin/uwsgi --ini soongsiri.ini
+
+[Install]
+WantedBy=multi-user.target
+

@@ -24,3 +24,8 @@ app/__pycache__/*
 # ##################
 
 *.ipynb
+
+# Socket Stuff #
+################
+soongsiri.sock
+

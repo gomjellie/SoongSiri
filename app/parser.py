@@ -18,7 +18,7 @@ class Singleton(type):
 class FoodParser:
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
-        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=1"
+        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=3"
         # 'http://soongguri.com/main.php?mkey=2&w=3&l=3&j=0'
         self.price_res = None
         self.faculty_food = None
@@ -170,7 +170,8 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
-            res = [each for each in res if each != '*']
+            res = [each for each in res if each != '']
+            res = [each for each in res if each[0] != '*']
             price = self.get_price(res)
 
             ret_dict.update({section: {'메뉴': res, '가격': price}})
@@ -240,25 +241,18 @@ class FoodParser:
         }
         """
         ret_dict = defaultdict()
-        discount = re.compile(r'10%할인\)')
+
         if not self.the_kitchen:
             return self.no_food_court_today
         for section in self.the_kitchen:
             menu = self.the_kitchen[section]
-            soup = BeautifulSoup(menu, 'html.parser')
 
-            t = ''
-            if soup.find_all(['div']):
-                for i in soup.find_all(['div']):
-                    t += '\n' + ' '.join(i.text.split())
-            # else:
-            #     for i in soup.find_all(['span']):
-            #         t += '\n' + ' '.join(i.text.split())
-            # food_list = list(filter(None, t.split('\n')))
-            f = [i.replace(' ', '') for i in t.split('\n') if i != '']
-            food_list = [discount.sub('', i) + ')' if discount.findall(i) else discount.sub('', i) for i in f]
-            food_list = [i for i in food_list if len(i) < 25]  # <div><div>content</div></div>로 묶이면 나오는 긴텍스트 제거
-            ret_dict.update({section: food_list})
+            menus = menu.split('<br>')
+            kitchen_regex = re.compile('[^가-힣 \d\-\.\+]+')
+            menus = [kitchen_regex.sub('', menu) for menu in menus]
+            menus = [menu.strip() for menu in menus if menu.strip() != '']
+
+            ret_dict.update({section: menus})
         return ret_dict
 
     def get_snack_corner(self):
@@ -296,30 +290,25 @@ class FoodParser:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
+            if soup.find_all(['div']):
+                for i in soup.find_all('div')[1:]:
+                    if len(i.text) < 35:
+                        t += '{}\n'.format(i.text.strip())
+
+                t = re.sub(r"\n+", '\n', t.strip())
             else:
-                for i in soup.find_all(['span']):
-                    t += '\n' + i.text
+                # TODO: span parsing
+                t = ''
+
+            menus = t.split('\n')
+            menus = [menu for menu in menus if not menu == '']
+            menus = [menu for menu in menus if menu[0] not in ['#', '<', '(']]
 
             hangul = re.compile('[^가-힣 0-9.]+')
-            digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")
+            menus = [hangul.sub('', menu) for menu in menus]
+            menus = [' '.join(menu.strip().split()) for menu in menus]
 
-            s = hangul.sub('', ' '.join(t.split()))
-
-            res = digit.sub('\g<0>\n', s).split('\n')
-            res_list = []
-            filter_item = ['일식', '퓨전', [], '', '직화']
-
-            for i in res:
-                if not any(j in i.split() for j in filter_item):
-                    res_list.append(' '.join(i.split()))  # remove whitespace
-
-            if res_list.count(''):
-                res_list.remove('')
-
-            ret_dict.update({section: list(set(res_list))})
+            ret_dict.update({section: menus})
         return ret_dict
 
 
