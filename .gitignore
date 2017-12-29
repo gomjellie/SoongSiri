@@ -5,6 +5,8 @@ nohup.out
 
 # Logs and databases #
 #####################
+log/*
+app/log/
 *.log
 *.sql
 *.sqlite
