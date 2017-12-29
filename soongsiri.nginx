@@ -1,0 +1,13 @@
+# /etc/nginx/sites-available/soongsiri
+# /etc/nginx/sites-enabled/soongsiri is linking above path
+
+server {
+    listen 9091;
+    server_name 13.124.160.152;
+    
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/soongsiri-test/soongsiri.sock;
+    }
+}
+
