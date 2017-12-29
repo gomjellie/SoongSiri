@@ -7,11 +7,11 @@ After=network.target
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu/soongsiri-test
-Environment="PATH=/home/ubuntu/soongsiri-test/venv/bin"
-# ExecStart=/home/ubuntu/soongsiri-test/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:9092 -m 007 wsgi:app 
-ExecStart=/home/ubuntu/soongsiri-test/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/soongsiri-test/soongsiri.sock -m 777 wsgi:app 
-# ExecStart=/home/ubuntu/soongsiri-test/bin/uwsgi --ini soongsiri.ini
+WorkingDirectory=/home/ubuntu/soongsiri
+Environment="PATH=/home/ubuntu/soongsiri/venv/bin"
+# ExecStart=/home/ubuntu/soongsiri/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:9092 -m 007 wsgi:app 
+ExecStart=/home/ubuntu/soongsiri/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/soongsiri/soongsiri.sock -m 777 wsgi:app 
+# ExecStart=/home/ubuntu/soongsiri/bin/uwsgi --ini soongsiri.ini
 
 [Install]
 WantedBy=multi-user.target

@@ -2,12 +2,12 @@
 # /etc/nginx/sites-enabled/soongsiri is linking above path
 
 server {
-    listen 9091;
+    listen 5000;
     server_name 13.124.160.152;
     
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/soongsiri-test/soongsiri.sock;
+        proxy_pass http://unix:/home/ubuntu/soongsiri/soongsiri.sock;
     }
 }
 
