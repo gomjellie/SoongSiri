@@ -16,6 +16,7 @@ class Singleton(type):
 class APIManager(metaclass=Singleton):
     STATELESS_PROCESS = {
         '식단 보기': FoodMessage,
+        '운영시간': TimeTableMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
