@@ -2,7 +2,7 @@ class Keyboard:
     buttons = []
     home_buttons = ["식단 보기",
                     "운영시간",
-                    # "식단 별점주기",
+                    "식단 별점주기",
                     "도서관",
                     "버스",
                     "지하철"
