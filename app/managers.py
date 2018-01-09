@@ -273,13 +273,15 @@ class DBManager:
             self.ban_list.insert_one({'black_list': []})
 
     def get_hakusiku_data(self, date=None):
-        date = date or datetime.date.today().__str__()
-        data = self.hakusiku.find_one({'날짜': date})
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        data = self.hakusiku.find_one({'날짜': date_str})
         return data
 
     def set_hakusiku_data(self, data, date=None):
-        date = date or datetime.date.today().__str__()
-        if self.get_hakusiku_data(date=date) is None:
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        if self.get_hakusiku_data(date=date_str) is None:
             self.hakusiku.insert_one(data)
 
     def is_banned_user(self, user_key):
