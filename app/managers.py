@@ -52,6 +52,19 @@ class APIManager(metaclass=Singleton):
                 '맛없음': RateFoodEndMessage,
             },
         ],
+        '내일의 식단': [
+            {
+                '내일의 식단': TomorrowFoodMessage,
+            },
+            {
+                '학식': TomorrowPupilFoodMessage,
+                '교식': TomorrowFacultyFoodMessage,
+                '기식': TomorrowDormFoodMessage,
+                '푸드코트': TomorrowFoodCourtMessage,
+                '스낵코너': TomorrowSnackCornerMessage,
+                '더 키친': TomorrowTheKitchenMessage,
+            },
+        ],
         '도서관': [
             {
                 '도서관': LibMessage,
@@ -123,7 +136,6 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
         elif process == '식단 리뷰':
-            print('식단 리뷰 process')
             if content in self.PROCESS[process][1]:
                 new_msg = self.PROCESS[process][1][content]
                 if content in ['리뷰 보기', '리뷰 삭제']:
@@ -132,6 +144,15 @@ class APIManager(metaclass=Singleton):
             else:
                 UserSessionAdmin.delete(user_key)
                 return ReviewPostSuccess(user_key, content)
+        elif process == '내일의 식단':
+            if content in self.PROCESS[process][1]:
+                new_msg = self.PROCESS[process][1][content]
+                UserSessionAdmin.delete(user_key)
+            else:
+                UserSessionAdmin.delete(user_key)
+                new_msg = FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+            return new_msg()
+        return FailMessage('Unhandled process {}'.format(process))
 
     def handle_stateless_process(self, user_key, content):
         """
