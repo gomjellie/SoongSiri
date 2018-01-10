@@ -95,8 +95,12 @@ class FoodMessage(BaseMessage):
 class TomorrowFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('장소를 선택해주세요')
-        self.update_keyboard(Keyboard.food_buttons)
+        if datetime.date.today().weekday() == 6:
+            self.update_message('일요일은 내일의 식단을 볼 수 없습니다.')
+            self.update_keyboard(['취소'])
+        else:
+            self.update_message('장소를 선택해주세요')
+            self.update_keyboard(Keyboard.food_buttons)
 
 
 class PupilFoodMessage(BaseMessage):

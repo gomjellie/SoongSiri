@@ -42,13 +42,7 @@ def viewLog(mode, data=None):
             data["type"],
             data["content"]))
     elif mode is "scheduler":
-        app.logger.info("[parsing] 학식: {}, 교식: {}, 푸드코트: {}, 기식: {} 날짜: {}".format(
-            data['학식'],
-            data['교식'],
-            data['푸드코트'],
-            data['기식'],
-            data['날짜']
-        ))
+        app.logger.info("[parsing] data: {}".format(data))
     elif mode is "query":
         app.logger.info("[query] hakusiku {}".format(data))
     elif mode is "review":
