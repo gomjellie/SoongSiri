@@ -298,7 +298,8 @@ class Menu:
             return stars[round(rate)]
 
         today = date or datetime.date.today()
-        ret_string = '{} {}\n'.format(today, place)
+        day_of_week = "월화수목금토일"[today.weekday()]
+        ret_string = '{}({}) {}\n'.format(today, day_of_week, place)
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
                 if time in menu:
