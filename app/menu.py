@@ -213,7 +213,7 @@ class Menu:
 
         try:
             from .managers import DBAdmin
-            if DBAdmin.get_hakusiku_data():
+            if DBAdmin.get_hakusiku_data(date):
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
             food_api.refresh(date)
