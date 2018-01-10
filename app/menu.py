@@ -202,7 +202,7 @@ class Menu:
     look_up_order = '조식 조식1 조식2 중식 중식1 중식2 중식3 석식 석식1 석식2 특식'.split()
 
     @staticmethod
-    def fetch_save_menu():
+    def fetch_save_menu(date=None):
         def set_rate(f_dicts):
             for f_dict in f_dicts:
                 for sec in f_dict:
@@ -216,16 +216,17 @@ class Menu:
             if DBAdmin.get_hakusiku_data():
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
-            food_api.refresh()
+            food_api.refresh(date)
             food_court = food_api.get_food_court()
             faculty_food = food_api.get_faculty_food()
             pupil_food = food_api.get_pupil_food()
-            dorm_foods = food_api.get_dormitory_food()
+            dorm_foods = food_api.get_dormitory_food(date)
             the_kitchen_food = food_api.get_the_kitchen()
             snack_corner_food = food_api.get_snack_corner()
-            day_of_week = datetime.date.today().weekday()
+            date = date or datetime.date.today()
+            day_of_week = date.weekday()
             dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
-            date = datetime.date.today().__str__()
+            date = date.__str__()
 
             ratable_list = [faculty_food, pupil_food, dorm_food]
             set_rate(ratable_list)
@@ -244,21 +245,21 @@ class Menu:
         except Exception as e:
             viewLog("fail", e)
 
-    def prepare_food(self):
+    def prepare_food(self, date=None):
         """
         draft of set_food func using hakusiku db
         :return: None
         """
         from .managers import DBAdmin
-        data = DBAdmin.get_hakusiku_data()
+        data = DBAdmin.get_hakusiku_data(date)
         if data:
             self.foods = data[self.kor_name]
             viewLog("query", self.foods)
 
         else:
             try:
-                self.fetch_save_menu()
-                data = DBAdmin.get_hakusiku_data()
+                self.fetch_save_menu(date)
+                data = DBAdmin.get_hakusiku_data(date)
                 self.foods = data[self.kor_name]
             except Exception as e:
                 from .my_exception import FoodNotFound
@@ -276,7 +277,7 @@ class Menu:
         return ret
 
     @staticmethod
-    def format_to_string(menu, place):
+    def format_to_string(menu, place, date=None):
         def rate2star(rate):
             # half = '✮'
             # full = '★'
@@ -296,7 +297,7 @@ class Menu:
             ]
             return stars[round(rate)]
 
-        today = datetime.date.today()
+        today = date or datetime.date.today()
         ret_string = '{} {}\n'.format(today, place)
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
@@ -334,12 +335,12 @@ class Menu:
         else:
             raise Exception('unexpected place: {}'.format(place))
 
-    def get_string(self):
+    def get_string(self, date=None):
         dic = self.foods
         place = self.kor_name
 
         try:
-            return Menu.format_to_string(dic, place)
+            return Menu.format_to_string(dic, place, date)
         except Exception as e:
             from .my_exception import FoodNotFound
             raise FoodNotFound(e)

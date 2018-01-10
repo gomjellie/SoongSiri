@@ -44,7 +44,7 @@ class FoodParser:
             '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
         }
 
-    def refresh(self, day_of_week=None):
+    def refresh(self, date=None):
         """
         서버에 request를 보내서 식당 정보들을 갱신한다.
         인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
@@ -60,7 +60,8 @@ class FoodParser:
         그나마 안전하지 않을까
         :return: None
         """
-        day_of_week = day_of_week or datetime.date.today().weekday()
+        date = date or datetime.date.today()
+        day_of_week = date.weekday()
         # date.weekday() 메소드는 월요일 0 일요일7인 반면 fkey는 월요일 1 일요일 0이다
         day_of_week = (day_of_week + 1) % 8
         res = requests.get(self.base_url, params={'fkey': day_of_week}, timeout=2)
@@ -177,9 +178,9 @@ class FoodParser:
             ret_dict.update({section: {'메뉴': res, '가격': price}})
         return ret_dict
 
-    def get_dormitory_food(self):
+    def get_dormitory_food(self, date=None):
         dorm_url = 'http://ssudorm.ssu.ac.kr/SShostel/mall_main.php?viewform=B0001_foodboard_list&gyear={}&gmonth={}&gday={}'
-        today = datetime.date.today()
+        today = date or datetime.date.today()
         day_of_week = today.weekday()
         if day_of_week == 6:
             # 일요일에 다음주로 홈페이지가 넘어가버림
