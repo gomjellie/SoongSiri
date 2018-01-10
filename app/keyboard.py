@@ -1,6 +1,6 @@
 class Keyboard:
     buttons = []
-    home_buttons = ["식단 보기",
+    home_buttons = ["오늘의 식단",
                     "내일의 식단",
                     "운영시간",
                     "식단 별점주기",
