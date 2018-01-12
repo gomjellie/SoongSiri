@@ -240,7 +240,7 @@ class Menu:
                 '날짜': date,
             }
             viewLog('scheduler', food_dict)
-            DBAdmin.set_hakusiku_data(food_dict)
+            DBAdmin.set_hakusiku_data(food_dict, date)
 
         except Exception as e:
             viewLog("fail", e)
