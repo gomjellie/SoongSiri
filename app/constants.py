@@ -7,7 +7,7 @@ time_table = {
     '교식': {
         '평일': [
             '11:20 ~ 14:00(중식)',
-            '17:00 ~ 18:10(중식)',
+            '17:00 ~ 18:10(석식)',
         ],
         '주말': ['11:20 ~ 14:00(중식)'],
     },
@@ -29,9 +29,11 @@ time_table = {
 def get_timetable_string(location):
     t = time_table[location]
     ret = ''
-    for day in t:
-        day_time = t[day]
-        for time in day_time:
-            ret += '\n{} :   {}'.format(day, time)
+    look_up_order = '평일 주말'.split()
+    for day in look_up_order:
+        if day in t:
+            day_time = t[day]
+            for time in day_time:
+                ret += '\n{} :   {}'.format(day, time)
 
     return ret
