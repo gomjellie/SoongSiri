@@ -38,9 +38,9 @@ def get_timetable_string(location):
             day_time = t[day]
             for time in day_time:
                 if date_type == day:
-                    day = day + '🎉'
+                    day = day + '🍉'
                 else:
-                    day = day + '  '
+                    day = day + '     '
                 ret += '\n{}:{}'.format(day, time)
 
     return ret
