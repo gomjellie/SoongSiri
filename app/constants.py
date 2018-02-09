@@ -1,3 +1,4 @@
+import datetime
 
 time_table = {
     '학식': {
@@ -27,6 +28,8 @@ time_table = {
 
 
 def get_timetable_string(location):
+    week_day = datetime.date.today().weekday()
+    date_type = '주말' if week_day in [5, 6] else '평일'
     t = time_table[location]
     ret = ''
     look_up_order = '평일 주말'.split()
@@ -34,6 +37,8 @@ def get_timetable_string(location):
         if day in t:
             day_time = t[day]
             for time in day_time:
+                if date_type == day:
+                    day = '🍉' + day
                 ret += '\n{} :   {}'.format(day, time)
 
     return ret
