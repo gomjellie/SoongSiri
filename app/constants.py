@@ -27,8 +27,9 @@ time_table = {
 }
 
 
-def get_timetable_string(location):
-    week_day = datetime.date.today().weekday()
+def get_timetable_string(location, is_tomorrow=None):
+    is_tomorrow = 1 if is_tomorrow else 0
+    week_day = datetime.date.today().weekday() + is_tomorrow
     date_type = '주말' if week_day in [5, 6] else '평일'
     t = time_table[location]
     ret = ''

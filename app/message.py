@@ -118,7 +118,7 @@ class TomorrowPupilFoodMessage(BaseMessage):
         super().__init__()
         date = datetime.date.today() + datetime.timedelta(days=1)
         pupil_menu.prepare_food(date)
-        open_time = get_timetable_string('학식')
+        open_time = get_timetable_string('학식', '내일')
         self.update_message(pupil_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -137,7 +137,7 @@ class TomorrowFacultyFoodMessage(BaseMessage):
         super().__init__()
         date = datetime.date.today() + datetime.timedelta(days=1)
         faculty_menu.prepare_food(date)
-        open_time = get_timetable_string('교식')
+        open_time = get_timetable_string('교식', '내일')
         self.update_message(faculty_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -156,7 +156,7 @@ class TomorrowFoodCourtMessage(BaseMessage):
         super().__init__()
         date = datetime.date.today() + datetime.timedelta(days=1)
         food_court_menu.prepare_food(date)
-        open_time = get_timetable_string('푸드코트')
+        open_time = get_timetable_string('푸드코트', '내일')
         self.update_message(food_court_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -175,7 +175,7 @@ class TomorrowTheKitchenMessage(BaseMessage):
         super().__init__()
         date = datetime.date.today() + datetime.timedelta(days=1)
         the_kitchen_menu.prepare_food(date)
-        open_time = get_timetable_string('더 키친')
+        open_time = get_timetable_string('더 키친', '내일')
         self.update_message(the_kitchen_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
@@ -194,7 +194,7 @@ class TomorrowSnackCornerMessage(BaseMessage):
         super().__init__()
         date = datetime.date.today() + datetime.timedelta(days=1)
         snack_corner_menu.prepare_food(date)
-        open_time = get_timetable_string('스넥코너')
+        open_time = get_timetable_string('스넥코너', '내일')
         self.update_message(snack_corner_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
