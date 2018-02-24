@@ -212,8 +212,15 @@ class APIManager(metaclass=Singleton):
 
 
 class SessionManager(metaclass=Singleton):
+    def __init__(self):
+        import pymongo
+        _conn = pymongo.MongoClient()
+        user = _conn.user
+        self.session = user.session
+
+    @staticmethod
     def check_user_key(self, user_key):
-        if user_key in session:
+        if self.session.find_one({'user_key': user_key}):
             return True
         else:
             return False
@@ -222,7 +229,7 @@ class SessionManager(metaclass=Singleton):
         @wraps(func)
         def session_wrapper(*args, **kwargs):
             user_key = args[1]
-            if user_key in session:
+            if SessionManager.check_user_key(user_key):
                 return func(*args, **kwargs)
             else:
                 return False
@@ -230,35 +237,43 @@ class SessionManager(metaclass=Singleton):
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
-        session[user_key] = {
+        self.session.insert_one({
+            'user_key': user_key,
             'history': [content],
             'process': process,
-            # process[0]: process name, process[1]: process step
-        }
+        })
 
     @verify_session
     def delete(self, user_key):
-        del session[user_key]
+        self.session.remove({'user_key': user_key})
 
     @verify_session
     def add_history(self, user_key, content):
-        session[user_key]['history'].append(content)
+        user = self.session.find_one({'user_key': user_key})
+        history = user['history']
+        history.append(content)
+        user.update({'history': history})
 
     @verify_session
     def get_history(self, user_key):
-        return session[user_key]['history'][:]
+        user = self.session.find_one({'user_key': user_key})
+        history = user['history']
+        return history[:]
 
     @verify_session
     def init_process(self, user_key, process):
-        session[user_key]['process'] = process
+        user = self.session.find_one({'user_key': user_key})
+        user.update({'process': process})
 
     @verify_session
     def expire_process(self, user_key):
-        session[user_key]['process'] = None
+        user = self.session.find_one({'user_key': user_key})
+        user.update({'process': None})
 
     @verify_session
     def get_process(self, user_key):
-        return session[user_key].get('process')
+        user = self.session.find_one({'user_key': user_key})
+        return user['process']
 
 
 class DBManager:
