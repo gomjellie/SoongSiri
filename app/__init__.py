@@ -10,7 +10,6 @@ app.config.update(dict(
     PASSWORD='default'
 ))
 
-session = defaultdict()
 
 from app import views, myLogger
 myLogger.setLogger(app, 20)

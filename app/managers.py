@@ -1,7 +1,11 @@
 from .message import *
-from app import session
 from functools import wraps
 import datetime
+import pymongo
+
+_conn = pymongo.MongoClient()
+_user = _conn.user
+session = _user.session
 
 
 class Singleton(type):
@@ -212,15 +216,9 @@ class APIManager(metaclass=Singleton):
 
 
 class SessionManager(metaclass=Singleton):
-    def __init__(self):
-        import pymongo
-        _conn = pymongo.MongoClient()
-        user = _conn.user
-        self.session = user.session
-
     @staticmethod
-    def check_user_key(self, user_key):
-        if self.session.find_one({'user_key': user_key}):
+    def check_user_key(user_key):
+        if session.find_one({'user_key': user_key}):
             return True
         else:
             return False
@@ -229,7 +227,7 @@ class SessionManager(metaclass=Singleton):
         @wraps(func)
         def session_wrapper(*args, **kwargs):
             user_key = args[1]
-            if SessionManager.check_user_key(user_key):
+            if session.find_one({'user_key': user_key}):
                 return func(*args, **kwargs)
             else:
                 return False
@@ -237,7 +235,7 @@ class SessionManager(metaclass=Singleton):
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
-        self.session.insert_one({
+        session.insert_one({
             'user_key': user_key,
             'history': [content],
             'process': process,
@@ -245,40 +243,42 @@ class SessionManager(metaclass=Singleton):
 
     @verify_session
     def delete(self, user_key):
-        self.session.remove({'user_key': user_key})
+        session.remove({'user_key': user_key})
 
     @verify_session
     def add_history(self, user_key, content):
-        user = self.session.find_one({'user_key': user_key})
+        user = session.find_one({'user_key': user_key})
         history = user['history']
         history.append(content)
         user.update({'history': history})
+        session.save(user)
 
     @verify_session
     def get_history(self, user_key):
-        user = self.session.find_one({'user_key': user_key})
+        user = session.find_one({'user_key': user_key})
         history = user['history']
         return history[:]
 
     @verify_session
     def init_process(self, user_key, process):
-        user = self.session.find_one({'user_key': user_key})
+        user = session.find_one({'user_key': user_key})
         user.update({'process': process})
+        session.save(user)
 
     @verify_session
     def expire_process(self, user_key):
-        user = self.session.find_one({'user_key': user_key})
+        user = session.find_one({'user_key': user_key})
         user.update({'process': None})
+        session.save(user)
 
     @verify_session
     def get_process(self, user_key):
-        user = self.session.find_one({'user_key': user_key})
+        user = session.find_one({'user_key': user_key})
         return user['process']
 
 
 class DBManager:
     def __init__(self):
-        import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
