@@ -1,7 +1,11 @@
 from .message import *
-from app import session
 from functools import wraps
 import datetime
+import pymongo
+
+_conn = pymongo.MongoClient()
+_user = _conn.user
+session = _user.session
 
 
 class Singleton(type):
@@ -15,7 +19,8 @@ class Singleton(type):
 
 class APIManager(metaclass=Singleton):
     STATELESS_PROCESS = {
-        '식단 보기': FoodMessage,
+        '오늘의 식단': FoodMessage,
+        '운영시간': TimeTableMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
@@ -49,6 +54,19 @@ class APIManager(metaclass=Singleton):
                 '맛있음': RateFoodEndMessage,
                 '보통': RateFoodEndMessage,
                 '맛없음': RateFoodEndMessage,
+            },
+        ],
+        '내일의 식단': [
+            {
+                '내일의 식단': TomorrowFoodMessage,
+            },
+            {
+                '학식': TomorrowPupilFoodMessage,
+                '교식': TomorrowFacultyFoodMessage,
+                '기식': TomorrowDormFoodMessage,
+                '푸드코트': TomorrowFoodCourtMessage,
+                '스낵코너': TomorrowSnackCornerMessage,
+                '더 키친': TomorrowTheKitchenMessage,
             },
         ],
         '도서관': [
@@ -122,7 +140,6 @@ class APIManager(metaclass=Singleton):
                 msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
         elif process == '식단 리뷰':
-            print('식단 리뷰 process')
             if content in self.PROCESS[process][1]:
                 new_msg = self.PROCESS[process][1][content]
                 if content in ['리뷰 보기', '리뷰 삭제']:
@@ -131,6 +148,15 @@ class APIManager(metaclass=Singleton):
             else:
                 UserSessionAdmin.delete(user_key)
                 return ReviewPostSuccess(user_key, content)
+        elif process == '내일의 식단':
+            if content in self.PROCESS[process][1]:
+                new_msg = self.PROCESS[process][1][content]
+                UserSessionAdmin.delete(user_key)
+            else:
+                UserSessionAdmin.delete(user_key)
+                new_msg = FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+            return new_msg()
+        return FailMessage('Unhandled process {}'.format(process))
 
     def handle_stateless_process(self, user_key, content):
         """
@@ -190,8 +216,9 @@ class APIManager(metaclass=Singleton):
 
 
 class SessionManager(metaclass=Singleton):
-    def check_user_key(self, user_key):
-        if user_key in session:
+    @staticmethod
+    def check_user_key(user_key):
+        if session.find_one({'user_key': user_key}):
             return True
         else:
             return False
@@ -200,7 +227,7 @@ class SessionManager(metaclass=Singleton):
         @wraps(func)
         def session_wrapper(*args, **kwargs):
             user_key = args[1]
-            if user_key in session:
+            if session.find_one({'user_key': user_key}):
                 return func(*args, **kwargs)
             else:
                 return False
@@ -208,40 +235,50 @@ class SessionManager(metaclass=Singleton):
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
-        session[user_key] = {
+        session.insert_one({
+            'user_key': user_key,
             'history': [content],
             'process': process,
-            # process[0]: process name, process[1]: process step
-        }
+        })
 
     @verify_session
     def delete(self, user_key):
-        del session[user_key]
+        session.remove({'user_key': user_key})
 
     @verify_session
     def add_history(self, user_key, content):
-        session[user_key]['history'].append(content)
+        user = session.find_one({'user_key': user_key})
+        history = user['history']
+        history.append(content)
+        user.update({'history': history})
+        session.save(user)
 
     @verify_session
     def get_history(self, user_key):
-        return session[user_key]['history'][:]
+        user = session.find_one({'user_key': user_key})
+        history = user['history']
+        return history[:]
 
     @verify_session
     def init_process(self, user_key, process):
-        session[user_key]['process'] = process
+        user = session.find_one({'user_key': user_key})
+        user.update({'process': process})
+        session.save(user)
 
     @verify_session
     def expire_process(self, user_key):
-        session[user_key]['process'] = None
+        user = session.find_one({'user_key': user_key})
+        user.update({'process': None})
+        session.save(user)
 
     @verify_session
     def get_process(self, user_key):
-        return session[user_key].get('process')
+        user = session.find_one({'user_key': user_key})
+        return user['process']
 
 
 class DBManager:
     def __init__(self):
-        import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
@@ -251,13 +288,15 @@ class DBManager:
             self.ban_list.insert_one({'black_list': []})
 
     def get_hakusiku_data(self, date=None):
-        date = date or datetime.date.today().__str__()
-        data = self.hakusiku.find_one({'날짜': date})
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        data = self.hakusiku.find_one({'날짜': date_str})
         return data
 
     def set_hakusiku_data(self, data, date=None):
-        date = date or datetime.date.today().__str__()
-        if self.get_hakusiku_data(date=date) is None:
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        if self.get_hakusiku_data(date=date_str) is None:
             self.hakusiku.insert_one(data)
 
     def is_banned_user(self, user_key):

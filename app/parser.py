@@ -18,7 +18,7 @@ class Singleton(type):
 class FoodParser:
     def __init__(self):
         self.base_url = 'http://soongguri.com/menu/m_menujson.php'
-        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=1"
+        self.price_url = "http://soongguri.com/main.php?mkey=2&w=3&l=3"
         # 'http://soongguri.com/main.php?mkey=2&w=3&l=3&j=0'
         self.price_res = None
         self.faculty_food = None
@@ -44,7 +44,7 @@ class FoodParser:
             '메뉴': ['식단이 없습니다', '운영시간을 확인해 주세요']
         }
 
-    def refresh(self, day_of_week=None):
+    def refresh(self, date=None):
         """
         서버에 request를 보내서 식당 정보들을 갱신한다.
         인자로 fkey를 받는데 1은 월요일, 5는 금요일 이런식이다.
@@ -60,7 +60,8 @@ class FoodParser:
         그나마 안전하지 않을까
         :return: None
         """
-        day_of_week = day_of_week or datetime.date.today().weekday()
+        date = date or datetime.date.today()
+        day_of_week = date.weekday()
         # date.weekday() 메소드는 월요일 0 일요일7인 반면 fkey는 월요일 1 일요일 0이다
         day_of_week = (day_of_week + 1) % 8
         res = requests.get(self.base_url, params={'fkey': day_of_week}, timeout=2)
@@ -79,6 +80,8 @@ class FoodParser:
     def get_price(self, menu_items):
         prices = []
         for menu_item in menu_items:
+            if menu_item == '*':
+                continue
             res = self.price_res
             soup = BeautifulSoup(res.text, 'html.parser')
             div = soup.find_all('div', text=re.compile(menu_item))
@@ -168,14 +171,16 @@ class FoodParser:
             res = exclude_english.sub('', ' '.join(t.split()))
             res = ' '.join(res.split())
             res = res.split(' ')
+            res = [each for each in res if each != '']
+            res = [each for each in res if each[0] != '*']
             price = self.get_price(res)
 
             ret_dict.update({section: {'메뉴': res, '가격': price}})
         return ret_dict
 
-    def get_dormitory_food(self):
+    def get_dormitory_food(self, date=None):
         dorm_url = 'http://ssudorm.ssu.ac.kr/SShostel/mall_main.php?viewform=B0001_foodboard_list&gyear={}&gmonth={}&gday={}'
-        today = datetime.date.today()
+        today = date or datetime.date.today()
         day_of_week = today.weekday()
         if day_of_week == 6:
             # 일요일에 다음주로 홈페이지가 넘어가버림
@@ -237,25 +242,18 @@ class FoodParser:
         }
         """
         ret_dict = defaultdict()
-        discount = re.compile(r'10%할인\)')
+
         if not self.the_kitchen:
             return self.no_food_court_today
         for section in self.the_kitchen:
             menu = self.the_kitchen[section]
-            soup = BeautifulSoup(menu, 'html.parser')
 
-            t = ''
-            if soup.find_all(['div']):
-                for i in soup.find_all(['div']):
-                    t += '\n' + ' '.join(i.text.split())
-            # else:
-            #     for i in soup.find_all(['span']):
-            #         t += '\n' + ' '.join(i.text.split())
-            # food_list = list(filter(None, t.split('\n')))
-            f = [i.replace(' ', '') for i in t.split('\n') if i != '']
-            food_list = [discount.sub('', i) + ')' if discount.findall(i) else discount.sub('', i) for i in f]
-            food_list = [i for i in food_list if len(i) < 25]  # <div><div>content</div></div>로 묶이면 나오는 긴텍스트 제거
-            ret_dict.update({section: food_list})
+            menus = menu.split('<br>')
+            kitchen_regex = re.compile('[^가-힣 \d\-\.\+]+')
+            menus = [kitchen_regex.sub('', menu) for menu in menus]
+            menus = [menu.strip() for menu in menus if menu.strip() != '']
+
+            ret_dict.update({section: menus})
         return ret_dict
 
     def get_snack_corner(self):
@@ -293,30 +291,25 @@ class FoodParser:
             ret_dict.update({section: []})
             soup = BeautifulSoup(self.food_court[section], 'html.parser')
             t = ''
-            if soup.find_all(['span']) == []:
-                for i in soup.find_all(['div']):
-                    t += '\n' + i.text
+            if soup.find_all(['div']):
+                for i in soup.find_all('div')[1:]:
+                    if len(i.text) < 35:
+                        t += '{}\n'.format(i.text.strip())
+
+                t = re.sub(r"\n+", '\n', t.strip())
             else:
-                for i in soup.find_all(['span']):
-                    t += '\n' + i.text
+                # TODO: span parsing
+                t = ''
+
+            menus = t.split('\n')
+            menus = [menu for menu in menus if not menu == '']
+            menus = [menu for menu in menus if menu[0] not in ['#', '<', '(']]
 
             hangul = re.compile('[^가-힣 0-9.]+')
-            digit = re.compile(r"[(?P<num>(0-9.)*?)(?p<last>\s*)]+")
+            menus = [hangul.sub('', menu) for menu in menus]
+            menus = [' '.join(menu.strip().split()) for menu in menus]
 
-            s = hangul.sub('', ' '.join(t.split()))
-
-            res = digit.sub('\g<0>\n', s).split('\n')
-            res_list = []
-            filter_item = ['일식', '퓨전', [], '', '직화']
-
-            for i in res:
-                if not any(j in i.split() for j in filter_item):
-                    res_list.append(' '.join(i.split()))  # remove whitespace
-
-            if res_list.count(''):
-                res_list.remove('')
-
-            ret_dict.update({section: list(set(res_list))})
+            ret_dict.update({section: menus})
         return ret_dict
 
 

@@ -5,6 +5,8 @@ from .menu import pupil_menu, faculty_menu, food_court_menu,\
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 from .review import Review
+from .constants import get_timetable_string
+import datetime
 
 
 class SuccessMessage:
@@ -91,12 +93,33 @@ class FoodMessage(BaseMessage):
         self.update_keyboard(Keyboard.food_buttons)
 
 
+class TomorrowFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        if datetime.date.today().weekday() == 6:
+            self.update_message('일요일은 내일의 식단을 볼 수 없습니다.')
+            self.update_keyboard(['취소'])
+        else:
+            self.update_message('장소를 선택해주세요')
+            self.update_keyboard(Keyboard.food_buttons)
+
+
 class PupilFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         pupil_menu.prepare_food()
-        open_time = '\n평일 :   10:30 ~ 14:00(중식)\n주말 :   운영안함'
+        open_time = get_timetable_string('학식')
         self.update_message(pupil_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowPupilFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        pupil_menu.prepare_food(date)
+        open_time = get_timetable_string('학식', '내일')
+        self.update_message(pupil_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -104,10 +127,18 @@ class FacultyFoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         faculty_menu.prepare_food()
-        open_time = '\n평일 :   11:30 ~ 14:00(중식)' +\
-                    '\n평일 :   17:00 ~ 18:10(석식)' +\
-                    '\n주말 :   11:30 ~ 14:00(중식)'
+        open_time = get_timetable_string('교식')
         self.update_message(faculty_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowFacultyFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        faculty_menu.prepare_food(date)
+        open_time = get_timetable_string('교식', '내일')
+        self.update_message(faculty_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -115,9 +146,18 @@ class FoodCourtMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         food_court_menu.prepare_food()
-        open_time = '\n평일 :   11:00 ~ 15:00(중식)' +\
-                    '\n주말 :   운영안함'
+        open_time = get_timetable_string('푸드코트')
         self.update_message(food_court_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowFoodCourtMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        food_court_menu.prepare_food(date)
+        open_time = get_timetable_string('푸드코트', '내일')
+        self.update_message(food_court_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -125,8 +165,18 @@ class TheKitchenMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         the_kitchen_menu.prepare_food()
-        open_time = '\n평일 : NAN'
+        open_time = get_timetable_string('더 키친')
         self.update_message(the_kitchen_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowTheKitchenMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        the_kitchen_menu.prepare_food(date)
+        open_time = get_timetable_string('더 키친', '내일')
+        self.update_message(the_kitchen_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -134,8 +184,18 @@ class SnackCornerMessage(BaseMessage):
     def __init__(self):
         super().__init__()
         snack_corner_menu.prepare_food()
-        open_time = '\n평일 : NAN'
-        self.update_message(snack_corner_menu.get_string())
+        open_time = get_timetable_string('스넥코너')
+        self.update_message(snack_corner_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowSnackCornerMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        snack_corner_menu.prepare_food(date)
+        open_time = get_timetable_string('스넥코너', '내일')
+        self.update_message(snack_corner_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -148,6 +208,19 @@ class DormFoodMessage(BaseMessage):
                     '\n석식 : 17:00 ~ 18:30' +\
                     '\n쉬는시간 : 14:30~15:00 16:00~17:00'
         self.update_message(dormitory_menu.get_string() + open_time)
+        self.update_keyboard(Keyboard.home_buttons)
+
+
+class TomorrowDormFoodMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        date = datetime.date.today() + datetime.timedelta(days=1)
+        dormitory_menu.prepare_food(date)
+        open_time = '\n조식 : 08:00 ~ 09:30' +\
+                    '\n중식 : 11:00 ~ 14:00' +\
+                    '\n석식 : 17:00 ~ 18:30' +\
+                    '\n쉬는시간 : 14:30~15:00 16:00~17:00'
+        self.update_message(dormitory_menu.get_string(date) + open_time)
         self.update_keyboard(Keyboard.home_buttons)
 
 
@@ -301,6 +374,13 @@ class LibStatMessage(UrlMessage):
         url = 'http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room)
         self.update_message('{}열람실 좌석 테이블입니다.'.format(room), '좌석 확인하기', url)
         self.update_keyboard(Keyboard.home_buttons)
+
+
+class TimeTableMessage(UrlMessage):
+    def __init__(self):
+        super().__init__()
+        url = 'http://soongguri.com/pages/hours.php'
+        self.update_message('방학중 생활협동조합 매장별 운영시간', '매장별 시간 확인하기', url)
 
 
 class SubMessage(BaseMessage):
