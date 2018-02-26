@@ -381,6 +381,7 @@ class TimeTableMessage(UrlMessage):
         super().__init__()
         url = 'http://soongguri.com/pages/hours.php'
         self.update_message('방학중 생활협동조합 매장별 운영시간', '매장별 시간 확인하기', url)
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class SubMessage(BaseMessage):
