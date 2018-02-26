@@ -2,10 +2,7 @@ from .message import *
 from functools import wraps
 import datetime
 import pymongo
-
-_conn = pymongo.MongoClient()
-_user = _conn.user
-session = _user.session
+from app import session
 
 
 class Singleton(type):
