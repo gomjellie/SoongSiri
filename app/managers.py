@@ -134,7 +134,7 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
-                msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
         elif process == '식단 리뷰':
             if content in self.PROCESS[process][1]:
@@ -151,7 +151,7 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
-                new_msg = FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return new_msg()
         return FailMessage('Unhandled process {}'.format(process))
 
