@@ -348,7 +348,7 @@ class Menu:
 
     @staticmethod
     def is_available_now(place, menu):
-        time_table = Menu.vacation_time_table
+        time_table = Menu.time_table
         current_time = datetime.datetime.now().time()
         today = datetime.date.today()
         day_of_week = today.weekday()
