@@ -61,7 +61,7 @@ def get_timetable_string(location, is_tomorrow=None):
     is_tomorrow = 1 if is_tomorrow else 0
     week_day = datetime.date.today().weekday() + is_tomorrow
     date_type = '주말' if week_day in [5, 6] else '평일'
-    t = vacation_time_table[location]
+    t = time_table[location]
     ret = ''
     look_up_order = '평일 주말'.split()
     for day in look_up_order:
