@@ -89,7 +89,7 @@ class CancelMessage(BaseMessage):
 class FoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('장소를 선택해주세요\n\n오른쪽으로 스와이프 하면 버튼 더 있어요.\n오른쪽에 공간있어요')
+        self.update_message('장소를 선택해주세요\n')
         self.update_keyboard(Keyboard.food_buttons)
 
 
@@ -98,6 +98,9 @@ class TomorrowFoodMessage(BaseMessage):
         super().__init__()
         if datetime.date.today().weekday() == 6:
             self.update_message('일요일은 내일의 식단을 볼 수 없습니다.')
+            self.update_keyboard(['취소'])
+        elif datetime.date.today().weekday() == 5:
+            self.update_message('토요일은 내일의 식단을 볼 수 없습니다.')
             self.update_keyboard(['취소'])
         else:
             self.update_message('장소를 선택해주세요')
