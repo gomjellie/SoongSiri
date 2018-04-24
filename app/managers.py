@@ -2,6 +2,7 @@ from .message import *
 from functools import wraps
 import datetime
 import pymongo
+import re
 from app import session
 
 
@@ -329,10 +330,13 @@ class DBManager:
                     s += 1
             return s
 
+        def remove_special_char(src):
+            return re.sub("[!@#$%^&*()]", "", src)
+
         review = self.get_review()
 
         if count_user_key(review['리뷰']) < 3:
-            review['리뷰'].append({'user_key': user_key, 'content': new_review})
+            review['리뷰'].append({'user_key': user_key, 'content': remove_special_char(new_review)})
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
             raise Exception('3회 이상 작성하셨습니다.')
