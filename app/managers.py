@@ -335,11 +335,11 @@ class DBManager:
 
         review = self.get_review()
 
-        if count_user_key(review['리뷰']) < 3:
+        if count_user_key(review['리뷰']) < 5:
             review['리뷰'].append({'user_key': user_key, 'content': remove_special_char(new_review)})
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
-            raise Exception('3회 이상 작성하셨습니다.')
+            raise Exception('5회 이상 작성하셨습니다.')
 
     def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()

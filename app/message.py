@@ -237,7 +237,7 @@ class SelectFoodPlaceMessage(BaseMessage):
 class ReviewInitMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('리뷰를 참고하거나, 리뷰를 직접 남겨보세요.')
+        self.update_message('리뷰를 참고하거나, 리뷰를 직접 남겨보세요.\n' + Review.get_string())
         self.update_keyboard(Keyboard.review_buttons)
 
 
