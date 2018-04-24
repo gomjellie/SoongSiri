@@ -364,16 +364,21 @@ class BusMiddleMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
 
-class LibMessage(BaseMessage):
+class LibMessage(UrlMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('열람실을 선택해 주세요')
-        self.update_keyboard(LibrarySeat.get_buttons())
+        lib_msg = "\n".join(("시험기간중 시간표", "자유열람실", "제1,4열람실 : 06:00 ~ 24:00", "제2,3,박사열람실: 24시간", "자료열람실", "평일 : 09:00 ~ 22:00 (일부운영)", "주말: 09:00 ~ 17:00"))
+        self.update_message(lib_msg, "열람좌석 조회", url="https://oasis.ssu.ac.kr/#/smuf/seat/status")
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class LibStatMessage(UrlMessage):
+    """
+    deprecated
+    """
     def __init__(self, room):
         super().__init__()
+        raise Exception("Deprecated Class LibStatMessage")
         url = 'http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room)
         self.update_message('{}열람실 좌석 테이블입니다.'.format(room), '좌석 확인하기', url)
         self.update_keyboard(Keyboard.home_buttons)
