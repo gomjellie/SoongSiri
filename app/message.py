@@ -367,7 +367,9 @@ class BusMiddleMessage(BaseMessage):
 class LibMessage(UrlMessage):
     def __init__(self):
         super().__init__()
-        lib_msg = "\n".join(("시험기간중 시간표", "자유열람실", "제1,4열람실 : 06:00 ~ 24:00", "제2,3,박사열람실: 24시간", "자료열람실", "평일 : 09:00 ~ 22:00 (일부운영)", "주말: 09:00 ~ 17:00"))
+        lib_msg = "\n".join(("시험기간중 시간표",
+                             "\n자유열람실", "제 1, 4열람실 : 06:00 ~ 24:00", "제 2, 3, 박사열람실 : 24시간",
+                             "\n자료열람실", "평일 : 09:00 ~ 22:00 (일부운영)", "주말 : 09:00 ~ 17:00"))
         self.update_message(lib_msg, "열람좌석 조회", url="https://oasis.ssu.ac.kr/#/smuf/seat/status")
         self.update_keyboard(Keyboard.home_buttons)
 
