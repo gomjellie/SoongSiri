@@ -2,10 +2,8 @@ from .message import *
 from functools import wraps
 import datetime
 import pymongo
-
-_conn = pymongo.MongoClient()
-_user = _conn.user
-session = _user.session
+import re
+from app import session
 
 
 class Singleton(type):
@@ -32,6 +30,7 @@ class APIManager(metaclass=Singleton):
         '베라 앞(20165)': BusBeraMessage,
         '중문(20169)': BusMiddleMessage,
         '지하철': SubMessage,
+        '도서관': LibMessage,
     }
 
     PROCESS = {
@@ -69,15 +68,15 @@ class APIManager(metaclass=Singleton):
                 '더 키친': TomorrowTheKitchenMessage,
             },
         ],
-        '도서관': [
-            {
-                '도서관': LibMessage,
-            },
-            {
-                # 일단 예외로 둔다
-                '*': OnGoingMessage,
-            }
-        ],
+        # '도서관': [
+        #     {
+        #         '도서관': LibMessage,
+        #     },
+        #     {
+        #         # 일단 예외로 둔다
+        #         '*': OnGoingMessage,
+        #     }
+        # ],
         '식단 리뷰': [
             {
                 '식단 리뷰': ReviewInitMessage,
@@ -137,7 +136,7 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
-                msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
         elif process == '식단 리뷰':
             if content in self.PROCESS[process][1]:
@@ -154,7 +153,7 @@ class APIManager(metaclass=Singleton):
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
-                new_msg = FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return new_msg()
         return FailMessage('Unhandled process {}'.format(process))
 
@@ -331,13 +330,16 @@ class DBManager:
                     s += 1
             return s
 
+        def remove_special_char(src):
+            return re.sub("[!@#$%^&*()]", "", src)
+
         review = self.get_review()
 
-        if count_user_key(review['리뷰']) < 3:
-            review['리뷰'].append({'user_key': user_key, 'content': new_review})
+        if count_user_key(review['리뷰']) < 5:
+            review['리뷰'].append({'user_key': user_key, 'content': remove_special_char(new_review)})
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
-            raise Exception('3회 이상 작성하셨습니다.')
+            raise Exception('5회 이상 작성하셨습니다.')
 
     def update_rate(self, user_key, place, menu, rate):
         today = datetime.date.today().__str__()

@@ -5,7 +5,7 @@
 
 식단지원 리스트는 다음과 같습니다:
 
-학식(학생 식당), 교식(교직원 식당), 기식(기숙사), 푸트코트의 학식
+학식(학생 식당), 교식(교직원 식당), 기식(기숙사), 푸트코트, 스낵코너, 더 키친
 
 식단정보를 보여줄 뿐만아니라 별점을 매겨서 다른 학우의 선택을 도울 수 있습니다.
 
@@ -27,9 +27,10 @@ pip install -r ./requirements.txt
 ## set time-zone
 
 ```bash
-tzselect
+dpkg-reconfigure tzdata
 ```
 
+asia -> seoul 선택
 
 ## set mongodb environ
 

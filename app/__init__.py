@@ -1,5 +1,5 @@
 from flask import Flask
-from collections import defaultdict
+import pymongo
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -9,6 +9,11 @@ app.config.update(dict(
     USERNAME='admin',
     PASSWORD='default'
 ))
+
+
+_conn = pymongo.MongoClient()
+_user = _conn.user
+session = _user.session
 
 
 from app import views, myLogger

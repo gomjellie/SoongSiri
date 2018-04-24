@@ -89,7 +89,7 @@ class CancelMessage(BaseMessage):
 class FoodMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('장소를 선택해주세요\n\n오른쪽으로 스와이프 하면 버튼 더 있어요.\n오른쪽에 공간있어요')
+        self.update_message('장소를 선택해주세요\n')
         self.update_keyboard(Keyboard.food_buttons)
 
 
@@ -98,6 +98,9 @@ class TomorrowFoodMessage(BaseMessage):
         super().__init__()
         if datetime.date.today().weekday() == 6:
             self.update_message('일요일은 내일의 식단을 볼 수 없습니다.')
+            self.update_keyboard(['취소'])
+        elif datetime.date.today().weekday() == 5:
+            self.update_message('토요일은 내일의 식단을 볼 수 없습니다.')
             self.update_keyboard(['취소'])
         else:
             self.update_message('장소를 선택해주세요')
@@ -234,7 +237,7 @@ class SelectFoodPlaceMessage(BaseMessage):
 class ReviewInitMessage(BaseMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('리뷰를 참고하거나, 리뷰를 직접 남겨보세요.')
+        self.update_message('리뷰를 참고하거나, 리뷰를 직접 남겨보세요.\n' + Review.get_string())
         self.update_keyboard(Keyboard.review_buttons)
 
 
@@ -361,16 +364,23 @@ class BusMiddleMessage(BaseMessage):
         self.update_keyboard(Keyboard.home_buttons)
 
 
-class LibMessage(BaseMessage):
+class LibMessage(UrlMessage):
     def __init__(self):
         super().__init__()
-        self.update_message('열람실을 선택해 주세요')
-        self.update_keyboard(LibrarySeat.get_buttons())
+        lib_msg = "\n".join(("시험기간중 시간표",
+                             "\n자유열람실", "제 1, 4열람실 : 06:00 ~ 24:00", "제 2, 3, 박사열람실 : 24시간",
+                             "\n자료열람실", "평일 : 09:00 ~ 22:00 (일부운영)", "주말 : 09:00 ~ 17:00"))
+        self.update_message(lib_msg, "열람좌석 조회", url="https://oasis.ssu.ac.kr/#/smuf/seat/status")
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class LibStatMessage(UrlMessage):
+    """
+    deprecated
+    """
     def __init__(self, room):
         super().__init__()
+        raise Exception("Deprecated Class LibStatMessage")
         url = 'http://203.253.28.47/seat/roomview5.asp?room_no={}'.format(room)
         self.update_message('{}열람실 좌석 테이블입니다.'.format(room), '좌석 확인하기', url)
         self.update_keyboard(Keyboard.home_buttons)
@@ -381,6 +391,7 @@ class TimeTableMessage(UrlMessage):
         super().__init__()
         url = 'http://soongguri.com/pages/hours.php'
         self.update_message('방학중 생활협동조합 매장별 운영시간', '매장별 시간 확인하기', url)
+        self.update_keyboard(Keyboard.home_buttons)
 
 
 class SubMessage(BaseMessage):
