@@ -29,6 +29,7 @@ class APIManager(metaclass=Singleton):
         '베라 앞(20165)': BusBeraMessage,
         '중문(20169)': BusMiddleMessage,
         '지하철': SubMessage,
+        '도서관': LibMessage,
     }
 
     PROCESS = {
@@ -66,15 +67,15 @@ class APIManager(metaclass=Singleton):
                 '더 키친': TomorrowTheKitchenMessage,
             },
         ],
-        '도서관': [
-            {
-                '도서관': LibMessage,
-            },
-            {
-                # 일단 예외로 둔다
-                '*': OnGoingMessage,
-            }
-        ],
+        # '도서관': [
+        #     {
+        #         '도서관': LibMessage,
+        #     },
+        #     {
+        #         # 일단 예외로 둔다
+        #         '*': OnGoingMessage,
+        #     }
+        # ],
         '식단 리뷰': [
             {
                 '식단 리뷰': ReviewInitMessage,
