@@ -55,7 +55,8 @@ def page_not_found(e):
 
 
 def process_fail(exception_str):
-    user_key = request.get_json().get('user_key')
+    jsn = request.get_json() or {'user_key': 'not_user'}
+    user_key = jsn.get('user_key')
     msg = APIAdmin.process("fail", {'user_key': user_key, 'log': exception_str}).get_message()
     viewLog("fail", data=exception_str)
     return jsonify(msg)
