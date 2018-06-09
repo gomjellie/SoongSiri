@@ -196,6 +196,9 @@ class APIManager(metaclass=Singleton):
         if stat is 'home':
             home_message = HomeMessage()
             return home_message
+        elif stat is 'google':
+            google_message = GoogleMessage()
+            return google_message
         elif stat is 'message':
             content = req['content']
             user_key = req['user_key']

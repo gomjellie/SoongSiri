@@ -5,7 +5,7 @@ from .menu import pupil_menu, faculty_menu, food_court_menu,\
 from .parser import subway_api, bus_api
 from .library_seat import LibrarySeat
 from .review import Review
-from .constants import get_timetable_string
+from .constants import get_timetable_string, google_response_form
 import datetime
 
 
@@ -30,6 +30,14 @@ class Message:
 
     def __init__(self):
         self.retMessage = None
+
+    def get_message(self):
+        return self.retMessage
+
+
+class GoogleMessage:
+    def __init__(self):
+        self.retMessage = loads(dumps(google_response_form))
 
     def get_message(self):
         return self.retMessage
