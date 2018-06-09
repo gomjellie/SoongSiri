@@ -41,6 +41,10 @@ def viewLog(mode, data=None):
             data["user_key"],
             data["type"],
             data["content"]))
+    elif mode is "google":
+        app.logger.info("[google] data_bunch : {}".format(
+            data
+        ))
     elif mode is "scheduler":
         app.logger.info("[parsing] data: {}".format(data))
     elif mode is "query":

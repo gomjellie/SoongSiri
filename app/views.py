@@ -2,6 +2,7 @@ from flask import request, jsonify
 from .managers import APIAdmin
 from app import app
 from .myLogger import viewLog
+from .constants import google_response_form
 import traceback
 
 
@@ -47,6 +48,14 @@ def exit_chat_room(user_key):
     viewLog('exit', user_key)
     msg = APIAdmin.process('etc').get_message()
     return jsonify(msg), 200
+
+
+@app.route("/google_webhook", methods=["POST"])
+def google_webhook():
+    jsn = request.get_json()
+    viewLog("google", data=jsn)
+    # msg = APIAdmin.process('google').get_message()
+    return jsonify(google_response_form), 200
 
 
 @app.errorhandler(404)
