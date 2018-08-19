@@ -73,7 +73,7 @@ class FoodParser:
         self.the_kitchen = jsn.get('THE KITCHEN')
         self.snack_corner = jsn.get('스넥코너')
         self.food_court = jsn.get('푸드코트')
-        self.faculty_food = jsn.get('교직원식당')
+        self.faculty_food = jsn.get('숭실도담식당')
         self.price_res = requests.get(self.price_url, timeout=2)
         self.price_res.encoding = 'utf-8'
 
