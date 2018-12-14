@@ -21,7 +21,7 @@ class FoodParser:
         ssubob.refresh(date)
 
     def get_food(self, place):
-        ssubob.get(place)
+        return ssubob.get(place)
 
 
 class SubwayParser(metaclass=Singleton):
