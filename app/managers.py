@@ -160,6 +160,8 @@ class APIManager(metaclass=Singleton):
             return fail_message
         elif stat is 'etc':
             return SuccessMessage()
+        elif stat is "scheduler":
+            return CronUpdateMessage()
         else:
             return FailMessage("stat not in list('home', 'message', 'fail')")
 
@@ -247,6 +249,8 @@ class DBManager:
         date_str = date.__str__()
         if self.get_hakusiku_data(date=date_str) is None:
             self.hakusiku.insert_one(data)
+        else:
+            self.hakusiku.replace_one({"날짜": date_str}, data)
 
     def is_banned_user(self, user_key):
         return True if user_key in self._get_black_list() else False

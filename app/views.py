@@ -42,6 +42,11 @@ def block_friend(user_key):
     return jsonify(msg), 200
 
 
+@app.route("/refresh", methods=["GET"])
+def refresh():
+    APIAdmin.process("scheduler")
+
+
 @app.route("/chat_room/<user_key>", methods=["DELETE"])
 def exit_chat_room(user_key):
     viewLog('exit', user_key)
