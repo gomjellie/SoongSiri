@@ -193,7 +193,6 @@ class Menu:
 
     def __init__(self, kor_name):
         """
-        :param open_time: '2017-07-03 이런 형태'
         :param kor_name: '학식, 교식, 푸드코트 중에 하나이다.'
         """
         self.foods = None
@@ -203,13 +202,6 @@ class Menu:
 
     @staticmethod
     def fetch_save_menu(date=None):
-        def set_rate(f_dicts):
-            for f_dict in f_dicts:
-                for sec in f_dict:
-                    f_dict[sec].update({
-                        '평점': 0,
-                        '참여자': [],
-                    })
 
         try:
             from .managers import DBAdmin
@@ -228,8 +220,6 @@ class Menu:
             dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = date.__str__()
 
-            ratable_list = [faculty_food, pupil_food, dorm_food]
-            set_rate(ratable_list)
             food_dict = {
                 '푸드코트': food_court,
                 '학식': pupil_food,
@@ -278,34 +268,13 @@ class Menu:
 
     @staticmethod
     def format_to_string(menu, place, date=None):
-        def rate2star(rate):
-            # half = '✮'
-            # full = '★'
-            # empty = '✩'
-            stars = [
-                '✩✩✩✩✩',
-                '✮✩✩✩✩',
-                '★✩✩✩✩',
-                '★✩✩✩✩',
-                '★✮✩✩✩',
-                '★★✮✩✩',
-                '★★★✩✩',
-                '★★★✮✩',
-                '★★★★✩',
-                '★★★★✮',
-                '★★★★★',
-            ]
-            return stars[round(rate)]
-
         today = date or datetime.date.today()
         day_of_week = "월화수목금토일"[today.weekday()]
         ret_string = '{}({}) {}\n'.format(today, day_of_week, place)
         if place in ['학식', '교식', '기식']:
             for time in Menu.look_up_order:
                 if time in menu:
-                    len_participant = len(menu[time]['참여자'])
-                    star = rate2star(menu[time]['평점'])
-                    ret_string += '\n{} {}({}명 평가)\n'.format(time, star, len_participant)
+                    ret_string += '\n{} \n'.format(time)
                     for dish in menu[time]['메뉴']:
                         ret_string += '*{}\n'.format(dish)
                     if place in ['학식', '교식']:
