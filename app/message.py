@@ -414,3 +414,11 @@ class OnGoingMessage(BaseMessage):
         self.update_message('만드는 중입니다.')
         self.update_keyboard(Keyboard.home_buttons)
 
+
+class CronUpdateMessage(BaseMessage):
+    def __init__(self):
+        super().__init__()
+        faculty_menu.scheduled_refresh_food()
+        self.update_message("update success")
+        self.update_keyboard(Keyboard.home_buttons)
+

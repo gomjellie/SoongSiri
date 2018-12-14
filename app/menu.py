@@ -250,6 +250,35 @@ class Menu:
                 from .my_exception import FoodNotFound
                 raise FoodNotFound(e)
 
+    def scheduled_refresh_food(self):
+        """
+        주기적으로 하는 메뉴 업데이트
+        :return:
+        """
+        try:
+            from .managers import DBAdmin
+            food_api.refresh(None)
+            dorm_foods = food_api.get_food("기식")
+            date = datetime.date.today()
+            day_of_week = date.weekday()
+            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
+            date = date.__str__()
+
+            food_dict = {
+                '푸드코트': food_api.get_food("푸드코트"),
+                '학식': food_api.get_food("학식"),
+                '교식': food_api.get_food("교식"),
+                '기식': dorm_food,
+                '더 키친': food_api.get_food("더 키친"),
+                '스넥코너': food_api.get_food("스넥코너"),
+                '날짜': date,
+            }
+            viewLog('scheduler', food_dict)
+            DBAdmin.set_hakusiku_data(food_dict, date)
+
+        except Exception as e:
+            viewLog("fail", e)
+
     def get_times(self):
         """
         ['조식', '중식', '중식2'] 이런식으로 리턴함
