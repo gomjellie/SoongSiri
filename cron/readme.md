@@ -1,0 +1,1 @@
+0 * * * * /home/ubuntu/soongsiri/cron/run.py >> /home/ubuntu/soongsiri/cron/run.py.log 2>&1
