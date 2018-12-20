@@ -62,7 +62,7 @@ def exit_chat_room(user_key):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return process_fail('page_not_found'), 404
+    return process_fail('{} page_not_found'.format(request.url)), 404
 
 
 def process_fail(exception_str):
