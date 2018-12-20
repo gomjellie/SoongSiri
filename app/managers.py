@@ -162,6 +162,8 @@ class APIManager(metaclass=Singleton):
             return SuccessMessage()
         elif stat is "scheduler":
             return CronUpdateMessage()
+        elif stat is "refresh_tomorrow":
+            return CronUpdateTomorrowMessage()
         else:
             return FailMessage("stat not in list('home', 'message', 'fail')")
 

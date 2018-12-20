@@ -279,6 +279,31 @@ class Menu:
         except Exception as e:
             viewLog("fail", e)
 
+    def scheduled_refresh_tomorrow_food(self):
+        try:
+            from .managers import DBAdmin
+            date = datetime.date.today() + datetime.timedelta(days=1)
+            food_api.refresh(date)
+            dorm_foods = food_api.get_food("기식")
+            day_of_week = date.weekday()
+            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
+            date = date.__str__()
+
+            food_dict = {
+                '푸드코트': food_api.get_food("푸드코트"),
+                '학식': food_api.get_food("학식"),
+                '교식': food_api.get_food("교식"),
+                '기식': dorm_food,
+                '더 키친': food_api.get_food("더 키친"),
+                '스넥코너': food_api.get_food("스넥코너"),
+                '날짜': date,
+            }
+            viewLog('scheduler', food_dict)
+            DBAdmin.set_hakusiku_data(food_dict, date)
+
+        except Exception as e:
+            viewLog("fail", e)
+
     def get_times(self):
         """
         ['조식', '중식', '중식2'] 이런식으로 리턴함

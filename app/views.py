@@ -47,6 +47,11 @@ def refresh():
     msg = APIAdmin.process("scheduler").get_message()
     return jsonify(msg), 200
 
+@app.route("/refresh_tomorrow", methods=["GET"])
+def refresh_tomorrow():
+    msg = APIAdmin.process("refresh_tomorrow").get_message()
+    return jsonify(msg), 200
+
 
 @app.route("/chat_room/<user_key>", methods=["DELETE"])
 def exit_chat_room(user_key):
