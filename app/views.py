@@ -47,6 +47,11 @@ def refresh():
     msg = APIAdmin.process("scheduler").get_message()
     return jsonify(msg), 200
 
+@app.route("/refresh_tomorrow", methods=["GET"])
+def refresh_tomorrow():
+    msg = APIAdmin.process("refresh_tomorrow").get_message()
+    return jsonify(msg), 200
+
 
 @app.route("/chat_room/<user_key>", methods=["DELETE"])
 def exit_chat_room(user_key):
@@ -57,7 +62,7 @@ def exit_chat_room(user_key):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return process_fail('page_not_found'), 404
+    return process_fail('{} page_not_found'.format(request.url)), 404
 
 
 def process_fail(exception_str):
