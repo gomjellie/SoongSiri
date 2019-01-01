@@ -34,27 +34,6 @@ class APIManager(metaclass=Singleton):
     }
 
     PROCESS = {
-        '식단 별점주기': [
-            {
-                '식단 별점주기': SelectFoodPlaceMessage,
-            },
-            {
-                '학식': RatingPupilMessage,
-                '교식': RatingFacultyMessage,
-                '기식': RatingDormFoodMessage,
-            },
-            {
-                '조식': RateFoodMessage,
-                '중식': RateFoodMessage,
-                '석식': RateFoodMessage,
-                # '중.석식': RateFoodMessage,
-            },
-            {
-                '맛있음': RateFoodEndMessage,
-                '보통': RateFoodEndMessage,
-                '맛없음': RateFoodEndMessage,
-            },
-        ],
         '내일의 식단': [
             {
                 '내일의 식단': TomorrowFoodMessage,
@@ -100,36 +79,7 @@ class APIManager(metaclass=Singleton):
         :return: Message Object
         """
 
-        if process == '식단 별점주기':
-            if content in self.PROCESS[process][1]:
-                # 학식, 교식 중식
-                new_msg = self.PROCESS[process][1][content]
-                return new_msg()
-            elif content[:2] in self.PROCESS[process][2]:
-                # 조식 중식 석식
-                hist = UserSessionAdmin.get_history(user_key)
-                place, menu = hist[-2:]
-                menu = menu[:2]  # 조식2->조식
-                from .menu import Menu
-                is_available, start_time, end_time = Menu.is_available_now(place, menu)
-                if is_available:
-                    new_msg = self.PROCESS[process][2][menu]
-                    return new_msg()
-                else:
-                    UserSessionAdmin.delete(user_key)
-                    return FoodNonVotableMessage(start_time, end_time)
-            elif content in self.PROCESS[process][3]:
-                # 맛있음 보통 맛없음
-                hist = UserSessionAdmin.get_history(user_key)
-                place, menu, rate = hist[-3:]
-                prev_rate, new_rate = DBAdmin.update_rate(user_key, place, menu, rate)
-                UserSessionAdmin.delete(user_key)
-                new_msg = self.PROCESS[process][3][content]
-                return new_msg(prev_rate, new_rate)
-            else:
-                UserSessionAdmin.delete(user_key)
-                return FailMessage('식단 별점주기 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
-        elif process == '도서관':
+        if process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
                 msg = LibStatMessage(room=room)
@@ -210,6 +160,10 @@ class APIManager(metaclass=Singleton):
             return fail_message
         elif stat is 'etc':
             return SuccessMessage()
+        elif stat is "scheduler":
+            return CronUpdateMessage()
+        elif stat is "refresh_tomorrow":
+            return CronUpdateTomorrowMessage()
         else:
             return FailMessage("stat not in list('home', 'message', 'fail')")
 
@@ -297,6 +251,8 @@ class DBManager:
         date_str = date.__str__()
         if self.get_hakusiku_data(date=date_str) is None:
             self.hakusiku.insert_one(data)
+        else:
+            self.hakusiku.replace_one({"날짜": date_str}, data)
 
     def is_banned_user(self, user_key):
         return True if user_key in self._get_black_list() else False
@@ -340,33 +296,6 @@ class DBManager:
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
             raise Exception('5회 이상 작성하셨습니다.')
-
-    def update_rate(self, user_key, place, menu, rate):
-        today = datetime.date.today().__str__()
-
-        data = self.hakusiku.find_one({'날짜': today})
-
-        participant = data[place][menu]['참여자']
-        prev_rate = data[place][menu]['평점']
-        score = {
-            "맛있음": 10.0,
-            "보통": 5.0,
-            "맛없음": 1,
-        }
-        rate = score[rate]
-
-        if user_key in participant:
-            from .my_exception import FoodRateDuplicate
-
-            raise FoodRateDuplicate()
-        else:
-            _prev_rate = prev_rate * len(participant)
-            participant.append(user_key)
-            new_rate = (_prev_rate + rate) / len(participant)
-            data[place][menu]['평점'] = new_rate
-
-            self.hakusiku.find_one_and_replace({"날짜": today}, data)
-            return prev_rate, new_rate
 
 
 APIAdmin = APIManager()
