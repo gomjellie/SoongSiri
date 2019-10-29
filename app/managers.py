@@ -1,7 +1,9 @@
 from .message import *
-from app import session
 from functools import wraps
 import datetime
+import pymongo
+import re
+from app import session
 
 
 class Singleton(type):
@@ -15,7 +17,8 @@ class Singleton(type):
 
 class APIManager(metaclass=Singleton):
     STATELESS_PROCESS = {
-        '식단 보기': FoodMessage,
+        '오늘의 식단': FoodMessage,
+        '운영시간': TimeTableMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
         '기식': DormFoodMessage,
@@ -27,39 +30,32 @@ class APIManager(metaclass=Singleton):
         '베라 앞(20165)': BusBeraMessage,
         '중문(20169)': BusMiddleMessage,
         '지하철': SubMessage,
+        '도서관': LibMessage,
     }
 
     PROCESS = {
-        '식단 별점주기': [
+        '내일의 식단': [
             {
-                '식단 별점주기': SelectFoodPlaceMessage,
+                '내일의 식단': TomorrowFoodMessage,
             },
             {
-                '학식': RatingPupilMessage,
-                '교식': RatingFacultyMessage,
-                '기식': RatingDormFoodMessage,
-            },
-            {
-                '조식': RateFoodMessage,
-                '중식': RateFoodMessage,
-                '석식': RateFoodMessage,
-                # '중.석식': RateFoodMessage,
-            },
-            {
-                '맛있음': RateFoodEndMessage,
-                '보통': RateFoodEndMessage,
-                '맛없음': RateFoodEndMessage,
+                '학식': TomorrowPupilFoodMessage,
+                '교식': TomorrowFacultyFoodMessage,
+                '기식': TomorrowDormFoodMessage,
+                '푸드코트': TomorrowFoodCourtMessage,
+                '스낵코너': TomorrowSnackCornerMessage,
+                '더 키친': TomorrowTheKitchenMessage,
             },
         ],
-        '도서관': [
-            {
-                '도서관': LibMessage,
-            },
-            {
-                # 일단 예외로 둔다
-                '*': OnGoingMessage,
-            }
-        ],
+        # '도서관': [
+        #     {
+        #         '도서관': LibMessage,
+        #     },
+        #     {
+        #         # 일단 예외로 둔다
+        #         '*': OnGoingMessage,
+        #     }
+        # ],
         '식단 리뷰': [
             {
                 '식단 리뷰': ReviewInitMessage,
@@ -83,46 +79,16 @@ class APIManager(metaclass=Singleton):
         :return: Message Object
         """
 
-        if process == '식단 별점주기':
-            if content in self.PROCESS[process][1]:
-                # 학식, 교식 중식
-                new_msg = self.PROCESS[process][1][content]
-                return new_msg()
-            elif content[:2] in self.PROCESS[process][2]:
-                # 조식 중식 석식
-                hist = UserSessionAdmin.get_history(user_key)
-                place, menu = hist[-2:]
-                menu = menu[:2]  # 조식2->조식
-                from .menu import Menu
-                is_available, start_time, end_time = Menu.is_available_now(place, menu)
-                if is_available:
-                    new_msg = self.PROCESS[process][2][menu]
-                    return new_msg()
-                else:
-                    UserSessionAdmin.delete(user_key)
-                    return FoodNonVotableMessage(start_time, end_time)
-            elif content in self.PROCESS[process][3]:
-                # 맛있음 보통 맛없음
-                hist = UserSessionAdmin.get_history(user_key)
-                place, menu, rate = hist[-3:]
-                prev_rate, new_rate = DBAdmin.update_rate(user_key, place, menu, rate)
-                UserSessionAdmin.delete(user_key)
-                new_msg = self.PROCESS[process][3][content]
-                return new_msg(prev_rate, new_rate)
-            else:
-                UserSessionAdmin.delete(user_key)
-                return FailMessage('식단 별점주기 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
-        elif process == '도서관':
+        if process == '도서관':
             if '열람실' in content:
                 room = content[0]  # '1 열람실 (이용률: 9.11%)'[0]하면 1만 빠져나온다
                 msg = LibStatMessage(room=room)
                 UserSessionAdmin.delete(user_key)
             else:
                 UserSessionAdmin.delete(user_key)
-                msg = FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+                return FailMessage('도서관 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
             return msg
         elif process == '식단 리뷰':
-            print('식단 리뷰 process')
             if content in self.PROCESS[process][1]:
                 new_msg = self.PROCESS[process][1][content]
                 if content in ['리뷰 보기', '리뷰 삭제']:
@@ -131,6 +97,15 @@ class APIManager(metaclass=Singleton):
             else:
                 UserSessionAdmin.delete(user_key)
                 return ReviewPostSuccess(user_key, content)
+        elif process == '내일의 식단':
+            if content in self.PROCESS[process][1]:
+                new_msg = self.PROCESS[process][1][content]
+                UserSessionAdmin.delete(user_key)
+            else:
+                UserSessionAdmin.delete(user_key)
+                return FailMessage('내일의 식단 process에서 문제가 발생하였습니다 해당 세션을 초기화합니다.')
+            return new_msg()
+        return FailMessage('Unhandled process {}'.format(process))
 
     def handle_stateless_process(self, user_key, content):
         """
@@ -185,13 +160,18 @@ class APIManager(metaclass=Singleton):
             return fail_message
         elif stat is 'etc':
             return SuccessMessage()
+        elif stat is "scheduler":
+            return CronUpdateMessage()
+        elif stat is "refresh_tomorrow":
+            return CronUpdateTomorrowMessage()
         else:
             return FailMessage("stat not in list('home', 'message', 'fail')")
 
 
 class SessionManager(metaclass=Singleton):
-    def check_user_key(self, user_key):
-        if user_key in session:
+    @staticmethod
+    def check_user_key(user_key):
+        if session.find_one({'user_key': user_key}):
             return True
         else:
             return False
@@ -200,7 +180,7 @@ class SessionManager(metaclass=Singleton):
         @wraps(func)
         def session_wrapper(*args, **kwargs):
             user_key = args[1]
-            if user_key in session:
+            if session.find_one({'user_key': user_key}):
                 return func(*args, **kwargs)
             else:
                 return False
@@ -208,40 +188,50 @@ class SessionManager(metaclass=Singleton):
         return session_wrapper
 
     def init(self, user_key, content=None, process=None):
-        session[user_key] = {
+        session.insert_one({
+            'user_key': user_key,
             'history': [content],
             'process': process,
-            # process[0]: process name, process[1]: process step
-        }
+        })
 
     @verify_session
     def delete(self, user_key):
-        del session[user_key]
+        session.remove({'user_key': user_key})
 
     @verify_session
     def add_history(self, user_key, content):
-        session[user_key]['history'].append(content)
+        user = session.find_one({'user_key': user_key})
+        history = user['history']
+        history.append(content)
+        user.update({'history': history})
+        session.save(user)
 
     @verify_session
     def get_history(self, user_key):
-        return session[user_key]['history'][:]
+        user = session.find_one({'user_key': user_key})
+        history = user['history']
+        return history[:]
 
     @verify_session
     def init_process(self, user_key, process):
-        session[user_key]['process'] = process
+        user = session.find_one({'user_key': user_key})
+        user.update({'process': process})
+        session.save(user)
 
     @verify_session
     def expire_process(self, user_key):
-        session[user_key]['process'] = None
+        user = session.find_one({'user_key': user_key})
+        user.update({'process': None})
+        session.save(user)
 
     @verify_session
     def get_process(self, user_key):
-        return session[user_key].get('process')
+        user = session.find_one({'user_key': user_key})
+        return user['process']
 
 
 class DBManager:
     def __init__(self):
-        import pymongo
         _conn = pymongo.MongoClient()
         _food_db = _conn.food_db
         self.hakusiku = _food_db.hakusiku
@@ -251,14 +241,18 @@ class DBManager:
             self.ban_list.insert_one({'black_list': []})
 
     def get_hakusiku_data(self, date=None):
-        date = date or datetime.date.today().__str__()
-        data = self.hakusiku.find_one({'날짜': date})
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        data = self.hakusiku.find_one({'날짜': date_str})
         return data
 
     def set_hakusiku_data(self, data, date=None):
-        date = date or datetime.date.today().__str__()
-        if self.get_hakusiku_data(date=date) is None:
+        date = date or datetime.date.today()
+        date_str = date.__str__()
+        if self.get_hakusiku_data(date=date_str) is None:
             self.hakusiku.insert_one(data)
+        else:
+            self.hakusiku.replace_one({"날짜": date_str}, data)
 
     def is_banned_user(self, user_key):
         return True if user_key in self._get_black_list() else False
@@ -292,40 +286,16 @@ class DBManager:
                     s += 1
             return s
 
+        def remove_special_char(src):
+            return re.sub("[!@#$%^&*()]", "", src)
+
         review = self.get_review()
 
-        if count_user_key(review['리뷰']) < 3:
-            review['리뷰'].append({'user_key': user_key, 'content': new_review})
+        if count_user_key(review['리뷰']) < 5:
+            review['리뷰'].append({'user_key': user_key, 'content': remove_special_char(new_review)})
             self.review.find_one_and_replace({'날짜': datetime.date.today().__str__()}, review)
         else:
-            raise Exception('3회 이상 작성하셨습니다.')
-
-    def update_rate(self, user_key, place, menu, rate):
-        today = datetime.date.today().__str__()
-
-        data = self.hakusiku.find_one({'날짜': today})
-
-        participant = data[place][menu]['참여자']
-        prev_rate = data[place][menu]['평점']
-        score = {
-            "맛있음": 10.0,
-            "보통": 5.0,
-            "맛없음": 1,
-        }
-        rate = score[rate]
-
-        if user_key in participant:
-            from .my_exception import FoodRateDuplicate
-
-            raise FoodRateDuplicate()
-        else:
-            _prev_rate = prev_rate * len(participant)
-            participant.append(user_key)
-            new_rate = (_prev_rate + rate) / len(participant)
-            data[place][menu]['평점'] = new_rate
-
-            self.hakusiku.find_one_and_replace({"날짜": today}, data)
-            return prev_rate, new_rate
+            raise Exception('5회 이상 작성하셨습니다.')
 
 
 APIAdmin = APIManager()

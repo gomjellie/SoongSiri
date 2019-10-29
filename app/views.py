@@ -5,6 +5,11 @@ from .myLogger import viewLog
 import traceback
 
 
+@app.route('/')
+def index():
+    return '', 200
+
+
 @app.route('/keyboard')
 def keyboard():
     home_message = APIAdmin.process("home").get_message()
@@ -20,7 +25,7 @@ def message():
         return jsonify(msg), 200
     except Exception as e:
         traceback.print_exc()
-        return process_fail(e)
+        return process_fail(traceback.format_exc())
 
 
 @app.route('/friend', methods=['POST'])
@@ -37,6 +42,17 @@ def block_friend(user_key):
     return jsonify(msg), 200
 
 
+@app.route("/refresh", methods=["GET"])
+def refresh():
+    msg = APIAdmin.process("scheduler").get_message()
+    return jsonify(msg), 200
+
+@app.route("/refresh_tomorrow", methods=["GET"])
+def refresh_tomorrow():
+    msg = APIAdmin.process("refresh_tomorrow").get_message()
+    return jsonify(msg), 200
+
+
 @app.route("/chat_room/<user_key>", methods=["DELETE"])
 def exit_chat_room(user_key):
     viewLog('exit', user_key)
@@ -46,11 +62,12 @@ def exit_chat_room(user_key):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return process_fail('page_not_found'), 404
+    return process_fail('{} page_not_found'.format(request.url)), 404
 
 
 def process_fail(exception_str):
-    user_key = request.get_json().get('user_key')
+    jsn = request.get_json() or {'user_key': 'not_user'}
+    user_key = jsn.get('user_key')
     msg = APIAdmin.process("fail", {'user_key': user_key, 'log': exception_str}).get_message()
     viewLog("fail", data=exception_str)
     return jsonify(msg)
