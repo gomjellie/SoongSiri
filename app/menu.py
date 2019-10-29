@@ -209,17 +209,17 @@ class Menu:
                 viewLog("fail", '오늘의 데이터는 이미 저장되어 있습니다.')
                 return
             food_api.refresh(date)
-            dorm_foods = food_api.get_food("기식")
+            # dorm_foods = food_api.get_food("기식")
             date = date or datetime.date.today()
             day_of_week = date.weekday()
-            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
+            # dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = date.__str__()
 
             food_dict = {
                 '푸드코트': food_api.get_food("푸드코트"),
                 '학식': food_api.get_food("학식"),
                 '교식': food_api.get_food("교식"),
-                '기식': dorm_food,
+                # '기식': dorm_food,
                 '더 키친': food_api.get_food("더 키친"),
                 '스넥코너': food_api.get_food("스넥코너"),
                 '날짜': date,
@@ -258,17 +258,17 @@ class Menu:
         try:
             from .managers import DBAdmin
             food_api.refresh(None)
-            dorm_foods = food_api.get_food("기식")
+            # dorm_foods = food_api.get_food("기식")
             date = datetime.date.today()
             day_of_week = date.weekday()
-            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
+            # dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = date.__str__()
 
             food_dict = {
                 '푸드코트': food_api.get_food("푸드코트"),
                 '학식': food_api.get_food("학식"),
                 '교식': food_api.get_food("교식"),
-                '기식': dorm_food,
+                # '기식': dorm_food,
                 '더 키친': food_api.get_food("더 키친"),
                 '스넥코너': food_api.get_food("스넥코너"),
                 '날짜': date,
@@ -284,16 +284,16 @@ class Menu:
             from .managers import DBAdmin
             date = datetime.date.today() + datetime.timedelta(days=1)
             food_api.refresh(date)
-            dorm_foods = food_api.get_food("기식")
-            day_of_week = date.weekday()
-            dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
+            # dorm_foods = food_api.get_food("기식")
+            # day_of_week = date.weekday()
+            # dorm_food = dorm_foods.get('월화수목금토일'[day_of_week])
             date = date.__str__()
 
             food_dict = {
                 '푸드코트': food_api.get_food("푸드코트"),
                 '학식': food_api.get_food("학식"),
                 '교식': food_api.get_food("교식"),
-                '기식': dorm_food,
+                # '기식': dorm_food,
                 '더 키친': food_api.get_food("더 키친"),
                 '스넥코너': food_api.get_food("스넥코너"),
                 '날짜': date,

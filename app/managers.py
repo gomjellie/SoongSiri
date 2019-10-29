@@ -21,7 +21,7 @@ class APIManager(metaclass=Singleton):
         '운영시간': TimeTableMessage,
         '학식': PupilFoodMessage,
         '교식': FacultyFoodMessage,
-        '기식': DormFoodMessage,
+        # '기식': DormFoodMessage,
         '푸드코트': FoodCourtMessage,
         '스낵코너': SnackCornerMessage,
         '더 키친': TheKitchenMessage,
@@ -41,7 +41,7 @@ class APIManager(metaclass=Singleton):
             {
                 '학식': TomorrowPupilFoodMessage,
                 '교식': TomorrowFacultyFoodMessage,
-                '기식': TomorrowDormFoodMessage,
+                # '기식': TomorrowDormFoodMessage,
                 '푸드코트': TomorrowFoodCourtMessage,
                 '스낵코너': TomorrowSnackCornerMessage,
                 '더 키친': TomorrowTheKitchenMessage,
