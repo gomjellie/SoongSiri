@@ -1,6 +1,9 @@
+#!/home/ubuntu/soongsiri/venv/bin/python
+
 import ssubob
 import datetime
 import pprint
+import json
 
 tomorrow = datetime.date.today() + datetime.timedelta(days=1)
 ssubob.refresh(tomorrow)
@@ -19,5 +22,5 @@ data['오늘'] = {
     '학식': ssubob.get('학식'),
 }
 
-print(data)
+print(json.dumps(data, ensure_ascii=False, indent=4))
 
